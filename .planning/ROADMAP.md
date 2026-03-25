@@ -35,7 +35,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Admin and consultant roles are enforced — a consultant cannot access admin-only routes
   4. The UI shell renders in dark mode with Human Agency blue accent, sidebar navigation, monospace prompt content, and sans-serif chrome
   5. 18 realistic seed prompts across 6 categories exist in the database and are visible to any authenticated or demo user
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Project bootstrap, Supabase clients, full schema + RLS + Auth Hook, Vitest setup
+- [ ] 01-02-PLAN.md — Auth Server Actions (signup, login, logout, demo bypass), login page UI, signup page
+- [ ] 01-03-PLAN.md — App shell (sidebar, demo banner), library placeholder, 18 seed prompts
 
 ### Phase 2: Prompt Library
 **Goal**: Users can browse, search, filter, and read prompts from the central library — and admins can create, edit, and deprecate them.
@@ -88,11 +93,11 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/3 | Planning complete | - |
 | 2. Prompt Library | 0/TBD | Not started | - |
 | 3. Engagement Workspace | 0/TBD | Not started | - |
 | 4. Merge Workflow | 0/TBD | Not started | - |
