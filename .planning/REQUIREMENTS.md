@@ -35,7 +35,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **ENG-01**: User can create an engagement with name, client name, and industry
 - [x] **ENG-02**: User can view list of their engagements with status indicators
-- [ ] **ENG-03**: User can view engagement workspace showing all forked prompts for that engagement
+- [x] **ENG-03**: User can view engagement workspace showing all forked prompts for that engagement
 - [x] **ENG-04**: User can mark an engagement as completed or paused
 
 ### Forking
@@ -148,7 +148,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LIB-08 | Phase 2 | Pending |
 | ENG-01 | Phase 3 | Complete |
 | ENG-02 | Phase 3 | Complete |
-| ENG-03 | Phase 3 | Pending |
+| ENG-03 | Phase 3 | Complete |
 | ENG-04 | Phase 3 | Complete |
 | FORK-01 | Phase 3 | Pending |
 | FORK-02 | Phase 3 | Pending |
