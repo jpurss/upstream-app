@@ -1,10 +1,31 @@
-export default function LibraryPage() {
+import { fetchAllActivePrompts } from '@/lib/data/prompts'
+import { createClient } from '@/lib/supabase/server'
+import { LibraryGrid } from '@/components/library/library-grid'
+
+export default async function LibraryPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const role = user?.app_metadata?.role as string | null
+  const isAnonymous = user?.is_anonymous ?? false
+  const demoRole = isAnonymous ? (user?.user_metadata?.demo_role as string ?? 'consultant') : null
+  const effectiveRole = role ?? (isAnonymous ? demoRole : null)
+  const isAdmin = effectiveRole === 'admin'
+
+  const prompts = await fetchAllActivePrompts()
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-8">
-      <h1 className="text-[20px] font-semibold text-white">Prompt Library</h1>
-      <p className="text-[14px] text-zinc-400 mt-3 text-center max-w-sm">
-        18 prompts loaded and ready &mdash; full library browsing comes in Phase 2.
-      </p>
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-xl font-semibold">Prompt Library</h1>
+        {/* Admin "New Prompt" button will be added in Plan 04 */}
+        <div />
+      </div>
+      <LibraryGrid
+        initialPrompts={prompts}
+        isAdmin={isAdmin}
+        totalCount={prompts.length}
+      />
     </div>
   )
 }
