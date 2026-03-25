@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { fetchEngagementById } from '@/lib/data/engagements'
 import { fetchForksByEngagement } from '@/lib/data/forks'
-import { WorkspaceHeader } from '@/components/engagements/workspace-header'
+import { fetchAllActivePrompts } from '@/lib/data/prompts'
+import { WorkspaceClient } from '@/components/engagements/workspace-client'
 import { ForkGrid } from '@/components/engagements/fork-grid'
 
 export default async function EngagementWorkspacePage({
@@ -21,7 +22,11 @@ export default async function EngagementWorkspacePage({
     notFound()
   }
 
-  const forks = await fetchForksByEngagement(id)
+  // Fetch forks and prompts in parallel for the picker modal
+  const [forks, prompts] = await Promise.all([
+    fetchForksByEngagement(id),
+    fetchAllActivePrompts(),
+  ])
 
   // Compute stats
   const forkCount = forks.length
@@ -32,12 +37,17 @@ export default async function EngagementWorkspacePage({
         ratedForks.length
       : null
 
+  // IDs of prompts already forked into this engagement — prevents duplicates in picker
+  const forkedPromptIds = forks.map((f) => f.source_prompt_id)
+
   return (
     <div className="p-8">
-      <WorkspaceHeader
+      <WorkspaceClient
         engagement={engagement}
         forkCount={forkCount}
         avgEffectiveness={avgEffectiveness}
+        prompts={prompts}
+        forkedPromptIds={forkedPromptIds}
       />
       <ForkGrid forks={forks} engagementId={id} />
     </div>

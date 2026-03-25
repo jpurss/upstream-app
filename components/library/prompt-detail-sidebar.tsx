@@ -16,11 +16,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { DeprecationDialog } from '@/components/library/deprecation-dialog'
+import { ForkToEngagementDialog } from '@/components/engagements/fork-to-engagement-dialog'
 import type { Prompt } from '@/lib/types/prompt'
 
 interface PromptDetailSidebarProps {
   prompt: Prompt
   isAdmin: boolean
+  activeForkCount?: number
+  userEngagements?: Array<{ id: string; name: string; client_name: string; status: string }>
+  forkedEngagementIds?: string[]
 }
 
 function formatDate(dateStr: string): string {
@@ -31,7 +35,13 @@ function formatDate(dateStr: string): string {
   })
 }
 
-export function PromptDetailSidebar({ prompt, isAdmin }: PromptDetailSidebarProps) {
+export function PromptDetailSidebar({
+  prompt,
+  isAdmin,
+  activeForkCount,
+  userEngagements,
+  forkedEngagementIds,
+}: PromptDetailSidebarProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -52,6 +62,14 @@ export function PromptDetailSidebar({ prompt, isAdmin }: PromptDetailSidebarProp
         )}
         Copy
       </Button>
+
+      {userEngagements && (
+        <ForkToEngagementDialog
+          promptId={prompt.id}
+          engagements={userEngagements}
+          forkedEngagementIds={forkedEngagementIds ?? []}
+        />
+      )}
 
       <Separator />
 
@@ -124,10 +142,10 @@ export function PromptDetailSidebar({ prompt, isAdmin }: PromptDetailSidebarProp
           <span className="text-[13px] text-muted-foreground">Checkouts</span>
         </div>
 
-        {/* Active Forks — hardcoded 0 until Phase 3 */}
+        {/* Active Forks — real count from database */}
         <div className="flex flex-col gap-1">
           <GitFork className="size-4 text-muted-foreground" />
-          <span className="text-sm font-semibold">0</span>
+          <span className="text-sm font-semibold">{activeForkCount ?? 0}</span>
           <span className="text-[13px] text-muted-foreground">Active Forks</span>
         </div>
 

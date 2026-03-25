@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { createEngagement } from '@/app/(app)/engagements/actions'
+import { createMultipleForks } from '@/app/(app)/engagements/[id]/actions'
 import { INDUSTRIES } from '@/lib/types/engagement'
 import type { Prompt } from '@/lib/types/prompt'
 
@@ -127,10 +128,30 @@ export function NewEngagementDialog({
   }
 
   function handleForkSelected() {
-    if (createdEngagementId && onForkSelected) {
-      onForkSelected(createdEngagementId, Array.from(selectedPromptIds))
+    if (!createdEngagementId || selectedPromptIds.size === 0) {
+      handleOpenChange(false)
+      return
     }
-    handleOpenChange(false)
+
+    const engagementId = createdEngagementId
+    const promptIds = Array.from(selectedPromptIds)
+
+    startTransition(async () => {
+      const result = await createMultipleForks(promptIds, engagementId)
+      if (result.forked > 0) {
+        const count = result.forked
+        if (count === 1) {
+          toast.success('Forked to engagement')
+        } else {
+          toast.success(`${count} prompts forked to engagement`)
+        }
+      }
+      // Also notify via legacy callback if provided (backwards compat)
+      if (onForkSelected) {
+        onForkSelected(engagementId, promptIds)
+      }
+      handleOpenChange(false)
+    })
   }
 
   function handleSkip() {

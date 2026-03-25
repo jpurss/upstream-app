@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { fetchPromptById } from '@/lib/data/prompts'
+import { fetchUserEngagements } from '@/lib/data/engagements'
+import { countActiveForks } from '@/lib/data/forks'
 import { createClient } from '@/lib/supabase/server'
 import { PromptDetailContent } from '@/components/library/prompt-detail-content'
 import { PromptDetailSidebar } from '@/components/library/prompt-detail-sidebar'
@@ -32,6 +34,31 @@ export default async function PromptDetailPage({
   const effectiveRole = role ?? (isAnonymous ? demoRole : null)
   const isAdmin = effectiveRole === 'admin'
 
+  // Fetch fork data and user's engagements in parallel
+  const [activeForkCount, userEngagements, forkedEngagementsData] = await Promise.all([
+    countActiveForks(promptId),
+    user ? fetchUserEngagements(user.id) : Promise.resolve([]),
+    user
+      ? supabase
+          .from('forked_prompts')
+          .select('engagement_id')
+          .eq('source_prompt_id', promptId)
+          .then(({ data }) => data ?? [])
+      : Promise.resolve([]),
+  ])
+
+  const forkedEngagementIds = forkedEngagementsData.map(
+    (row: { engagement_id: string }) => row.engagement_id
+  )
+
+  // Shape engagements for the ForkToEngagementDialog prop
+  const engagementsForFork = userEngagements.map((e) => ({
+    id: e.id,
+    name: e.name,
+    client_name: e.client_name,
+    status: e.status,
+  }))
+
   return (
     <div className="p-8">
       {/* Back link — D-08 */}
@@ -51,7 +78,13 @@ export default async function PromptDetailPage({
       {/* Two-column layout — D-08: content left, sidebar right, gap 32px */}
       <div className="flex gap-8">
         <PromptDetailContent content={prompt.content} />
-        <PromptDetailSidebar prompt={prompt} isAdmin={isAdmin} />
+        <PromptDetailSidebar
+          prompt={prompt}
+          isAdmin={isAdmin}
+          activeForkCount={activeForkCount}
+          userEngagements={engagementsForFork}
+          forkedEngagementIds={forkedEngagementIds}
+        />
       </div>
     </div>
   )
