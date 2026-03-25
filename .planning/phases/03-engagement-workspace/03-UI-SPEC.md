@@ -68,10 +68,10 @@ Source: .impeccable.md. Two weights only — 400 (regular) and 600 (semibold). I
 | Prompt content | 13px | 400 | 1.6 | Geist Mono | Fork adapted content in Write tab and Preview tab — never UI chrome |
 
 Notes:
-- No other font sizes permitted in this phase.
+- No other font sizes permitted in this phase. Maximum 4 declared sizes (Display 20px, Heading 16px, Body 14px, Label/Prompt 13px).
 - Engagement card client name uses body (14px) at weight 400, muted foreground.
 - Fork card status indicators (customization/adaptation) use label (13px) with semantic color dots.
-- Prompt content headings inside Preview/Diff tabs use Geist Sans: H1 at 18px/600 with border-b, H2 at 16px/600, H3 at 14px/600. Body content remains Geist Mono 13px.
+- Prompt content headings inside Preview/Diff tabs use existing sizes only: H1 at 16px/600 with `border-b border-border pb-2`, H2 at 14px/600, H3 at 13px/600. Body content remains Geist Mono 13px. No additional sizes introduced.
 - Issue tag badges use label (13px) weight 400.
 
 ---
@@ -96,7 +96,7 @@ Source: .impeccable.md / globals.css. CSS variable names confirmed from codebase
 **Accent (`#4287FF`) reserved for:**
 1. "New Engagement" primary CTA button (hero state in empty page, secondary in populated page header)
 2. "+ Fork a Prompt" button in workspace header
-3. "Fork" confirm button in fork-to-engagement dialog
+3. "Fork to Engagement" confirm button in fork-to-engagement dialog
 4. Active star in effectiveness rating when filled (index ≤ user-selected rating) — use `#FFB852` (amber) for star fill, NOT blue
 5. Focus ring on all inputs, textareas, and interactive controls (`--ring`)
 6. Active nav item — "Engagements" when on any `/engagements/` route
@@ -161,7 +161,7 @@ Source: CONTEXT.md decisions D-01 through D-25.
   1. Name — text `<Input>`, required, label "Engagement Name", placeholder "e.g. Accenture AI Strategy Q2"
   2. Client Name — text `<Input>`, required, label "Client Name", placeholder "e.g. Accenture"
   3. Industry — `<Select>` dropdown, label "Industry", required
-- Footer: "Create Engagement" primary button (left of cancel) + "Cancel" ghost button
+- Footer: "Create Engagement" primary button + "Discard" ghost button
 - On success: optional second step shows prompt picker (D-06) — "Add prompts to get started" heading, searchable mini library card grid, "Skip for now" ghost link, "Fork Selected (N)" primary button
 - Error: inline field validation — "This field is required." at 13px destructive below each empty required field
 
@@ -206,7 +206,7 @@ Fork cards are work-status trackers, NOT prompt previews.
 - Opens `<Dialog>`: title "Fork to Engagement", engagement list as radio items
 - Each item: engagement name + client name subline + status dot
 - "Already forked" state: item grayed out with label "Already in this engagement" — not selectable
-- Footer: "Fork" primary button + "Cancel" ghost button
+- Footer: "Fork to Engagement" primary button + "Back to Library" ghost button
 - If no active engagements: dialog shows "No active engagements" with inline "Create one" link that opens create engagement modal
 
 **Entry Point 2: Workspace "+ Fork a Prompt" button (D-13)**
@@ -215,7 +215,7 @@ Fork cards are work-status trackers, NOT prompt previews.
 - Body: mini library card grid — reuses `<LibraryGrid>` filtering logic
 - Already-forked prompts: rendered with "Already forked" badge overlay on card, pointer-events none
 - Multiple selection: checkboxes on cards, selection count shows in footer "3 selected"
-- Footer: "Fork Selected (N)" primary button + "Cancel" ghost button
+- Footer: "Fork Selected (N)" primary button + "Done Browsing" ghost button
 - "Fork Selected" disabled when no prompts selected
 
 **Entry Point 3: Post-creation prompt picker (D-14)**
@@ -227,7 +227,7 @@ Fork cards are work-status trackers, NOT prompt previews.
 - Route: `/engagements/[id]/forks/[forkId]`
 - Two-column layout: wide editor column (`flex-1`, min 0) + narrow metadata sidebar (280px fixed)
 - Column gap: 32px (xl)
-- Page header: back link "← [Engagement Name]" (body size, muted, hover foreground) + autosave indicator (right-aligned, label size 13px, muted)
+- Page header: back link "← Back to [Engagement Name]" (body size, muted, hover foreground) + autosave indicator (right-aligned, label size 13px, muted)
 - Autosave indicator states: blank (no unsaved changes) → "Saving..." (during debounce/request) → "Saved" (2s after confirm, then returns to blank)
 - Autosave debounce: 1.5 seconds after last keystroke
 
@@ -287,9 +287,14 @@ Source: CONTEXT.md decisions + .impeccable.md voice guidelines.
 | Primary CTA — empty page | "New Engagement" | Hero CTA in empty state, primary variant, centered |
 | Primary CTA — populated page | "New Engagement" | Secondary variant, page header right |
 | Workspace fork CTA | "+ Fork a Prompt" | Primary variant in workspace header |
-| Modal create CTA | "Create Engagement" | Primary button in create dialog footer |
-| Modal picker CTA (single) | "Fork Prompt" | Primary button in fork-to-engagement dialog |
-| Modal picker CTA (multi) | "Fork Selected (N)" | Primary button in prompt picker modal, N = selection count |
+| Modal create CTA | "Create Engagement" | Primary button in create engagement dialog footer |
+| Modal create dismiss | "Discard" | Ghost button in create engagement dialog footer — names the outcome (abandoning a partially filled form) |
+| Fork-to-engagement CTA | "Fork to Engagement" | Primary button in fork-to-engagement dialog footer — includes the object being acted on |
+| Fork-to-engagement dismiss | "Back to Library" | Ghost button in fork-to-engagement dialog footer — names where the user returns |
+| Prompt picker CTA (multi) | "Fork Selected (N)" | Primary button in prompt picker modal, N = selection count |
+| Prompt picker dismiss | "Done Browsing" | Ghost button in prompt picker modal footer — names the completed browsing action |
+| Post-creation picker CTA | "Fork Selected (N)" | Primary button in post-creation prompt picker step |
+| Post-creation picker skip | "Skip for now" | Ghost link in post-creation prompt picker — no confirmation needed |
 | Empty state heading | "Create your first engagement" | Heading size (16px/600), centered |
 | Empty state body | "Fork prompts into client workspaces, adapt them, and rate what works." | Body size, muted, max-width 320px |
 | Empty state secondary link | "or Browse the Library →" | Label size, muted, after primary CTA |
@@ -301,13 +306,13 @@ Source: CONTEXT.md decisions + .impeccable.md voice guidelines.
 | No engagements inline link | "Create one" | Inline link in fork dialog when no engagements exist |
 | Already forked label | "Already in this engagement" | Muted label on grayed-out item in fork dialog |
 | Already forked card badge | "Already forked" | Badge overlay on picker card — muted surface |
-| Back link | "← [Engagement Name]" | Dynamic engagement name, muted, hover foreground — NOT "Back" |
+| Back link | "← Back to [Engagement Name]" | Dynamic engagement name, muted, hover foreground — D-20 locked |
 | Autosave saving state | "Saving..." | Label size, muted, header right |
 | Autosave saved state | "Saved" | Label size, muted, header right, fades after 2s |
 | Completion confirm title | "Mark engagement as completed?" | AlertDialog title |
 | Completion confirm body | "This will mark the engagement as completed. You can reopen it by setting the status to Active." | AlertDialog description |
 | Completion confirm action | "Mark Complete" | AlertDialog confirm, primary variant |
-| Completion cancel action | "Keep Active" | AlertDialog cancel — names the outcome |
+| Completion cancel action | "Keep Active" | AlertDialog cancel — names the outcome, consistent pattern for all AlertDialog cancels |
 | Effectiveness star aria | "Rate effectiveness N out of 5" | aria-label on each star button, N = star position |
 | Fork success toast (single) | "Forked to [Engagement Name]" | Sonner, 3s, no action button |
 | Fork success toast (multi) | "N prompts forked to [Engagement Name]" | Sonner, 3s |
@@ -330,6 +335,7 @@ Source: CONTEXT.md decisions + .impeccable.md voice guidelines.
 - No exclamation marks
 - No "successfully" prefix — state the outcome: "Saved", not "Successfully saved!"
 - Confirmation dialogs state consequence before action
+- Dismiss controls name outcomes, not the mechanical act of closing: "Discard", "Back to Library", "Done Browsing", "Keep Active" — never "Cancel"
 - Dynamic values in brackets, e.g. "[Engagement Name]"
 
 ---
