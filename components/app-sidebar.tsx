@@ -91,15 +91,13 @@ export function AppSidebar({ userRole, userName, isAnonymous }: AppSidebarProps)
               if (item.enabled) {
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link
-                        href={item.href}
-                        className="flex items-center gap-2 text-white bg-zinc-800 border-l-2 border-[#4287FF]"
-                      >
-                        <Icon className="size-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
+                    <SidebarMenuButton
+                    isActive={true}
+                    render={<Link href={item.href} />}
+                  >
+                    <Icon className="size-4" />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
               }
