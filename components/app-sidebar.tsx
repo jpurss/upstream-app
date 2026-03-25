@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Library,
   Briefcase,
@@ -35,7 +36,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { title: 'Library', icon: Library, href: '/library', enabled: true, adminOnly: false, phase: 2 },
-  { title: 'Engagements', icon: Briefcase, href: '/engagements', enabled: false, adminOnly: false, phase: 3 },
+  { title: 'Engagements', icon: Briefcase, href: '/engagements', enabled: true, adminOnly: false, phase: 3 },
   { title: 'Demand Board', icon: MessageSquarePlus, href: '/demand', enabled: false, adminOnly: false, phase: 5 },
   { title: 'Review Queue', icon: GitPullRequestArrow, href: '/review', enabled: false, adminOnly: true, phase: 4 },
   { title: 'Dashboard', icon: BarChart3, href: '/dashboard', enabled: false, adminOnly: true, phase: 5 },
@@ -48,6 +49,8 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ userRole, userName, isAnonymous }: AppSidebarProps) {
+  const pathname = usePathname()
+
   // Filter admin-only items for non-admins
   const visibleItems = navItems.filter(item => {
     if (item.adminOnly && userRole !== 'admin') return false
@@ -92,7 +95,7 @@ export function AppSidebar({ userRole, userName, isAnonymous }: AppSidebarProps)
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
-                    isActive={true}
+                    isActive={pathname.startsWith(item.href)}
                     render={<Link href={item.href} />}
                   >
                     <Icon className="size-4" />

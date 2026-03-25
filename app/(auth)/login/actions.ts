@@ -14,7 +14,12 @@ export async function signIn(_prevState: unknown, formData: FormData) {
     return { error: 'Incorrect email or password. Please try again.' }
   }
 
-  redirect('/library')
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const role = user?.app_metadata?.role
+  const effectiveRole = role ?? 'consultant'
+  redirect(effectiveRole === 'admin' ? '/library' : '/engagements')
 }
 
 export async function signInAsDemo(role: 'consultant' | 'admin') {
@@ -32,5 +37,5 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
     return { error: 'Something went wrong. Please try again.' }
   }
 
-  redirect('/library')
+  redirect(role === 'admin' ? '/library' : '/engagements')
 }
