@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function signUp(_prevState: unknown, formData: FormData) {
   const email = formData.get('email') as string
@@ -14,8 +15,20 @@ export async function signUp(_prevState: unknown, formData: FormData) {
     return { error: error.message }
   }
 
-  // If the user is immediately confirmed (e.g., email confirmation disabled), redirect to library
-  if (data.session) {
+  // If the user is immediately confirmed (e.g., email confirmation disabled), create profile and redirect.
+  if (data.session && data.user) {
+    // Best-effort profile creation using admin client to bypass RLS.
+    const adminClient = createAdminClient()
+    const { error: profileError } = await adminClient
+      .from('profiles')
+      .upsert(
+        { id: data.user.id, name: email.split('@')[0], role: 'consultant' },
+        { onConflict: 'id' },
+      )
+    if (profileError) {
+      console.error('[signUp] profile upsert failed:', profileError.message)
+    }
+
     redirect('/library')
   }
 
