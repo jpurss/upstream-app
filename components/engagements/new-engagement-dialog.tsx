@@ -34,7 +34,6 @@ interface NewEngagementDialogProps {
 type Step = 'create' | 'pick-prompts'
 
 interface FieldErrors {
-  name?: string
   client_name?: string
   industry?: string
 }
@@ -49,7 +48,6 @@ export function NewEngagementDialog({
   const [createdEngagementId, setCreatedEngagementId] = useState<string | null>(null)
 
   // Form state
-  const [name, setName] = useState('')
   const [clientName, setClientName] = useState('')
   const [industry, setIndustry] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
@@ -60,7 +58,6 @@ export function NewEngagementDialog({
   const [selectedPromptIds, setSelectedPromptIds] = useState<Set<string>>(new Set())
 
   function resetForm() {
-    setName('')
     setClientName('')
     setIndustry('')
     setFieldErrors({})
@@ -79,7 +76,6 @@ export function NewEngagementDialog({
 
   function validateForm(): boolean {
     const errors: FieldErrors = {}
-    if (!name.trim()) errors.name = 'This field is required.'
     if (!clientName.trim()) errors.client_name = 'This field is required.'
     if (!industry) errors.industry = 'This field is required.'
     setFieldErrors(errors)
@@ -91,7 +87,6 @@ export function NewEngagementDialog({
     if (!validateForm()) return
 
     const formData = new FormData()
-    formData.set('name', name)
     formData.set('client_name', clientName)
     formData.set('industry', industry)
 
@@ -187,27 +182,6 @@ export function NewEngagementDialog({
               </DialogHeader>
               <form onSubmit={handleSubmit} noValidate>
                 <div className="flex flex-col gap-4 py-2">
-                  {/* Engagement Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="eng-name" className="text-sm font-medium">
-                      Engagement Name
-                    </label>
-                    <Input
-                      id="eng-name"
-                      name="name"
-                      placeholder="e.g. Accenture AI Strategy Q2"
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value)
-                        if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: undefined }))
-                      }}
-                      aria-invalid={!!fieldErrors.name}
-                    />
-                    {fieldErrors.name && (
-                      <span className="text-[13px] text-destructive">{fieldErrors.name}</span>
-                    )}
-                  </div>
-
                   {/* Client Name */}
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="eng-client" className="text-sm font-medium">

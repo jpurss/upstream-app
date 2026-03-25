@@ -19,6 +19,7 @@ async function getAuthenticatedUser() {
 
 /**
  * Creates a new engagement for the authenticated user.
+ * Auto-generates the engagement name from client_name + month/year suffix.
  * Validates required fields before inserting.
  */
 export async function createEngagement(formData: FormData) {
@@ -26,18 +27,21 @@ export async function createEngagement(formData: FormData) {
   if (!ctx) return { error: 'Unauthorized' }
 
   const { user, supabase } = ctx
-  const name = formData.get('name') as string
   const client_name = formData.get('client_name') as string
   const industry = formData.get('industry') as string
 
-  if (!name?.trim()) return { error: 'Engagement name is required' }
   if (!client_name?.trim()) return { error: 'Client name is required' }
   if (!industry?.trim()) return { error: 'Industry is required' }
+
+  // Auto-generate engagement name: "ClientName — Mon YYYY"
+  const now = new Date()
+  const monthYear = now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  const autoName = `${client_name.trim()} \u2014 ${monthYear}`
 
   const { data, error } = await supabase
     .from('engagements')
     .insert({
-      name: name.trim(),
+      name: autoName,
       client_name: client_name.trim(),
       industry,
       created_by: user.id,
