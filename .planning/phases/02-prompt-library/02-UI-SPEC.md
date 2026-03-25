@@ -48,7 +48,7 @@ Exceptions:
 - Filter bar row: 40px height (standard interactive control height)
 - Touch targets (buttons, clickable cards): minimum 36px height per density principle
 - Card grid gap: 16px (md) between cards
-- List row height: 52px for density — enough for two lines of text without crowding
+- List row height: 48px — enough for two lines of text without crowding (matches 2xl token)
 
 ---
 
@@ -97,6 +97,19 @@ Source: .impeccable.md / globals.css. CSS variable names confirmed from codebase
 7. Card hover border glow (`border-primary/30`)
 
 Accent is NOT used for: category badges, model badges, star ratings, checkout counts, or decorative elements.
+
+---
+
+## Focal Points
+
+One primary visual anchor per surface. The executor must ensure this element commands attention on first render.
+
+| Surface | Primary Focal Point |
+|---------|-------------------|
+| Library grid (`/library`) | The card grid itself — prompt cards fill the viewport; the search input is the secondary anchor for task-oriented users |
+| Detail page (`/library/[id]`) | The rendered prompt content (left column) — largest text mass on the page; the "Copy" button is the secondary focal point in the sidebar |
+| Admin create form (`/library/new`) | The markdown textarea in the Write tab — largest input on the page, Geist Mono distinguishes it from UI chrome |
+| Admin edit form (`/library/[id]/edit`) | Same as create: the markdown textarea; the "Deprecate Prompt" button is a deliberate secondary focal point by color contrast (destructive red) |
 
 ---
 
@@ -165,7 +178,7 @@ Source: CONTEXT.md decisions + .impeccable.md voice guidelines ("Direct, concise
 | Primary CTA (admin create) | "New Prompt" | Button label in page header |
 | Primary CTA (admin save create) | "Save Prompt" | Submit button on `/library/new` form |
 | Primary CTA (admin save edit) | "Update Prompt" | Submit button on `/library/[id]/edit` form |
-| Cancel action | "Cancel" | Ghost button on form pages — navigates back |
+| Form cancel action | "Discard Changes" | Ghost button on form pages — navigates back to library without saving |
 | Copy to clipboard | "Copy" | Button label in detail sidebar; icon-only on narrow sidebar |
 | Copy success toast | "Copied to clipboard" | Sonner toast, 2-second duration, no action button |
 | Empty state heading | "No prompts match your filters" | Centered, heading size (16px/600) |
@@ -179,7 +192,7 @@ Source: CONTEXT.md decisions + .impeccable.md voice guidelines ("Direct, concise
 | Deprecation dialog title | "Deprecate this prompt?" | AlertDialog title |
 | Deprecation dialog body | "This prompt will be hidden from the library but remains in the database. Consultants will no longer see it in browse or search results." | AlertDialog description |
 | Deprecation confirm action | "Deprecate" | AlertDialog confirm button, destructive |
-| Deprecation cancel action | "Cancel" | AlertDialog cancel button |
+| Deprecation cancel action | "Keep Prompt" | AlertDialog cancel button — names the outcome of not deprecating |
 | Deprecated status badge | "Deprecated" | Warning color badge — visible on direct URL access by admin |
 | Active status badge | "Active" | Success color badge — shown in metadata sidebar |
 | Detail page back link | "← Library" | Navigation link text, muted, hover primary |
