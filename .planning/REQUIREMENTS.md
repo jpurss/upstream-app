@@ -22,9 +22,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Library
 
-- [ ] **LIB-01**: Admin can create a new prompt with title, description, content (markdown), category, capability type, industry tags, use case tags, target model, complexity, input/output schema
-- [ ] **LIB-02**: Admin can edit an existing prompt in the central library
-- [ ] **LIB-03**: Admin can deprecate a prompt (set status to deprecated)
+- [x] **LIB-01**: Admin can create a new prompt with title, description, content (markdown), category, capability type, industry tags, use case tags, target model, complexity, input/output schema
+- [x] **LIB-02**: Admin can edit an existing prompt in the central library
+- [x] **LIB-03**: Admin can deprecate a prompt (set status to deprecated)
 - [ ] **LIB-04**: User can browse library as grid or list of prompt cards showing title, category badge, capability type, avg rating, checkout count, model badge
 - [ ] **LIB-05**: User can filter library by category, capability type, industry, effectiveness range, status, and target model
 - [ ] **LIB-06**: User can search prompts by keyword (full-text search on title, description, content)
@@ -138,9 +138,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-03 | Phase 1 | Pending |
 | UI-04 | Phase 1 | Pending |
 | SEED-01 | Phase 1 | Pending |
-| LIB-01 | Phase 2 | Pending |
-| LIB-02 | Phase 2 | Pending |
-| LIB-03 | Phase 2 | Pending |
+| LIB-01 | Phase 2 | Complete |
+| LIB-02 | Phase 2 | Complete |
+| LIB-03 | Phase 2 | Complete |
 | LIB-04 | Phase 2 | Pending |
 | LIB-05 | Phase 2 | Pending |
 | LIB-06 | Phase 2 | Pending |

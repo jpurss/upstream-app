@@ -18,7 +18,7 @@ Upstream ships as five phases that follow the strict dependency chain of the dat
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation** - Database schema, auth (email + demo bypass), UI shell, and seed library data
-- [ ] **Phase 2: Prompt Library** - Admin CRUD, browse/search/filter, prompt detail, copy-to-clipboard
+- [x] **Phase 2: Prompt Library** - Admin CRUD, browse/search/filter, prompt detail, copy-to-clipboard (completed 2026-03-25)
 - [ ] **Phase 3: Engagement Workspace** - Engagement management, fork/checkout, edit, rate, and field feedback
 - [ ] **Phase 4: Merge Workflow** - Suggest merge, side-by-side diff, review queue, approve and reject
 - [ ] **Phase 5: Demand Board and Dashboard** - Prompt requests, upvoting, admin metrics, and analytics charts
@@ -52,13 +52,13 @@ Plans:
   3. User can search by keyword across title, description, and content — relevant prompts appear
   4. User can open a prompt detail page showing full rendered markdown content, metadata, and aggregate field intelligence (avg rating, total forks, recent feedback)
   5. Admin can create, edit, and deprecate prompts — consultant users see no create/edit/deprecate controls
-**Plans:** 4 plans
+**Plans:** 4/4 plans complete
 
 Plans:
-- [ ] 02-01-PLAN.md — Install dependencies, shared Prompt type, data-access layer, Toaster + NuqsAdapter
-- [ ] 02-02-PLAN.md — Library browse page: card grid/list, filter bar, search, sort, filter chips, empty states
-- [ ] 02-03-PLAN.md — Prompt detail page: markdown content, metadata sidebar, copy-to-clipboard, field intelligence
-- [ ] 02-04-PLAN.md — Admin CRUD: server actions, create/edit form pages, deprecation dialog, admin controls
+- [x] 02-01-PLAN.md — Install dependencies, shared Prompt type, data-access layer, Toaster + NuqsAdapter
+- [x] 02-02-PLAN.md — Library browse page: card grid/list, filter bar, search, sort, filter chips, empty states
+- [x] 02-03-PLAN.md — Prompt detail page: markdown content, metadata sidebar, copy-to-clipboard, field intelligence
+- [x] 02-04-PLAN.md — Admin CRUD: server actions, create/edit form pages, deprecation dialog, admin controls
 
 ### Phase 3: Engagement Workspace
 **Goal**: Consultants can create client engagements, fork prompts into them, adapt and annotate the forked content, and rate effectiveness after use — completing the core "GitHub for Prompts" loop.
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-25 |
-| 2. Prompt Library | 0/4 | Planned | - |
+| 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
 | 3. Engagement Workspace | 0/TBD | Not started | - |
 | 4. Merge Workflow | 0/TBD | Not started | - |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |

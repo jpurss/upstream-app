@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 02 in progress — Plan 03 complete
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-03-25T13:35:34Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-03-25T13:53:33.467Z"
 progress:
   total_phases: 5
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  completed_phases: 2
+  total_plans: 7
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every engagement makes the firm smarter — field-tested prompt improvements flow back into the central library through a Git-like checkout/fork/merge workflow.
-**Current focus:** Phase 02 — Prompt Library
+**Current focus:** Phase 02 — prompt-library
 
 ## Current Position
 
-Phase: 02 (Prompt Library) — IN PROGRESS
-Plan: 3 of 4
+Phase: 02 (prompt-library) — EXECUTING
+Plan: 4 of 4
 
 ## Performance Metrics
 
@@ -49,6 +49,10 @@ Plan: 3 of 4
 | Phase 01 P01 | 11 | 2 tasks | 22 files |
 | Phase 01 P01 | 45 | 3 tasks | 16 files |
 | Phase 01 P02 | 25 | 2 tasks | 9 files |
+| Phase 02 P01 | 3 | 3 tasks | 21 files |
+| Phase 02-prompt-library P03 | 4 | 2 tasks | 6 files |
+| Phase 02 P02 | 5 | 3 tasks | 11 files |
+| Phase 02-prompt-library P04 | 11 | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -70,7 +74,14 @@ Recent decisions affecting current work:
 - [Phase 01]: Auth Hook deployed: custom_access_token_hook injects role from profiles into JWT app_metadata on every token issue
 - [Phase 01]: Used useTransition for demo buttons (not useActionState) since signInAsDemo takes role arg not FormData
 - [Phase 01]: signOut placed in lib/auth-utils.ts for sidebar reuse — avoids awkward import from login/actions.ts
+- [Phase 02]: fetchPromptById does NOT filter by status per D-14 — deprecated prompts remain accessible at direct URLs
+- [Phase 02]: Added PROMPT_CATEGORIES runtime constant to lib/types/prompt.ts to enable runtime category value testing
 - [Phase 02-03]: Active Forks hardcoded to 0 in sidebar stats — forks table query deferred to Phase 3 per plan spec
+- [Phase 02]: FilterBar and FilterChips implemented in Task 1 (dependency of LibraryGrid) — Task 2 tests validate existing implementation
+- [Phase 02]: LibraryGrid uses useMemo for client-side filtering and separate state for Supabase search results — avoids Pitfall 5 (search overrides initial prompts)
+- [Phase 02-prompt-library]: Server Actions handle mutations with RLS as security gate and server-side role check as defense-in-depth
+- [Phase 02-prompt-library]: deprecatePrompt returns {success: true} with no redirect — called from client dialog which handles navigation
+- [Phase 02-prompt-library]: Admin controls conditionally rendered (not disabled, not hidden via CSS) — consultant sees clean read-only library
 
 ### Pending Todos
 
@@ -84,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T13:35:34Z
-Stopped at: Completed 02-03-PLAN.md
-Resume file: .planning/phases/02-prompt-library/02-04-PLAN.md
+Last session: 2026-03-25T13:53:33.465Z
+Stopped at: Completed 02-04-PLAN.md
+Resume file: None
