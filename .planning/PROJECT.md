@@ -27,8 +27,8 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 - [ ] Review queue with side-by-side diff for merge approval (lead/admin)
 - [ ] Demand board — submit requests, upvote, resolve
 - [ ] Admin dashboard with key metrics and analytics charts
-- [ ] Auth with role-based access (consultant / lead / admin) — email + Google OAuth
-- [ ] Demo bypass button — skip signup to explore with pre-loaded seed data
+- [ ] Auth with role-based access (consultant / admin) — email/password + demo bypass
+- [ ] Demo bypass button — skip signup with anonymous session + seed data
 - [ ] 18 realistic seed prompts across 6 categories for demo
 - [ ] Markdown editor for prompt content
 - [ ] Copy prompt content with one click
@@ -52,7 +52,7 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 
 **Pitch goal:** Show, don't tell. A deployed, working product pre-loaded with realistic seed data. Not a deck.
 
-**Design direction:** Linear/Raycast/Notion aesthetic. Dark mode default, warm amber/gold accent. Dense power-user UI. Monospace for prompt content, sans-serif for everything else.
+**Design direction:** Linear/Raycast/Notion aesthetic. Dark mode default, Human Agency brand blue (#4287FF) accent. Dense power-user UI. Monospace for prompt content, sans-serif for everything else.
 
 **Component philosophy:** Leverage high-quality OSS components wherever possible — markdown editors, diff viewers, data tables, charts — rather than building from scratch. Ship faster with better quality.
 
@@ -63,7 +63,7 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 ## Constraints
 
 - **Stack**: Next.js 14+ (App Router) + Tailwind + shadcn/ui + Supabase (auth, Postgres, RLS, storage) + Vercel
-- **Auth**: Supabase Auth — email/password + Google OAuth + demo bypass mode
+- **Auth**: Supabase Auth — email/password + demo bypass mode (Google OAuth deferred to v2)
 - **Content format**: Markdown for prompt content
 - **Viewport**: Desktop-focused, no mobile optimization required
 - **Hosting**: Vercel free tier + Supabase free tier for demo deployment
@@ -74,7 +74,7 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Next.js + Supabase stack | PRD recommendation, fast CRUD with auth/RLS built in | — Pending |
-| Email + Google OAuth | Matches target user's likely Google Workspace setup | — Pending |
+| Email/password + demo bypass (Google OAuth v2) | Simplifies v1 auth; demo bypass more important for pitch | — Pending |
 | Markdown prompt content | Rich enough for structured prompts, simpler than custom templating | — Pending |
 | Desktop-only for v1 | Power users on desktops, avoids responsive complexity | — Pending |
 | Demo bypass button | Lets Brendan explore immediately without signup friction | — Pending |
@@ -82,4 +82,4 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 | Dark mode default | Matches design direction (Linear/Raycast), consultants working late | — Pending |
 
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-25 after requirements scoping — simplified to 2 roles (consultant/admin), no team collaboration in v1, brand blue #4287FF accent*
