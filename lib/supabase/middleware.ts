@@ -35,5 +35,24 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Role-based routing: redirect consultants away from /library to /engagements.
+  // This eliminates the library skeleton flash during post-login navigation.
+  // Only redirects the exact /library path — /library/[promptId] remains accessible.
+  if (user) {
+    const pathname = request.nextUrl.pathname
+    const role = user.app_metadata?.role as string | undefined
+    const isAnonymous = user.is_anonymous ?? false
+    const demoRole = isAnonymous
+      ? (user.user_metadata?.demo_role as string | undefined) ?? 'consultant'
+      : undefined
+    const effectiveRole = role ?? demoRole ?? 'consultant'
+
+    if (effectiveRole !== 'admin' && pathname === '/library') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/engagements'
+      return NextResponse.redirect(url)
+    }
+  }
+
   return supabaseResponse
 }
