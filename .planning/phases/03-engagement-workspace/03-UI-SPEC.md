@@ -3,7 +3,8 @@ description: UI design contract for Phase 03 (Engagement Workspace) — spacing,
 date_last_edited: 2026-03-25
 phase: 3
 slug: engagement-workspace
-status: draft
+status: approved
+reviewed_at: 2026-03-25
 shadcn_initialized: true
 preset: base-nova
 created: 2026-03-25
