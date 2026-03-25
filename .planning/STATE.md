@@ -2,16 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-25T05:52:38.736Z"
-last_activity: 2026-03-25 — Roadmap created, ready to begin Phase 1 planning
+status: Ready to execute
+stopped_at: Completed 01-01-PLAN.md — foundation bootstrapped, Supabase deployed
+last_updated: "2026-03-25T11:13:15.326Z"
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
+  total_plans: 3
   completed_plans: 0
-  percent: 0
 ---
 
 # Project State
@@ -21,16 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every engagement makes the firm smarter — field-tested prompt improvements flow back into the central library through a Git-like checkout/fork/merge workflow.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 01 — foundation
 
 ## Current Position
 
-Phase: 1 of 5 (Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-25 — Roadmap created, ready to begin Phase 1 planning
-
-Progress: [░░░░░░░░░░] 0%
+Phase: 01 (foundation) — EXECUTING
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -52,6 +46,8 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01 P01 | 11 | 2 tasks | 22 files |
+| Phase 01 P01 | 45 | 3 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -65,6 +61,12 @@ Recent decisions affecting current work:
 - [Pre-build]: RBAC stored in `app_metadata` via Auth Hook (not `user_metadata`) — prevents self-elevation
 - [Pre-build]: Fork captures `original_content` snapshot at fork time — diff never breaks when parent updates
 - [Pre-build]: Merge request status is a PostgreSQL enum (`pending | approved | rejected | merged`) — not boolean columns
+- [Phase 01]: Used geist npm package for fonts instead of next/font/google — consistent with RESEARCH.md recommendation for developer tools
+- [Phase 01]: shadcn 4.x preset system changed — zinc-dark not available, CSS variables overridden manually in globals.css for zinc-950/900/800 dark palette with #4287FF primary
+- [Phase 01]: proxy.ts confirmed as Next.js 16 rename of middleware.ts — named export 'proxy' required (not 'middleware')
+- [Phase 01]: RLS role check: always use auth.jwt()->'app_metadata'->>'role', never auth.role() — prevents privilege escalation via user_metadata self-edit
+- [Phase 01]: proxy.ts naming convention confirmed correct for Next.js 16 — middleware.ts was renamed
+- [Phase 01]: Auth Hook deployed: custom_access_token_hook injects role from profiles into JWT app_metadata on every token issue
 
 ### Pending Todos
 
@@ -78,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T05:52:38.733Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation/01-CONTEXT.md
+Last session: 2026-03-25T11:13:15.324Z
+Stopped at: Completed 01-01-PLAN.md — foundation bootstrapped, Supabase deployed
+Resume file: None
