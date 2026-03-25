@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { DemoBanner } from '@/components/demo-banner'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,7 +52,7 @@ export default async function AppLayout({
           <AppSidebar userRole={effectiveRole} userName={displayName} isAnonymous={isAnonymous} />
           <main className="flex-1 overflow-auto">
             <SidebarTrigger />
-            {children}
+            <NuqsAdapter>{children}</NuqsAdapter>
           </main>
         </div>
       </SidebarProvider>
