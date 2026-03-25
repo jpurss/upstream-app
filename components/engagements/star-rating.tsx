@@ -5,12 +5,13 @@ import { Star } from 'lucide-react'
 interface StarRatingProps {
   rating: number | null
   onRate: (rating: number) => void
+  showLabel?: boolean
 }
 
-export function StarRating({ rating, onRate }: StarRatingProps) {
+export function StarRating({ rating, onRate, showLabel = true }: StarRatingProps) {
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-[13px] text-muted-foreground">Rate effectiveness</span>
+      {showLabel && <span className="text-[13px] text-muted-foreground">Rate effectiveness</span>}
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((starIndex) => {
           const isFilled = rating !== null && starIndex <= rating

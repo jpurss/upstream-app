@@ -1,9 +1,12 @@
 'use client'
 
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
+import { StarRating } from '@/components/engagements/star-rating'
+import { updateForkRating } from '@/app/(app)/engagements/[id]/forks/[forkId]/actions'
 import type { ForkedPromptWithTitle } from '@/lib/types/fork'
 
 function getRelativeTime(dateString: string): string {
@@ -45,6 +48,16 @@ export function ForkCard({ fork, engagementId }: ForkCardProps) {
   )
 
   const lastEdited = fork.last_used ?? fork.forked_at
+
+  const [localRating, setLocalRating] = useState(fork.effectiveness_rating)
+  const [, startTransition] = useTransition()
+
+  function handleRate(rating: number) {
+    setLocalRating(rating)
+    startTransition(async () => {
+      await updateForkRating(fork.id, rating, fork.source_prompt_id, fork.engagement_id)
+    })
+  }
 
   return (
     <Link href={`/engagements/${engagementId}/forks/${fork.id}`} className="block">
@@ -95,6 +108,14 @@ export function ForkCard({ fork, engagementId }: ForkCardProps) {
                 </>
               )}
             </div>
+          </div>
+
+          {/* Inline star rating — stop propagation so clicks don't navigate to detail */}
+          <div
+            onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
+            className="pt-1"
+          >
+            <StarRating rating={localRating} onRate={handleRate} showLabel={false} />
           </div>
 
           {/* Last edited */}

@@ -4,7 +4,6 @@ import { fetchEngagementById } from '@/lib/data/engagements'
 import { fetchForksByEngagement } from '@/lib/data/forks'
 import { fetchAllActivePrompts } from '@/lib/data/prompts'
 import { WorkspaceClient } from '@/components/engagements/workspace-client'
-import { ForkGrid } from '@/components/engagements/fork-grid'
 
 export default async function EngagementWorkspacePage({
   params,
@@ -48,8 +47,8 @@ export default async function EngagementWorkspacePage({
         avgEffectiveness={avgEffectiveness}
         prompts={prompts}
         forkedPromptIds={forkedPromptIds}
+        forks={forks}
       />
-      <ForkGrid forks={forks} engagementId={id} />
     </div>
   )
 }
