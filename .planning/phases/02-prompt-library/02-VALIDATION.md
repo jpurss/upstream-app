@@ -2,8 +2,9 @@
 phase: 02
 slug: prompt-library
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
+wave_0_plan: "02-01 Task 0"
 created: 2026-03-25
 ---
 
@@ -38,20 +39,24 @@ created: 2026-03-25
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 1 | LIB-01 | unit | `npm test -- tests/library-create.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-01-02 | 01 | 1 | LIB-02 | unit | `npm test -- tests/library-edit.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-01-03 | 01 | 1 | LIB-03 | unit | `npm test -- tests/library-deprecate.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-02-01 | 02 | 1 | LIB-04 | unit | `npm test -- tests/library-grid.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-02-02 | 02 | 1 | LIB-05 | unit | `npm test -- tests/library-filter.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-02-03 | 02 | 1 | LIB-06 | unit | `npm test -- tests/library-search.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-03-01 | 03 | 2 | LIB-07 | unit | `npm test -- tests/library-detail.test.tsx` | ❌ Wave 0 | ⬜ pending |
-| 02-03-02 | 03 | 2 | LIB-08 | unit | `npm test -- tests/library-copy.test.tsx` | ❌ Wave 0 | ⬜ pending |
+| 02-01-00 | 01 | 1 | Wave 0 | stub | `npm test` | Created by Task 0 | ⬜ pending |
+| 02-01-01 | 01 | 1 | (infra) | unit | `npm test` | N/A (deps + types) | ⬜ pending |
+| 02-02-01 | 02 | 2 | LIB-04 | unit | `npm test -- tests/library-grid.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-02-02 | 02 | 2 | LIB-05 | unit | `npm test -- tests/library-filter.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-02-03 | 02 | 2 | LIB-06 | unit | `npm test -- tests/library-search.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-03-01 | 03 | 2 | LIB-07 | unit | `npm test -- tests/library-detail.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-03-02 | 03 | 2 | LIB-08 | unit | `npm test -- tests/library-copy.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-04-01 | 04 | 3 | LIB-01 | unit | `npm test -- tests/library-create.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-04-02 | 04 | 3 | LIB-02 | unit | `npm test -- tests/library-edit.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
+| 02-04-03 | 04 | 3 | LIB-03 | unit | `npm test -- tests/library-deprecate.test.tsx` | Wave 0 (02-01 Task 0) | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
 ---
 
 ## Wave 0 Requirements
+
+**Covered by:** Plan 02-01, Task 0 (first task executed in the phase)
 
 - [ ] `tests/library-grid.test.tsx` — stubs for LIB-04
 - [ ] `tests/library-filter.test.tsx` — stubs for LIB-05
@@ -78,11 +83,11 @@ created: 2026-03-25
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 10s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (Plan 02-01 Task 0)
+- [x] No watch-mode flags
+- [x] Feedback latency < 10s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** pending (updated after checker revision)
