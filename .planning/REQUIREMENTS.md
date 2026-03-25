@@ -1,3 +1,8 @@
+---
+description: v1 requirements for Upstream — 38 requirements across 9 categories covering auth, library, engagements, forking, merge workflow, demand board, dashboard, UI/UX, and seed data. Includes phase traceability.
+date_last_edited: 2026-03-25
+---
+
 # Requirements: Upstream
 
 **Defined:** 2026-03-25
@@ -123,13 +128,57 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| — | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| UI-01 | Phase 1 | Pending |
+| UI-02 | Phase 1 | Pending |
+| UI-03 | Phase 1 | Pending |
+| UI-04 | Phase 1 | Pending |
+| SEED-01 | Phase 1 | Pending |
+| LIB-01 | Phase 2 | Pending |
+| LIB-02 | Phase 2 | Pending |
+| LIB-03 | Phase 2 | Pending |
+| LIB-04 | Phase 2 | Pending |
+| LIB-05 | Phase 2 | Pending |
+| LIB-06 | Phase 2 | Pending |
+| LIB-07 | Phase 2 | Pending |
+| LIB-08 | Phase 2 | Pending |
+| ENG-01 | Phase 3 | Pending |
+| ENG-02 | Phase 3 | Pending |
+| ENG-03 | Phase 3 | Pending |
+| ENG-04 | Phase 3 | Pending |
+| FORK-01 | Phase 3 | Pending |
+| FORK-02 | Phase 3 | Pending |
+| FORK-03 | Phase 3 | Pending |
+| FORK-04 | Phase 3 | Pending |
+| FORK-05 | Phase 3 | Pending |
+| FORK-06 | Phase 3 | Pending |
+| FORK-07 | Phase 3 | Pending |
+| MERGE-01 | Phase 4 | Pending |
+| MERGE-02 | Phase 4 | Pending |
+| MERGE-03 | Phase 4 | Pending |
+| MERGE-04 | Phase 4 | Pending |
+| MERGE-05 | Phase 4 | Pending |
+| DEMAND-01 | Phase 5 | Pending |
+| DEMAND-02 | Phase 5 | Pending |
+| DEMAND-03 | Phase 5 | Pending |
+| DEMAND-04 | Phase 5 | Pending |
+| DEMAND-05 | Phase 5 | Pending |
+| DASH-01 | Phase 5 | Pending |
+| DASH-02 | Phase 5 | Pending |
+| DASH-03 | Phase 5 | Pending |
+| DASH-04 | Phase 5 | Pending |
+| SEED-02 | Phase 5 | Pending |
+| SEED-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 38 total
-- Mapped to phases: 0
-- Unmapped: 38
+- Mapped to phases: 38
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 — traceability table populated after roadmap creation*
