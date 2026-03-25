@@ -35,11 +35,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Admin and consultant roles are enforced — a consultant cannot access admin-only routes
   4. The UI shell renders in dark mode with Human Agency blue accent, sidebar navigation, monospace prompt content, and sans-serif chrome
   5. 18 realistic seed prompts across 6 categories exist in the database and are visible to any authenticated or demo user
-**Plans:** 0/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
-- [ ] 01-01-PLAN.md — Project bootstrap, Supabase clients, full schema + RLS + Auth Hook, Vitest setup
-- [ ] 01-02-PLAN.md — Auth Server Actions (signup, login, logout, demo bypass), login page UI, signup page
+- [x] 01-01-PLAN.md — Project bootstrap, Supabase clients, full schema + RLS + Auth Hook, Vitest setup
+- [x] 01-02-PLAN.md — Auth Server Actions (signup, login, logout, demo bypass), login page UI, signup page
 - [ ] 01-03-PLAN.md — App shell (sidebar, demo banner), library placeholder, 18 seed prompts
 
 ### Phase 2: Prompt Library

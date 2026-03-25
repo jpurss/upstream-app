@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 01-01-PLAN.md — foundation bootstrapped, Supabase deployed
-last_updated: "2026-03-25T11:13:15.326Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-25T11:23:19.029Z"
 progress:
   total_phases: 5
   completed_phases: 0
@@ -48,6 +48,7 @@ Plan: 3 of 3
 *Updated after each plan completion*
 | Phase 01 P01 | 11 | 2 tasks | 22 files |
 | Phase 01 P01 | 45 | 3 tasks | 16 files |
+| Phase 01 P02 | 25 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 01]: RLS role check: always use auth.jwt()->'app_metadata'->>'role', never auth.role() — prevents privilege escalation via user_metadata self-edit
 - [Phase 01]: proxy.ts naming convention confirmed correct for Next.js 16 — middleware.ts was renamed
 - [Phase 01]: Auth Hook deployed: custom_access_token_hook injects role from profiles into JWT app_metadata on every token issue
+- [Phase 01]: Used useTransition for demo buttons (not useActionState) since signInAsDemo takes role arg not FormData
+- [Phase 01]: signOut placed in lib/auth-utils.ts for sidebar reuse — avoids awkward import from login/actions.ts
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T11:13:15.324Z
-Stopped at: Completed 01-01-PLAN.md — foundation bootstrapped, Supabase deployed
+Last session: 2026-03-25T11:23:19.026Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
