@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 03-engagement-workspace 03-01-PLAN.md
-last_updated: "2026-03-25T18:17:00.294Z"
+stopped_at: Completed 03-engagement-workspace 03-02-PLAN.md
+last_updated: "2026-03-25T18:24:10.536Z"
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 12
-  completed_plans: 7
+  completed_plans: 9
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 03 (engagement-workspace) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Plan: 2 of 5
 | Phase 02 P02 | 5 | 3 tasks | 11 files |
 | Phase 02-prompt-library P04 | 11 | 3 tasks | 13 files |
 | Phase 03-engagement-workspace P01 | 203 | 2 tasks | 10 files |
+| Phase 03-engagement-workspace P02 | 3 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,9 @@ Recent decisions affecting current work:
 - [Phase 03-engagement-workspace]: Server actions for engagements use regular Supabase client — RLS engagements_own policy enforces ownership
 - [Phase 03-engagement-workspace]: Role-based redirect (D-01): consultants land on /engagements after login, admins land on /library
 - [Phase 03-engagement-workspace]: Sidebar active state uses pathname.startsWith(item.href) — handles nested routes correctly
+- [Phase 03-engagement-workspace]: NewEngagementDialog manages open state via useState — renders own Button trigger, avoids prop chain for empty state CTA
+- [Phase 03-engagement-workspace]: Active prompts passed as server-fetched props to NewEngagementDialog — consistent with library page pattern, no client-side Supabase in modal
+- [Phase 03-engagement-workspace]: onForkSelected is a prop callback stub — wired in Plan 04 when createFork server action exists
 
 ### Pending Todos
 
@@ -105,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T18:17:00.292Z
-Stopped at: Completed 03-engagement-workspace 03-01-PLAN.md
+Last session: 2026-03-25T18:24:10.534Z
+Stopped at: Completed 03-engagement-workspace 03-02-PLAN.md
 Resume file: None
