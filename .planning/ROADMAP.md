@@ -17,7 +17,7 @@ Upstream ships as five phases that follow the strict dependency chain of the dat
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Database schema, auth (email + demo bypass), UI shell, and seed library data
+- [x] **Phase 1: Foundation** - Database schema, auth (email + demo bypass), UI shell, and seed library data
 - [ ] **Phase 2: Prompt Library** - Admin CRUD, browse/search/filter, prompt detail, copy-to-clipboard
 - [ ] **Phase 3: Engagement Workspace** - Engagement management, fork/checkout, edit, rate, and field feedback
 - [ ] **Phase 4: Merge Workflow** - Suggest merge, side-by-side diff, review queue, approve and reject
@@ -35,12 +35,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Admin and consultant roles are enforced — a consultant cannot access admin-only routes
   4. The UI shell renders in dark mode with Human Agency blue accent, sidebar navigation, monospace prompt content, and sans-serif chrome
   5. 18 realistic seed prompts across 6 categories exist in the database and are visible to any authenticated or demo user
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans executed
 
 Plans:
 - [x] 01-01-PLAN.md — Project bootstrap, Supabase clients, full schema + RLS + Auth Hook, Vitest setup
 - [x] 01-02-PLAN.md — Auth Server Actions (signup, login, logout, demo bypass), login page UI, signup page
-- [ ] 01-03-PLAN.md — App shell (sidebar, demo banner), library placeholder, 18 seed prompts
+- [x] 01-03-PLAN.md — App shell (sidebar, demo banner), library placeholder, 18 seed prompts
 
 ### Phase 2: Prompt Library
 **Goal**: Users can browse, search, filter, and read prompts from the central library — and admins can create, edit, and deprecate them.
@@ -52,7 +52,13 @@ Plans:
   3. User can search by keyword across title, description, and content — relevant prompts appear
   4. User can open a prompt detail page showing full rendered markdown content, metadata, and aggregate field intelligence (avg rating, total forks, recent feedback)
   5. Admin can create, edit, and deprecate prompts — consultant users see no create/edit/deprecate controls
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Install dependencies, shared Prompt type, data-access layer, Toaster + NuqsAdapter
+- [ ] 02-02-PLAN.md — Library browse page: card grid/list, filter bar, search, sort, filter chips, empty states
+- [ ] 02-03-PLAN.md — Prompt detail page: markdown content, metadata sidebar, copy-to-clipboard, field intelligence
+- [ ] 02-04-PLAN.md — Admin CRUD: server actions, create/edit form pages, deprecation dialog, admin controls
 
 ### Phase 3: Engagement Workspace
 **Goal**: Consultants can create client engagements, fork prompts into them, adapt and annotate the forked content, and rate effectiveness after use — completing the core "GitHub for Prompts" loop.
@@ -97,8 +103,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/3 | Planned    |  |
-| 2. Prompt Library | 0/TBD | Not started | - |
+| 1. Foundation | 3/3 | Complete | 2026-03-25 |
+| 2. Prompt Library | 0/4 | Planned | - |
 | 3. Engagement Workspace | 0/TBD | Not started | - |
 | 4. Merge Workflow | 0/TBD | Not started | - |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |
