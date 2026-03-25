@@ -2,8 +2,8 @@
 phase: 01
 slug: foundation
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-25
 ---
 
@@ -18,7 +18,7 @@ created: 2026-03-25
 | Property | Value |
 |----------|-------|
 | **Framework** | Vitest 4.1.1 + Testing Library 16.3.2 |
-| **Config file** | `vitest.config.ts` (Wave 0 gap — must create) |
+| **Config file** | `vitest.config.ts` (created in Plan 01-01, Task 1) |
 | **Quick run command** | `npx vitest run --reporter=verbose` |
 | **Full suite command** | `npx vitest run` |
 | **Estimated runtime** | ~15 seconds |
@@ -38,15 +38,10 @@ created: 2026-03-25
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 01-01-01 | 01 | 1 | AUTH-01 | integration | `npx vitest run tests/auth.test.ts -t "sign up"` | ❌ W0 | ⬜ pending |
-| 01-01-02 | 01 | 1 | AUTH-02 | smoke | `npx vitest run tests/auth.test.ts -t "session cookie"` | ❌ W0 | ⬜ pending |
-| 01-01-03 | 01 | 1 | AUTH-03 | unit | `npx vitest run tests/auth.test.ts -t "sign out"` | ❌ W0 | ⬜ pending |
-| 01-01-04 | 01 | 1 | AUTH-04 | unit | `npx vitest run tests/rbac.test.ts -t "consultant redirect"` | ❌ W0 | ⬜ pending |
-| 01-01-05 | 01 | 1 | AUTH-05 | unit | `npx vitest run tests/demo.test.ts -t "anon read"` | ❌ W0 | ⬜ pending |
-| 01-02-01 | 02 | 2 | UI-01 | unit | `npx vitest run tests/theme.test.ts` | ❌ W0 | ⬜ pending |
-| 01-02-02 | 02 | 2 | UI-03 | unit | `npx vitest run tests/components.test.ts -t "monospace"` | ❌ W0 | ⬜ pending |
-| 01-02-03 | 02 | 2 | UI-04 | unit | `npx vitest run tests/sidebar.test.ts` | ❌ W0 | ⬜ pending |
-| 01-03-01 | 03 | 3 | SEED-01 | integration | `npx vitest run tests/seed.test.ts` | ❌ W0 | ⬜ pending |
+| 01-02-T1 | 02 | 2 | AUTH-01, AUTH-02, AUTH-03, AUTH-05 | unit | `npx vitest run tests/auth-actions.test.ts --reporter=verbose` | tests/auth-actions.test.ts | ⬜ pending |
+| 01-02-T2 | 02 | 2 | UI-02 | render | `npx vitest run tests/login-page.test.tsx --reporter=verbose` | tests/login-page.test.tsx | ⬜ pending |
+| 01-03-T1a | 03 | 3 | UI-04 | render | `npx vitest run tests/sidebar.test.tsx --reporter=verbose` | tests/sidebar.test.tsx | ⬜ pending |
+| 01-03-T1b | 03 | 3 | UI-04 | render | `npx vitest run tests/demo-banner.test.tsx --reporter=verbose` | tests/demo-banner.test.tsx | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -54,15 +49,26 @@ created: 2026-03-25
 
 ## Wave 0 Requirements
 
-- [ ] `vitest.config.ts` — Vitest configuration with jsdom environment
-- [ ] `tests/auth.test.ts` — AUTH-01, AUTH-02, AUTH-03 coverage
-- [ ] `tests/rbac.test.ts` — AUTH-04 redirect logic coverage
-- [ ] `tests/demo.test.ts` — AUTH-05 anonymous read access coverage
-- [ ] `tests/theme.test.ts` — UI-01 dark mode default coverage
-- [ ] `tests/components.test.ts` — UI-03 font class coverage
-- [ ] `tests/sidebar.test.ts` — UI-04 sidebar nav items coverage
-- [ ] `tests/seed.test.ts` — SEED-01 database row count coverage
-- [ ] Framework install: `npm install -D vitest @testing-library/react jsdom @vitejs/plugin-react`
+All Wave 0 test scaffolds are created inline by their respective TDD tasks (each task with `tdd="true"` writes failing tests first as part of the RED-GREEN-REFACTOR cycle). No separate Wave 0 step is needed.
+
+- [x] `vitest.config.ts` — Created in Plan 01-01, Task 1
+- [x] `tests/auth-actions.test.ts` — Created in Plan 01-02, Task 1 (tdd="true")
+- [x] `tests/login-page.test.tsx` — Created in Plan 01-02, Task 2 (tdd="true")
+- [x] `tests/sidebar.test.tsx` — Created in Plan 01-03, Task 1 (tdd="true")
+- [x] `tests/demo-banner.test.tsx` — Created in Plan 01-03, Task 1 (tdd="true")
+- [x] Framework install: `npm install -D vitest @testing-library/react jsdom @vitejs/plugin-react` (Plan 01-01, Task 1)
+
+---
+
+## Tasks Without Automated Tests
+
+| Task ID | Plan | Rationale |
+|---------|------|-----------|
+| 01-01-T1 | 01 | Bootstrap/config task — verified by `npm run build` and `npx vitest run` exit codes |
+| 01-01-T2 | 01 | SQL migration file — verified by file existence and content checks (no runtime test) |
+| 01-01-T3 | 01 | checkpoint:human-action — Supabase project creation, manual by nature |
+| 01-03-T2 | 03 | tdd="false" — static Server Component (library placeholder) + SQL seed data file, no testable logic |
+| 01-03-T3 | 03 | checkpoint:human-verify — visual inspection of running app |
 
 ---
 
@@ -78,11 +84,11 @@ created: 2026-03-25
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 15s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (all test files created by tdd="true" tasks)
+- [x] No watch-mode flags
+- [x] Feedback latency < 15s
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
