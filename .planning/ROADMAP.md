@@ -70,7 +70,14 @@ Plans:
   3. User can open a forked prompt and edit its content in a markdown editor, add adaptation notes, flag client-specific context, and save changes
   4. User can rate a forked prompt's effectiveness with 1-2 clicks from the engagement workspace — no modal, no form submission required
   5. User can view the diff between the original (at fork time) and their adapted version within the forked prompt view
-**Plans**: TBD
+**Plans:** 5 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Install deps, Engagement/Fork types, data access layer, server actions, sidebar nav, role-based redirect
+- [ ] 03-02-PLAN.md — Engagement list page: card grid, empty state, create engagement modal with prompt picker
+- [ ] 03-03-PLAN.md — Engagement workspace: header with status dropdown, fork card grid, fork empty state
+- [ ] 03-04-PLAN.md — Fork creation: 3 entry points, server actions, prompt picker modal, duplicate prevention
+- [ ] 03-05-PLAN.md — Fork detail: Write/Preview/Diff editor, autosave, star rating, issue tags, feedback sidebar
 
 ### Phase 4: Merge Workflow
 **Goal**: The knowledge loop closes — consultants can suggest pushing field-tested improvements back to the central library, and admins can review, diff, approve, or reject them.
@@ -105,6 +112,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-25 |
 | 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
-| 3. Engagement Workspace | 0/TBD | Not started | - |
+| 3. Engagement Workspace | 0/5 | Planning complete | - |
 | 4. Merge Workflow | 0/TBD | Not started | - |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |
