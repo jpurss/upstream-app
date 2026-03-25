@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase complete — ready for verification
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-03-25T13:53:33.467Z"
+stopped_at: Phase 3 context gathered
+last_updated: "2026-03-25T16:51:54.998Z"
 progress:
   total_phases: 5
   completed_phases: 2
@@ -82,6 +82,12 @@ Recent decisions affecting current work:
 - [Phase 02-prompt-library]: Server Actions handle mutations with RLS as security gate and server-side role check as defense-in-depth
 - [Phase 02-prompt-library]: deprecatePrompt returns {success: true} with no redirect — called from client dialog which handles navigation
 - [Phase 02-prompt-library]: Admin controls conditionally rendered (not disabled, not hidden via CSS) — consultant sees clean read-only library
+- [Phase 02-polish]: Filter bar restructured with progressive disclosure — Search/Sort/View always visible, taxonomy filters behind "Filters" toggle button with count badge
+- [Phase 02-polish]: Content typography hierarchy differentiated — H1 18px with border-b, H2 16px, H3 14px, all sans-serif headings against mono body
+- [Phase 02-polish]: Card star fill now conditional (filled >= 4.0, outline below), deprecated cards dimmed, descriptions expanded to 2 lines
+- [Phase 02-polish]: Card left border: transparent by default, transitions to brand blue on hover (was gold border-l-2, removed for visual redundancy with star)
+- [Phase 02-polish]: Search ilike queries escape special characters; search loading uses Loader2 spinner; star ratings have aria-label accessibility
+- [Phase 02-polish]: Copy button relabeled "Copy Prompt", back link uses ArrowLeft icon with hover:text-foreground
 
 ### Pending Todos
 
@@ -95,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T13:53:33.465Z
-Stopped at: Completed 02-04-PLAN.md
-Resume file: None
+Last session: 2026-03-25T16:51:54.995Z
+Stopped at: Phase 3 context gathered
+Resume file: .planning/phases/03-engagement-workspace/03-CONTEXT.md
