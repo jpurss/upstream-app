@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase complete — ready for verification
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-25T16:51:54.998Z"
+status: Ready to execute
+stopped_at: Completed 03-engagement-workspace 03-01-PLAN.md
+last_updated: "2026-03-25T18:17:00.294Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 7
+  total_plans: 12
   completed_plans: 7
 ---
 
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every engagement makes the firm smarter — field-tested prompt improvements flow back into the central library through a Git-like checkout/fork/merge workflow.
-**Current focus:** Phase 02 — prompt-library
+**Current focus:** Phase 03 — engagement-workspace
 
 ## Current Position
 
-Phase: 02 (prompt-library) — EXECUTING
-Plan: 4 of 4
+Phase: 03 (engagement-workspace) — EXECUTING
+Plan: 2 of 5
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 4 of 4
 | Phase 02-prompt-library P03 | 4 | 2 tasks | 6 files |
 | Phase 02 P02 | 5 | 3 tasks | 11 files |
 | Phase 02-prompt-library P04 | 11 | 3 tasks | 13 files |
+| Phase 03-engagement-workspace P01 | 203 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,9 @@ Recent decisions affecting current work:
 - [Phase 02-polish]: Card left border: transparent by default, transitions to brand blue on hover (was gold border-l-2, removed for visual redundancy with star)
 - [Phase 02-polish]: Search ilike queries escape special characters; search loading uses Loader2 spinner; star ratings have aria-label accessibility
 - [Phase 02-polish]: Copy button relabeled "Copy Prompt", back link uses ArrowLeft icon with hover:text-foreground
+- [Phase 03-engagement-workspace]: Server actions for engagements use regular Supabase client — RLS engagements_own policy enforces ownership
+- [Phase 03-engagement-workspace]: Role-based redirect (D-01): consultants land on /engagements after login, admins land on /library
+- [Phase 03-engagement-workspace]: Sidebar active state uses pathname.startsWith(item.href) — handles nested routes correctly
 
 ### Pending Todos
 
@@ -101,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T16:51:54.995Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-engagement-workspace/03-CONTEXT.md
+Last session: 2026-03-25T18:17:00.292Z
+Stopped at: Completed 03-engagement-workspace 03-01-PLAN.md
+Resume file: None
