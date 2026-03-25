@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import {
   Copy,
@@ -9,10 +10,12 @@ import {
   Download,
   GitFork,
   MessageSquare,
+  Pencil,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { DeprecationDialog } from '@/components/library/deprecation-dialog'
 import type { Prompt } from '@/lib/types/prompt'
 
 interface PromptDetailSidebarProps {
@@ -136,10 +139,19 @@ export function PromptDetailSidebar({ prompt, isAdmin }: PromptDetailSidebarProp
         </div>
       </div>
 
-      {/* Section 4 — Admin Controls slot */}
+      {/* Section 4 — Admin Controls */}
       {isAdmin && (
         <div className="flex flex-col gap-2">
-          {/* Plan 04 adds Edit + Deprecate buttons here */}
+          <Button
+            variant="secondary"
+            className="w-full"
+            render={<Link href={`/library/${prompt.id}/edit`} />}
+            nativeButton={false}
+          >
+            <Pencil data-icon="inline-start" />
+            Edit Prompt
+          </Button>
+          <DeprecationDialog promptId={prompt.id} />
         </div>
       )}
 

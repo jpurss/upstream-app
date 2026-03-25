@@ -77,8 +77,8 @@ export function PromptForm({ prompt, action }: PromptFormProps) {
   // Controlled state for Select components (required for base API)
   const [category, setCategory] = useState<string | null>(prompt?.category ?? null)
   const [capabilityType, setCapabilityType] = useState<string | null>(prompt?.capability_type ?? null)
-  const [targetModel, setTargetModel] = useState<string>(prompt?.target_model ?? 'model-agnostic')
-  const [complexity, setComplexity] = useState<string>(prompt?.complexity ?? 'moderate')
+  const [targetModel, setTargetModel] = useState<string | null>(prompt?.target_model ?? 'model-agnostic')
+  const [complexity, setComplexity] = useState<string | null>(prompt?.complexity ?? 'moderate')
 
   function validateForm(formData: FormData): boolean {
     const newErrors: Record<string, string> = {}
@@ -97,8 +97,8 @@ export function PromptForm({ prompt, action }: PromptFormProps) {
     formData.set('content', contentValue)
     formData.set('category', category ?? '')
     formData.set('capability_type', capabilityType ?? '')
-    formData.set('target_model', targetModel)
-    formData.set('complexity', complexity)
+    formData.set('target_model', targetModel ?? 'model-agnostic')
+    formData.set('complexity', complexity ?? 'moderate')
 
     if (!validateForm(formData)) return
 
