@@ -65,7 +65,8 @@ export function DemandBoardClient({
     router.push(`/demand?status=${val}&sort=${currentSort}`)
   }
 
-  function handleSortChange(val: string) {
+  function handleSortChange(val: string | null) {
+    if (!val) return
     router.push(`/demand?status=${currentStatus}&sort=${val}`)
   }
 
