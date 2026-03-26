@@ -91,9 +91,10 @@ Plans:
   3. Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status
   4. Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created
   5. Admin can decline a merge with a reason — the fork is notified of the rejection reason
-**Plans:** 4 plans
+**Plans:** 5 plans
 
 Plans:
+- [ ] 04-00-PLAN.md — Wave 0: Create 6 behavioral test stub files for TDD (merge-suggest, merge-data, review-queue, merge-approve, merge-decline, merge-diff)
 - [ ] 04-01-PLAN.md — Schema migration, merge types, data access layer, server actions (suggestMerge, approveMerge, declineMerge)
 - [ ] 04-02-PLAN.md — Fork sidebar merge section (suggest/status badges), app sidebar pending count badge
 - [ ] 04-03-PLAN.md — Review queue page: filter tabs, rich context cards, empty state, loading skeleton
@@ -121,5 +122,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Foundation | 3/3 | Complete | 2026-03-25 |
 | 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
 | 3. Engagement Workspace | 6/7 | In Progress|  |
-| 4. Merge Workflow | 0/4 | Not started | - |
+| 4. Merge Workflow | 0/5 | Not started | - |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |
