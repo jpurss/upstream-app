@@ -54,12 +54,10 @@ describe('Login Page', () => {
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
 
-  it('renders 3 feature highlight headings', async () => {
+  it('renders brand motto with "smarter" keyword', async () => {
     const LoginPage = (await import('@/app/(auth)/login/page')).default
     render(<LoginPage />)
-    expect(screen.getByText('Prompt Library')).toBeInTheDocument()
-    expect(screen.getByText('Fork & Adapt')).toBeInTheDocument()
-    expect(screen.getByText('Merge & Improve')).toBeInTheDocument()
+    expect(screen.getByText('smarter')).toBeInTheDocument()
   })
 })
 

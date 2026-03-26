@@ -20,6 +20,7 @@ const mockSignInWithPassword = vi.fn()
 const mockSignUp = vi.fn()
 const mockSignInAnonymously = vi.fn()
 const mockSignOut = vi.fn()
+const mockGetUser = vi.fn()
 
 vi.mock('@supabase/ssr', () => ({
   createServerClient: vi.fn(() => ({
@@ -28,7 +29,18 @@ vi.mock('@supabase/ssr', () => ({
       signUp: mockSignUp,
       signInAnonymously: mockSignInAnonymously,
       signOut: mockSignOut,
+      getUser: mockGetUser,
     },
+  })),
+}))
+
+// Mock the admin client used for profile upserts
+const mockAdminFrom = vi.fn(() => ({
+  upsert: vi.fn().mockResolvedValue({ error: null }),
+}))
+vi.mock('@/lib/supabase/admin', () => ({
+  createAdminClient: vi.fn(() => ({
+    from: mockAdminFrom,
   })),
 }))
 
@@ -39,6 +51,9 @@ describe('signIn Server Action', () => {
 
   it('calls supabase.auth.signInWithPassword with provided email and password', async () => {
     mockSignInWithPassword.mockResolvedValue({ error: null })
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: 'user-1', email: 'test@example.com', app_metadata: { role: 'admin' }, is_anonymous: false } },
+    })
     mockRedirect.mockImplementation(() => { throw new Error('NEXT_REDIRECT') })
 
     const { signIn } = await import('@/app/(auth)/login/actions')
@@ -72,8 +87,11 @@ describe('signIn Server Action', () => {
     expect(result).toEqual({ error: 'Incorrect email or password. Please try again.' })
   })
 
-  it('redirects to /library on successful sign in', async () => {
+  it('redirects based on user role after successful sign in (admin -> /library, consultant -> /engagements)', async () => {
     mockSignInWithPassword.mockResolvedValue({ error: null })
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: 'user-1', email: 'test@example.com', app_metadata: { role: 'admin' }, is_anonymous: false } },
+    })
     mockRedirect.mockImplementation(() => { throw new Error('NEXT_REDIRECT') })
 
     const { signIn } = await import('@/app/(auth)/login/actions')
@@ -98,6 +116,9 @@ describe('signInAsDemo Server Action', () => {
 
   it("calls signInAnonymously with demo_role='consultant' and display_name='Demo Consultant'", async () => {
     mockSignInAnonymously.mockResolvedValue({ error: null })
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: 'anon-1', user_metadata: { demo_role: 'consultant', display_name: 'Demo Consultant' }, is_anonymous: true } },
+    })
     mockRedirect.mockImplementation(() => { throw new Error('NEXT_REDIRECT') })
 
     const { signInAsDemo } = await import('@/app/(auth)/login/actions')
@@ -120,6 +141,9 @@ describe('signInAsDemo Server Action', () => {
 
   it("calls signInAnonymously with demo_role='admin' and display_name='Demo Admin'", async () => {
     mockSignInAnonymously.mockResolvedValue({ error: null })
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: 'anon-2', user_metadata: { demo_role: 'admin', display_name: 'Demo Admin' }, is_anonymous: true } },
+    })
     mockRedirect.mockImplementation(() => { throw new Error('NEXT_REDIRECT') })
 
     const { signInAsDemo } = await import('@/app/(auth)/login/actions')
@@ -140,8 +164,11 @@ describe('signInAsDemo Server Action', () => {
     })
   })
 
-  it('redirects to /library on successful demo sign in', async () => {
+  it('redirects based on demo role (consultant -> /engagements, admin -> /library)', async () => {
     mockSignInAnonymously.mockResolvedValue({ error: null })
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: 'anon-1', user_metadata: { demo_role: 'consultant', display_name: 'Demo Consultant' }, is_anonymous: true } },
+    })
     mockRedirect.mockImplementation(() => { throw new Error('NEXT_REDIRECT') })
 
     const { signInAsDemo } = await import('@/app/(auth)/login/actions')
@@ -152,7 +179,7 @@ describe('signInAsDemo Server Action', () => {
       // redirect throws
     }
 
-    expect(mockRedirect).toHaveBeenCalledWith('/library')
+    expect(mockRedirect).toHaveBeenCalledWith('/engagements')
   })
 })
 

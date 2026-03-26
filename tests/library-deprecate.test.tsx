@@ -16,19 +16,26 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
 
-// Mock Supabase server client
-const mockEq = vi.fn()
-const mockUpdate = vi.fn()
-const mockFrom = vi.fn()
+// Mock Supabase server client (used for auth check)
 const mockGetUser = vi.fn()
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(() =>
     Promise.resolve({
       auth: { getUser: mockGetUser },
-      from: mockFrom,
     })
   ),
+}))
+
+// Mock Supabase admin client (used for mutations)
+const mockEq = vi.fn()
+const mockUpdate = vi.fn()
+const mockFrom = vi.fn()
+
+vi.mock('@/lib/supabase/admin', () => ({
+  createAdminClient: vi.fn(() => ({
+    from: mockFrom,
+  })),
 }))
 
 describe('Deprecate Prompt — Server Action', () => {

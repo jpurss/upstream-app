@@ -123,8 +123,8 @@ describe('AppSidebar', () => {
       <AppSidebar userRole="admin" userName="Admin User" isAnonymous={false} />
     )
 
-    // Disabled nav items should have aria-disabled
+    // Disabled nav items should have aria-disabled (Demand Board + Dashboard = 2)
     const disabledItems = document.querySelectorAll('[aria-disabled="true"]')
-    expect(disabledItems.length).toBeGreaterThanOrEqual(4)
+    expect(disabledItems.length).toBeGreaterThanOrEqual(2)
   })
 })

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
 
@@ -35,30 +35,38 @@ describe('Library Filter Bar', () => {
     expect(searchInput).toBeInTheDocument()
   })
 
-  it('renders Select dropdowns for category, capability type, industry, target model, status', async () => {
+  it('renders filter dropdowns inside the expandable panel after clicking Filters button', async () => {
     const { FilterBar } = await import('@/components/library/filter-bar')
     const { container } = render(<FilterBar {...defaultFilterBarProps} />)
-    // Each Select renders a trigger element
-    const selectTriggers = container.querySelectorAll('[data-slot="select-trigger"]')
-    // 5 filter dropdowns + 1 sort dropdown = 6 total
-    expect(selectTriggers.length).toBeGreaterThanOrEqual(5)
+    // Filters panel is collapsed by default — only sort dropdown visible
+    const triggersBefore = container.querySelectorAll('[data-slot="select-trigger"]')
+    expect(triggersBefore.length).toBe(1)
+    // Open filters panel
+    await act(async () => {
+      screen.getByText('Filters').click()
+    })
+    // Now all 5 filter dropdowns + 1 sort = 6 total
+    const triggersAfter = container.querySelectorAll('[data-slot="select-trigger"]')
+    expect(triggersAfter.length).toBeGreaterThanOrEqual(6)
   })
 
-  it('renders a Slider for effectiveness range', async () => {
+  it('renders a Slider for effectiveness range when filters panel is open', async () => {
     const { FilterBar } = await import('@/components/library/filter-bar')
     const { container } = render(<FilterBar {...defaultFilterBarProps} />)
+    // Open filters panel
+    await act(async () => {
+      screen.getByText('Filters').click()
+    })
     const slider = container.querySelector('[data-slot="slider"]')
     expect(slider).toBeInTheDocument()
   })
 
-  it('renders sort dropdown with 4 options visible in the trigger', async () => {
+  it('renders sort dropdown with "Highest rated" text in the primary row', async () => {
     const { FilterBar } = await import('@/components/library/filter-bar')
     const { container } = render(<FilterBar {...defaultFilterBarProps} />)
-    // The sort dropdown should be present
+    // Sort dropdown is always visible (not behind the filters toggle)
     const selectTriggers = container.querySelectorAll('[data-slot="select-trigger"]')
-    // We have at least 6 selects (5 filters + 1 sort)
-    expect(selectTriggers.length).toBeGreaterThanOrEqual(6)
-    // Highest rated text is in component (it's in the items array)
+    expect(selectTriggers.length).toBeGreaterThanOrEqual(1)
     const allText = container.textContent
     expect(allText).toContain('Highest rated')
   })
