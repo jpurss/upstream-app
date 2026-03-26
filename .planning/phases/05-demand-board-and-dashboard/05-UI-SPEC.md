@@ -57,19 +57,18 @@ Source: `.impeccable.md` SS Spacing; Phase 4 UI-SPEC established exceptions
 
 ## Typography
 
+Exactly 4 sizes. Exactly 2 weights.
+
 | Role | Size | Weight | Font | Line Height | Usage in Phase 5 |
 |------|------|--------|------|-------------|------------------|
-| Display | 20px | 600 | Geist Sans | 1.2 | Page titles ("Demand Board", "Dashboard") |
-| Heading | 16px | 600 | Geist Sans | 1.3 | Request card titles, dashboard section headers, metric card labels |
-| Body | 15px | 400 | Geist Sans | 1.5 | Default UI text, request descriptions, dialog body text, form fields |
-| Label | 13px | 400 | Geist Sans | 1.4 | Badges (category, urgency, status), metadata (submitter, timestamp, upvote count), chart axis labels, table cell text |
-| Prompt content | 13px | 400 | Geist Mono | 1.6 | Not used on this phase's primary surfaces — retained for consistency if prompt content appears |
+| Display | 20px | 600 | Geist Sans | 1.2 | Page titles ("Demand Board", "Dashboard"), request card titles, dialog titles, dashboard section headings, chart headings, table headings, metric card labels |
+| Body | 15px | 400 | Geist Sans | 1.5 | Default UI text, request descriptions, dialog body text, form fields, autocomplete result titles |
+| Label | 13px | 400 | Geist Sans | 1.4 | Badges (category, urgency, status), metadata (submitter, timestamp, upvote count), chart axis labels, table cell text, admin button labels, sub-section label rows |
+| Metric | 28px | 600 | Geist Sans | 1.1 | Dashboard metric card numbers — large enough to read at a glance |
 
 Weights used: 400 (regular) and 600 (semibold) only. No other weights.
 
 Body (15px) vs Label (13px): same 2px hierarchy gap established in Phase 4. Body for primary card content and interactive inputs; Label for metadata, badges, and annotations.
-
-Metric card numbers: 28px, weight 600, Geist Sans — large enough to read at a glance in the dashboard overview.
 
 Source: Phase 4 UI-SPEC (body bumped to 15px); `.impeccable.md` SS Typography
 
@@ -145,7 +144,7 @@ Source: `05-CONTEXT.md` decisions D-01 through D-17.
 
 ```
 +--48px--+------------------------------------+
-|   ^    | [Title] (16px semibold)            |
+|   ^    | [Title] (20px semibold)            |
 |  [N]   | [Description truncated 2 lines]    |
 |        | [Category badge] [Urgency badge]   |
 |        | [Submitter name] · [relative time] |
@@ -154,7 +153,7 @@ Source: `05-CONTEXT.md` decisions D-01 through D-17.
 ```
 
 - **Upvote column (left, 48px fixed width):** vertical stack — `ArrowUp` icon (lucide, 16px), count (13px, weight 600, foreground). Arrow is filled blue (`text-primary fill-primary`) when current user has upvoted, outline-only when not. One click toggles state. On click: optimistic update (immediate visual change) + server action.
-- **Content area (flex-1):** title (16px, 600), description (`line-clamp-2`, 15px), badge row (category + urgency), metadata row (submitter + relative time — 13px muted). All at `gap-1` vertical stacking.
+- **Content area (flex-1):** title (20px, 600), description (`line-clamp-2`, 15px), badge row (category + urgency), metadata row (submitter + relative time — 13px muted). All at `gap-1` vertical stacking.
 - Resolved cards only: below metadata row, show "→ {Prompt Title}" as a link (13px, `text-[#65CFB2]`, hover underline).
 - Card hover: `border-[#4287FF]/30` transition (matches library card pattern). Cursor is `default` — cards are NOT clickable as a whole. Only the upvote arrow is interactive for consultants.
 - Declined cards: `opacity-60` on the full card (matches deprecated prompt pattern from Phase 2).
@@ -186,13 +185,13 @@ Source: `05-CONTEXT.md` decisions D-01 through D-17.
 
 - Trigger: "New Request" button, right-aligned in page header, primary variant, all authenticated users.
 - `Dialog` component (not AlertDialog — not a destructive action).
-- Dialog title: "New prompt request" (16px, semibold).
+- Dialog title: "New prompt request" (20px, semibold).
 - Fields (all required):
   1. Title: `Input`, label "What prompt do you need?", placeholder "e.g. Competitor analysis framework prompt"
   2. Description: `Textarea`, label "Describe the use case", min-height 80px, placeholder "When would you use this? What should it help you do?"
   3. Category: `Select`, label "Category", same 6 options as library (Discovery, Solution Design, Build, Enablement, Delivery, Internal Ops)
   4. Urgency: `Select`, label "Urgency", options: "Nice to have", "Medium", "Urgent"
-- Footer: "Cancel" (ghost) + "Submit Request" (primary `#4287FF`)
+- Footer: "Discard request" (ghost) + "Submit Request" (primary `#4287FF`)
 - On submit: `useTransition` spinner on button, dialog closes on success, toast: "Prompt request submitted"
 - Client-side validation: title and description required before button activates (HTML5 required attributes + button disabled state).
 
@@ -259,7 +258,7 @@ Card anatomy (`bg-card border-border rounded-md p-6`):
 
 *Checkouts Over Time — Line Chart:*
 - Full-width container, height 300px, `bg-card border-border rounded-md p-6`
-- Section heading: "Prompt Usage Over Time" (16px, 600) above the chart
+- Section heading: "Prompt Usage Over Time" (20px, 600) above the chart
 - Weekly granularity on x-axis (last 12 weeks shown by default)
 - Single line: checkout count per week. Line color: `#4287FF` (accent).
 - X-axis: week labels (13px, muted). Y-axis: count (13px, muted). No gridlines — use axis only for clean look.
@@ -268,7 +267,7 @@ Card anatomy (`bg-card border-border rounded-md p-6`):
 
 *Demand vs Supply — Grouped Bar Chart:*
 - Full-width container, height 300px, `bg-card border-border rounded-md p-6`
-- Section heading: "Demand vs Supply" (16px, 600) above chart
+- Section heading: "Demand vs Supply" (20px, 600) above chart
 - Monthly granularity. Two bars per month: "Requests opened" (`#FFB852` amber) and "Resolved" (`#65CFB2` teal).
 - Legend below chart: small color swatches + labels (13px, muted).
 - X-axis: month labels. Y-axis: count.
@@ -280,13 +279,13 @@ Two-column `grid grid-cols-2 gap-6`:
 
 *Top 10 Most Used Prompts:*
 - Container: `bg-card border-border rounded-md`
-- Heading: "Most Used Prompts" (16px, 600), `p-4 border-b border-border`
+- Heading: "Most Used Prompts" (20px, 600), `p-4 border-b border-border`
 - Table rows: prompt title (15px) + checkout count right-aligned (13px, muted) + small bar indicator (visual only, proportional to max count, `bg-primary/20 h-1 rounded-full`, inline below title). `py-3 px-4` per row. `border-b border-border` between rows.
 - Click on row: navigates to `/library/{id}` (entire row is a link).
 
 *Lowest Rated + Underutilized Prompts (D-11):*
 - Container: `bg-card border-border rounded-md`
-- Heading: "Needs Attention" (16px, 600), `p-4 border-b border-border`
+- Heading: "Needs Attention" (20px, 600), `p-4 border-b border-border`
 - Two sub-sections separated by a label row:
   - Sub-section A: "Lowest Rated" (13px, `text-muted-foreground`, non-clickable label row) — bottom 5 by avg_effectiveness, showing title + StarRating (read-only, `showLabel={false}`) + avg score.
   - Sub-section B: "Underutilized" (13px label row) — prompts with 0 forks (all time), showing title + "0 checkouts" in muted.
@@ -314,7 +313,7 @@ Source: `05-CONTEXT.md` decisions; `.impeccable.md` voice rules (direct, no mark
 | Dashboard page heading | "Dashboard" | 20px, semibold |
 | Request dialog title | "New prompt request" | Lower-case "prompt" — describes the object, not the action |
 | Request dialog submit | "Submit Request" | Primary button in dialog footer |
-| Request dialog cancel | "Cancel" | Ghost button — no drama, just close |
+| Request dialog cancel | "Discard request" | Ghost button — communicates consequence of dismissing a partially filled form |
 | Request submit success toast | "Prompt request submitted" | Outcome stated, no exclamation |
 | Request submit error toast | "Failed to submit request. Try again." | Problem + next step |
 | Upvote aria-label (not yet voted) | "Upvote this request" | Accessible label on upvote button |
