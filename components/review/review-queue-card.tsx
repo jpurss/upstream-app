@@ -75,7 +75,7 @@ export function ReviewQueueCard({ suggestion }: ReviewQueueCardProps) {
           <div className="mt-2">
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger>
                   <p className="text-[13px] text-foreground italic line-clamp-2 cursor-default">
                     {suggestion.merge_suggestion}
                   </p>
