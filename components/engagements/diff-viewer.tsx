@@ -45,6 +45,7 @@ export function DiffViewer({
   }
   return (
     <ReactDiffViewer
+      key={showDiffOnly ? 'diff-only' : 'full'}
       oldValue={original}
       newValue={adapted}
       splitView={true}

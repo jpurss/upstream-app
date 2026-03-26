@@ -59,7 +59,7 @@ export function ReviewDetailClient({ suggestion }: ReviewDetailClientProps) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className={`flex flex-col gap-6 ${isPending ? 'pb-20' : ''}`}>
       {/* ZONE 1: Page Header */}
       <div className="flex flex-col gap-4">
         {/* Row 1 — navigation + status */}

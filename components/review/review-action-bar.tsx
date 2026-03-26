@@ -27,30 +27,28 @@ export function ReviewActionBar({ suggestion, editedContent, hasEdited }: Review
   }
 
   return (
-    <div className="sticky bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm px-6 py-4 -mx-6 -mb-6">
-      <div className="flex items-start justify-between">
-        {/* Left side — Decline */}
-        <div className="flex flex-col gap-3">
-          {isDeclineOpen ? (
+    <div className="fixed bottom-6 left-[var(--sidebar-width)] right-0 z-40 flex justify-center pointer-events-none">
+      <div className="flex items-center gap-3 pointer-events-auto bg-zinc-900 border border-border rounded-full px-2 py-2 shadow-xl">
+        {isDeclineOpen ? (
+          <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
             <DeclineReasonForm
               forkId={suggestion.id}
               onDeclined={handleDeclined}
               onDiscard={() => setIsDeclineOpen(false)}
               initialExpanded={true}
             />
-          ) : (
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={() => setIsDeclineOpen(true)}
-            >
-              <X className="size-4" />
-              Decline
-            </Button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <Button
+            variant="destructive"
+            className="gap-2 rounded-full"
+            onClick={() => setIsDeclineOpen(true)}
+          >
+            <X className="size-4" />
+            Decline
+          </Button>
+        )}
 
-        {/* Right side — Approve */}
         <ApproveConfirmDialog
           suggestionId={suggestion.id}
           sourcePromptId={suggestion.source_prompt_id}
@@ -61,7 +59,7 @@ export function ReviewActionBar({ suggestion, editedContent, hasEdited }: Review
           onSuccess={handleApproveSuccess}
           trigger={
             <Button
-              className="gap-2"
+              className="gap-2 rounded-full"
               disabled={isDeclineOpen}
             >
               <Check className="size-4" />
