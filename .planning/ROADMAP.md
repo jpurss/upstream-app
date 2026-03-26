@@ -91,14 +91,16 @@ Plans:
   3. Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status
   4. Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created
   5. Admin can decline a merge with a reason — the fork is notified of the rejection reason
-**Plans:** 4/5 plans executed
+**Plans:** 7 plans (4 executed + 1 in progress + 2 gap closure)
 
 Plans:
 - [x] 04-00-PLAN.md — Wave 0: Create 6 behavioral test stub files for TDD (merge-suggest, merge-data, review-queue, merge-approve, merge-decline, merge-diff)
 - [x] 04-01-PLAN.md — Schema migration, merge types, data access layer, server actions (suggestMerge, approveMerge, declineMerge)
 - [x] 04-02-PLAN.md — Fork sidebar merge section (suggest/status badges), app sidebar pending count badge
 - [x] 04-03-PLAN.md — Review queue page: filter tabs, rich context cards, empty state, loading skeleton
-- [ ] 04-04-PLAN.md — Review detail page: side-by-side diff, edit-before-approve, approve/decline flows
+- [x] 04-04-PLAN.md — Review detail page: side-by-side diff, edit-before-approve, approve/decline flows
+- [ ] 04-05-PLAN.md — Gap closure: DiffViewer showDiffOnly, ReviewContextBar, ApproveConfirmDialog, ReviewContentEditor rewrite
+- [ ] 04-06-PLAN.md — Gap closure: ReviewDetailClient redesign (stacked 4-zone layout), ReviewActionBar, status-aware rendering
 
 ### Phase 5: Demand Board and Dashboard
 **Goal**: The demo is complete — consultants can surface prompt gaps through the demand board, admins have visibility into usage and quality metrics, and realistic seed engagement data makes every chart and metric meaningful.
@@ -122,5 +124,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Foundation | 3/3 | Complete | 2026-03-25 |
 | 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
 | 3. Engagement Workspace | 6/7 | In Progress|  |
-| 4. Merge Workflow | 4/5 | In Progress|  |
+| 4. Merge Workflow | 5/7 | In Progress|  |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |
