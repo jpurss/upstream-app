@@ -111,3 +111,24 @@ export async function updateForkMeta(
   if (error) return { error: error.message }
   return { success: true }
 }
+
+// Suggest merge — consultant submits fork for admin review
+export async function suggestMerge(forkId: string, mergeNote: string) {
+  const ctx = await getAuthenticatedUser()
+  if (!ctx) return { error: 'Unauthorized' }
+  const { supabase } = ctx
+
+  const { error } = await supabase
+    .from('forked_prompts')
+    .update({
+      merge_status: 'pending',
+      merge_suggestion: mergeNote,
+      merge_decline_reason: null, // clear any prior decline reason on resubmission
+    })
+    .eq('id', forkId)
+
+  if (error) return { error: error.message }
+  revalidatePath('/engagements')
+  revalidatePath('/review')
+  return { success: true }
+}

@@ -22,6 +22,7 @@ export type ForkedPrompt = {
   issues: IssueTag[]
   merge_status: string | null
   merge_suggestion: string | null
+  merge_decline_reason: string | null
   contains_client_context: boolean
   forked_by: string
   forked_at: string
