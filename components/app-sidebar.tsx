@@ -37,9 +37,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { title: 'Library', icon: Library, href: '/library', enabled: true, adminOnly: false, phase: 2 },
   { title: 'Engagements', icon: Briefcase, href: '/engagements', enabled: true, adminOnly: false, phase: 3 },
-  { title: 'Demand Board', icon: MessageSquarePlus, href: '/demand', enabled: false, adminOnly: false, phase: 5 },
+  { title: 'Demand Board', icon: MessageSquarePlus, href: '/demand', enabled: true, adminOnly: false, phase: 5 },
   { title: 'Review Queue', icon: GitPullRequestArrow, href: '/review', enabled: true, adminOnly: true, phase: 4 },
-  { title: 'Dashboard', icon: BarChart3, href: '/dashboard', enabled: false, adminOnly: true, phase: 5 },
+  { title: 'Dashboard', icon: BarChart3, href: '/dashboard', enabled: true, adminOnly: true, phase: 5 },
 ]
 
 interface AppSidebarProps {
