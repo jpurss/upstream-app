@@ -117,14 +117,14 @@ describe('AppSidebar', () => {
     expect(screen.queryByText('Dashboard')).not.toBeInTheDocument()
   })
 
-  it('Test 3: Library is enabled, other items have aria-disabled="true"', async () => {
+  it('Test 3: All Phase 5 items are now enabled — no aria-disabled items remain', async () => {
     const { AppSidebar } = await import('@/components/app-sidebar')
     render(
       <AppSidebar userRole="admin" userName="Admin User" isAnonymous={false} />
     )
 
-    // Disabled nav items should have aria-disabled (Demand Board + Dashboard = 2)
+    // Phase 5 activated Demand Board and Dashboard — no items should be disabled
     const disabledItems = document.querySelectorAll('[aria-disabled="true"]')
-    expect(disabledItems.length).toBeGreaterThanOrEqual(2)
+    expect(disabledItems.length).toBe(0)
   })
 })
