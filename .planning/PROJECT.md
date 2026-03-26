@@ -12,7 +12,8 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Suggest merge back to central library with diff view — Validated in Phase 4: merge-workflow
+- [x] Review queue with side-by-side diff for merge approval (lead/admin) — Validated in Phase 4: merge-workflow
 
 ### Active
 
@@ -23,8 +24,8 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 - [ ] Checkout/fork prompts to engagements
 - [ ] Edit forked prompts with adaptation notes and client context flag
 - [ ] Rate and provide feedback on forked prompts (1-2 clicks)
-- [ ] Suggest merge back to central library with diff view
-- [ ] Review queue with side-by-side diff for merge approval (lead/admin)
+- [x] Suggest merge back to central library with diff view
+- [x] Review queue with side-by-side diff for merge approval (lead/admin)
 - [ ] Demand board — submit requests, upvote, resolve
 - [ ] Admin dashboard with key metrics and analytics charts
 - [ ] Auth with role-based access (consultant / admin) — email/password + demo bypass
@@ -82,4 +83,4 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 | Dark mode default | Matches design direction (Linear/Raycast), consultants working late | — Pending |
 
 ---
-*Last updated: 2026-03-25 after requirements scoping — simplified to 2 roles (consultant/admin), no team collaboration in v1, brand blue #4287FF accent*
+*Last updated: 2026-03-26 — Phase 4 (merge-workflow) complete. Knowledge loop closes: consultants suggest merges, admins review/approve/decline with diff view.*
