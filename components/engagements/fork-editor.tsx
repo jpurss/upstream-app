@@ -123,7 +123,7 @@ export function ForkEditor({ fork, onSaveStateChange }: ForkEditorProps) {
 
       <TabsContent value="diff">
         <div className="mt-2 overflow-hidden rounded-lg border border-border">
-          <DiffViewer original={fork.original_content} adapted={content} />
+          <DiffViewer original={fork.original_content} adapted={content} showDiffOnly={false} />
         </div>
       </TabsContent>
     </Tabs>

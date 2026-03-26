@@ -6,6 +6,8 @@ import { DiffViewer } from '../components/engagements/diff-viewer'
 import { ReviewContextBar } from '../components/review/review-context-bar'
 import { ReviewContentEditor } from '../components/review/review-content-editor'
 import { ApproveConfirmDialog } from '../components/review/approve-confirm-dialog'
+import { ReviewDetailClient } from '../components/review/review-detail-client'
+import { ReviewActionBar } from '../components/review/review-action-bar'
 import type { MergeSuggestion } from '../lib/types/merge'
 
 // Mock react-diff-viewer-continued to avoid heavy rendering in unit tests
@@ -379,5 +381,113 @@ describe('ApproveConfirmDialog', () => {
       />
     )
     expect(screen.getByText(/Version will be bumped from 2 to 3/)).toBeInTheDocument()
+  })
+})
+
+// ─── ReviewDetailClient ────────────────────────────────────────────────────────
+
+describe('ReviewDetailClient', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders back link to review queue', () => {
+    render(<ReviewDetailClient suggestion={mockSuggestion} />)
+    const backLink = screen.getByRole('link', { name: /back to review queue/i })
+    expect(backLink).toBeInTheDocument()
+    expect(backLink).toHaveAttribute('href', '/review')
+  })
+
+  it('renders the prompt title', () => {
+    render(<ReviewDetailClient suggestion={mockSuggestion} />)
+    expect(screen.getByText('Discovery Interview')).toBeInTheDocument()
+  })
+
+  it('renders the context bar (submitter name visible)', () => {
+    render(<ReviewDetailClient suggestion={mockSuggestion} />)
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument()
+  })
+
+  it('shows "Changes" and "Edit before approving" tabs for pending status', () => {
+    render(<ReviewDetailClient suggestion={mockSuggestion} />)
+    expect(screen.getByText('Changes')).toBeInTheDocument()
+    expect(screen.getByText('Edit before approving')).toBeInTheDocument()
+  })
+
+  it('hides "Edit before approving" tab for approved status', () => {
+    render(<ReviewDetailClient suggestion={{ ...mockSuggestion, merge_status: 'approved' }} />)
+    expect(screen.queryByText('Edit before approving')).not.toBeInTheDocument()
+  })
+
+  it('hides action bar for approved status', () => {
+    render(<ReviewDetailClient suggestion={{ ...mockSuggestion, merge_status: 'approved' }} />)
+    expect(screen.queryByRole('button', { name: /decline/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/approve & merge/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /approve/i })).not.toBeInTheDocument()
+  })
+
+  it('hides action bar for declined status', () => {
+    render(
+      <ReviewDetailClient
+        suggestion={{ ...mockSuggestion, merge_status: 'declined', merge_decline_reason: 'Not aligned.' }}
+      />
+    )
+    expect(screen.queryByRole('button', { name: /decline/i })).not.toBeInTheDocument()
+    expect(screen.queryByText(/approve & merge/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /approve/i })).not.toBeInTheDocument()
+  })
+
+  it('shows decline reason panel for declined status', () => {
+    render(
+      <ReviewDetailClient
+        suggestion={{ ...mockSuggestion, merge_status: 'declined', merge_decline_reason: 'Not aligned with strategy.' }}
+      />
+    )
+    expect(screen.getByText('Not aligned with strategy.')).toBeInTheDocument()
+  })
+})
+
+// ─── ReviewActionBar ───────────────────────────────────────────────────────────
+
+describe('ReviewActionBar', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders "Decline" button', () => {
+    render(
+      <ReviewActionBar
+        suggestion={mockSuggestion}
+        editedContent={mockSuggestion.adapted_content}
+        hasEdited={false}
+      />
+    )
+    expect(screen.getByRole('button', { name: /decline/i })).toBeInTheDocument()
+  })
+
+  it('renders "Approve & Merge" button', () => {
+    render(
+      <ReviewActionBar
+        suggestion={mockSuggestion}
+        editedContent={mockSuggestion.adapted_content}
+        hasEdited={false}
+      />
+    )
+    // Use getAllByText since the button contains nested spans
+    const approveElements = screen.getAllByText(/approve & merge/i)
+    expect(approveElements.length).toBeGreaterThan(0)
+  })
+
+  it('shows version indicator text "v{N} -> v{N+1}"', () => {
+    render(
+      <ReviewActionBar
+        suggestion={mockSuggestion}
+        editedContent={mockSuggestion.adapted_content}
+        hasEdited={false}
+      />
+    )
+    // source_prompt_version is 2, so expect v2 -> v3
+    expect(screen.getByText(/v2/)).toBeInTheDocument()
+    expect(screen.getByText(/v3/)).toBeInTheDocument()
   })
 })

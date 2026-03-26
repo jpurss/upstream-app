@@ -11,10 +11,12 @@ import { declineMerge } from '@/app/(app)/review/actions'
 interface DeclineReasonFormProps {
   forkId: string
   onDeclined?: () => void
+  onDiscard?: () => void
+  initialExpanded?: boolean
 }
 
-export function DeclineReasonForm({ forkId, onDeclined }: DeclineReasonFormProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+export function DeclineReasonForm({ forkId, onDeclined, onDiscard, initialExpanded }: DeclineReasonFormProps) {
+  const [isExpanded, setIsExpanded] = useState(initialExpanded ?? false)
   const [reason, setReason] = useState('')
   const [isPending, startTransition] = useTransition()
 
@@ -23,6 +25,7 @@ export function DeclineReasonForm({ forkId, onDeclined }: DeclineReasonFormProps
       const result = await declineMerge(forkId, reason)
       if (result.success) {
         toast.success('Merge suggestion declined')
+        onDiscard?.()
         onDeclined?.()
       } else {
         toast.error("Couldn't save changes. Try again.")
@@ -58,6 +61,7 @@ export function DeclineReasonForm({ forkId, onDeclined }: DeclineReasonFormProps
           onClick={() => {
             setIsExpanded(false)
             setReason('')
+            onDiscard?.()
           }}
         >
           Discard reason
