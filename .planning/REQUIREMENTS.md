@@ -40,21 +40,21 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Forking
 
-- [ ] **FORK-01**: User can checkout/fork a prompt from the central library into an engagement (creates a snapshot of the prompt content at fork time)
-- [ ] **FORK-02**: User can edit a forked prompt's adapted content with a markdown editor
-- [ ] **FORK-03**: User can add adaptation notes explaining what was changed and why
-- [ ] **FORK-04**: User can flag a fork as containing client-specific context
-- [ ] **FORK-05**: User can rate a forked prompt's effectiveness (1-5 stars) with 1-2 clicks
-- [ ] **FORK-06**: User can add feedback notes and issue tags (hallucination, too_verbose, wrong_format, model_degradation, needs_context) to a fork
-- [ ] **FORK-07**: User can view the diff between original prompt content (at fork time) and their adapted version
+- [x] **FORK-01**: User can checkout/fork a prompt from the central library into an engagement (creates a snapshot of the prompt content at fork time)
+- [x] **FORK-02**: User can edit a forked prompt's adapted content with a markdown editor
+- [x] **FORK-03**: User can add adaptation notes explaining what was changed and why
+- [x] **FORK-04**: User can flag a fork as containing client-specific context
+- [x] **FORK-05**: User can rate a forked prompt's effectiveness (1-5 stars) with 1-2 clicks
+- [x] **FORK-06**: User can add feedback notes and issue tags (hallucination, too_verbose, wrong_format, model_degradation, needs_context) to a fork
+- [x] **FORK-07**: User can view the diff between original prompt content (at fork time) and their adapted version
 
 ### Merge
 
-- [ ] **MERGE-01**: User can suggest a merge back to the central library from a forked prompt with a merge note
-- [ ] **MERGE-02**: Merge suggestion shows side-by-side diff of original vs adapted content
-- [ ] **MERGE-03**: Admin can view a review queue of pending merge suggestions with context (who suggested, which engagement, effectiveness rating)
-- [ ] **MERGE-04**: Admin can approve a merge suggestion — updates central library prompt content, bumps version, creates changelog entry
-- [ ] **MERGE-05**: Admin can decline a merge suggestion with a reason
+- [x] **MERGE-01**: User can suggest a merge back to the central library from a forked prompt with a merge note
+- [x] **MERGE-02**: Merge suggestion shows side-by-side diff of original vs adapted content
+- [x] **MERGE-03**: Admin can view a review queue of pending merge suggestions with context (who suggested, which engagement, effectiveness rating)
+- [x] **MERGE-04**: Admin can approve a merge suggestion — updates central library prompt content, bumps version, creates changelog entry
+- [x] **MERGE-05**: Admin can decline a merge suggestion with a reason
 
 ### Demand Board
 
@@ -150,18 +150,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ENG-02 | Phase 3 | Complete |
 | ENG-03 | Phase 3 | Complete |
 | ENG-04 | Phase 3 | Complete |
-| FORK-01 | Phase 3 | Pending |
-| FORK-02 | Phase 3 | Pending |
-| FORK-03 | Phase 3 | Pending |
-| FORK-04 | Phase 3 | Pending |
-| FORK-05 | Phase 3 | Pending |
-| FORK-06 | Phase 3 | Pending |
-| FORK-07 | Phase 3 | Pending |
-| MERGE-01 | Phase 4 | Pending |
-| MERGE-02 | Phase 4 | Pending |
-| MERGE-03 | Phase 4 | Pending |
-| MERGE-04 | Phase 4 | Pending |
-| MERGE-05 | Phase 4 | Pending |
+| FORK-01 | Phase 3 | Complete |
+| FORK-02 | Phase 3 | Complete |
+| FORK-03 | Phase 3 | Complete |
+| FORK-04 | Phase 3 | Complete |
+| FORK-05 | Phase 3 | Complete |
+| FORK-06 | Phase 3 | Complete |
+| FORK-07 | Phase 3 | Complete |
+| MERGE-01 | Phase 4 | Complete |
+| MERGE-02 | Phase 4 | Complete |
+| MERGE-03 | Phase 4 | Complete |
+| MERGE-04 | Phase 4 | Complete |
+| MERGE-05 | Phase 4 | Complete |
 | DEMAND-01 | Phase 5 | Pending |
 | DEMAND-02 | Phase 5 | Pending |
 | DEMAND-03 | Phase 5 | Pending |
