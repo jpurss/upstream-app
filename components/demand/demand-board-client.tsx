@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { InboxIcon } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -13,6 +14,8 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RequestCard } from '@/components/demand/request-card'
+import { NewRequestDialog } from '@/components/demand/new-request-dialog'
+import { ResolveRequestDialog } from '@/components/demand/resolve-request-dialog'
 import type { PromptRequest } from '@/lib/types/prompt-request'
 
 const STATUS_TABS = [
@@ -29,6 +32,12 @@ const SORT_OPTIONS = [
   { value: 'urgent', label: 'Urgent first' },
 ]
 
+interface ActivePrompt {
+  id: string
+  title: string
+  category: string
+}
+
 interface DemandBoardClientProps {
   requests: PromptRequest[]
   currentStatus: string
@@ -36,6 +45,7 @@ interface DemandBoardClientProps {
   statusCounts: Record<string, number>
   isAdmin: boolean
   userId: string
+  activePrompts?: ActivePrompt[]
 }
 
 export function DemandBoardClient({
@@ -44,9 +54,12 @@ export function DemandBoardClient({
   currentSort,
   statusCounts,
   isAdmin,
-  userId,
+  userId: _userId,
+  activePrompts = [],
 }: DemandBoardClientProps) {
   const router = useRouter()
+  const [newRequestOpen, setNewRequestOpen] = useState(false)
+  const [resolvingRequestId, setResolvingRequestId] = useState<string | null>(null)
 
   function handleTabChange(val: string) {
     router.push(`/demand?status=${val}&sort=${currentSort}`)
@@ -71,9 +84,7 @@ export function DemandBoardClient({
         <h1 className="text-[20px] font-semibold">Demand Board</h1>
         <Button
           className="bg-[#4287FF] hover:bg-[#4287FF]/90 text-white"
-          onClick={() => {
-            // New Request dialog — wired in Plan 03
-          }}
+          onClick={() => setNewRequestOpen(true)}
         >
           New Request
         </Button>
@@ -112,7 +123,7 @@ export function DemandBoardClient({
       {/* Request list or empty state */}
       <div className="mt-4">
         {isEmpty ? (
-          <EmptyState status={currentStatus} />
+          <EmptyState status={currentStatus} onNewRequest={() => setNewRequestOpen(true)} />
         ) : (
           <div className="flex flex-col gap-3">
             {requests.map((request) => (
@@ -120,18 +131,36 @@ export function DemandBoardClient({
                 key={request.id}
                 request={request}
                 isAdmin={isAdmin}
+                onResolveClick={(id) => setResolvingRequestId(id)}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* New Request Dialog */}
+      <NewRequestDialog open={newRequestOpen} onOpenChange={setNewRequestOpen} />
+
+      {/* Resolve Request Dialog */}
+      {resolvingRequestId && (
+        <ResolveRequestDialog
+          open={true}
+          onOpenChange={(open) => { if (!open) setResolvingRequestId(null) }}
+          requestId={resolvingRequestId}
+          prompts={activePrompts}
+        />
+      )}
     </div>
   )
 }
 
-function EmptyState({ status }: { status: string }) {
-  const router = useRouter()
-
+function EmptyState({
+  status,
+  onNewRequest,
+}: {
+  status: string
+  onNewRequest: () => void
+}) {
   if (status === 'open') {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -142,9 +171,7 @@ function EmptyState({ status }: { status: string }) {
         </p>
         <Button
           className="mt-4 bg-[#4287FF] hover:bg-[#4287FF]/90 text-white"
-          onClick={() => {
-            // New Request dialog — wired in Plan 03
-          }}
+          onClick={onNewRequest}
         >
           New Request
         </Button>

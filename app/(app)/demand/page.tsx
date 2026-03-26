@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { fetchPromptRequests, countRequestsByStatus } from '@/lib/data/prompt-requests'
 import { DemandBoardClient } from '@/components/demand/demand-board-client'
 
@@ -34,6 +35,18 @@ export default async function DemandBoardPage({
 
   const statusCounts = await countRequestsByStatus()
 
+  // Only fetch active prompts for admins — needed for the resolve dialog autocomplete
+  let activePrompts: { id: string; title: string; category: string }[] = []
+  if (effectiveRole === 'admin') {
+    const supabaseAdmin = createAdminClient()
+    const { data } = await supabaseAdmin
+      .from('prompts')
+      .select('id, title, category')
+      .eq('status', 'active')
+      .order('title')
+    activePrompts = data ?? []
+  }
+
   return (
     <DemandBoardClient
       requests={requests}
@@ -42,6 +55,7 @@ export default async function DemandBoardPage({
       statusCounts={statusCounts}
       isAdmin={effectiveRole === 'admin'}
       userId={user.id}
+      activePrompts={activePrompts}
     />
   )
 }
