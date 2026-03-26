@@ -112,7 +112,7 @@ Plans:
   3. Admin dashboard shows top-level metrics (active prompts, avg effectiveness, total checkouts, open merge requests, open prompt requests) with real data from seed engagements
   4. Admin can view a usage chart (checkouts over time), top 10 most used prompts, bottom 10 lowest-rated prompts, and demand vs supply chart
   5. The demo user clicking "Demo Bypass" sees a pre-populated workspace with sample engagements, forked prompts, and demand board requests — not an empty product
-**Plans:** 7 plans (5 complete + 2 gap closure)
+**Plans:** 6/7 plans executed
 
 Plans:
 - [x] 05-01-PLAN.md — Foundation: schema migration, types, recharts install, utility extraction, test stubs, sidebar activation
@@ -120,7 +120,7 @@ Plans:
 - [x] 05-03-PLAN.md — Admin controls on demand cards (resolve, decline, mark planned) + new request dialog
 - [x] 05-04-PLAN.md — Admin dashboard: metrics, Recharts line/bar charts, top/bottom prompt tables
 - [x] 05-05-PLAN.md — Seed data (engagements, forks, requests, upvotes) + demo user ownership + admin landing redirect
-- [ ] 05-06-PLAN.md — Gap closure: middleware /library redirect, urgency sort order, seed data claim for both roles
+- [x] 05-06-PLAN.md — Gap closure: middleware /library redirect, urgency sort order, seed data claim for both roles
 - [ ] 05-07-PLAN.md — Gap closure: client-side demand board filtering/sorting, optimistic upvotes, compact metric cards
 
 ## Progress
@@ -134,4 +134,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
 | 3. Engagement Workspace | 6/7 | In Progress|  |
 | 4. Merge Workflow | 5/7 | In Progress|  |
-| 5. Demand Board and Dashboard | 5/7 | In Progress | |
+| 5. Demand Board and Dashboard | 6/7 | In Progress|  |

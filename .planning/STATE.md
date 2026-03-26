@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 05-05-PLAN.md
-last_updated: "2026-03-26T19:34:59.286Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-06-PLAN.md
+last_updated: "2026-03-26T22:25:09.021Z"
 progress:
   total_phases: 5
-  completed_phases: 5
-  total_plans: 26
-  completed_plans: 26
+  completed_phases: 4
+  total_plans: 28
+  completed_plans: 27
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 
 ## Current Position
 
-Phase: 05
-Plan: Not started
+Phase: 05 (demand-board-and-dashboard) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Plan: Not started
 | Phase 05-demand-board-and-dashboard P02 | 6 | 2 tasks | 12 files |
 | Phase 05-demand-board-and-dashboard P03 | 5 | 2 tasks | 7 files |
 | Phase 05-demand-board-and-dashboard P05 | 260 | 2 tasks | 3 files |
+| Phase 05 P06 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -157,6 +158,9 @@ Recent decisions affecting current work:
 - [Phase 05-demand-board-and-dashboard]: Active prompts fetched server-side only for admin role in demand page — avoids unnecessary admin DB call for consultants
 - [Phase 05-demand-board-and-dashboard]: Demo seed claim uses admin client to transfer placeholder UUID ownership to new anonymous session on signInAsDemo — works around per-session UUID isolation
 - [Phase 05-demand-board-and-dashboard]: Admin post-login landing changed from /library to /dashboard — dashboard now exists and is the correct admin home
+- [Phase 05]: Urgency sort uses JS-side URGENCY_PRIORITY map (urgent:0, medium:1, nice_to_have:2) with upvote tiebreak — alphabetical ORDER BY produced wrong sort
+- [Phase 05]: Seed claim loops over both DEMO_CONSULTANT_ID and DEMO_ADMIN_ID — both demo roles see identical demand board seed data
+- [Phase 05]: Consultant /library redirect removed entirely from middleware — library page handles read-only rendering for non-admins at render time
 
 ### Pending Todos
 
@@ -176,6 +180,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T19:27:57.015Z
-Stopped at: Completed 05-05-PLAN.md
+Last session: 2026-03-26T22:24:55.380Z
+Stopped at: Completed 05-06-PLAN.md
 Resume file: None
