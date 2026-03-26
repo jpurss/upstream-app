@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { Search, LayoutGrid, List } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import { Search, LayoutGrid, List, SlidersHorizontal } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
@@ -109,9 +109,25 @@ export function FilterBar({
   view,
   onViewChange,
 }: FilterBarProps) {
+  const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (category) count++
+    if (capability) count++
+    if (industry) count++
+    if (model) count++
+    if (status) count++
+    if (minRating > 0) count++
+    return count
+  }, [category, capability, industry, model, status, minRating])
+
+  const hasActiveFilters = activeFilterCount > 0
+
   return (
     <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-3">
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Primary row: Search, Sort, Filters toggle, View toggle */}
+      <div className="flex items-center gap-2">
         {/* Search input */}
         <div className="relative flex-1 min-w-[200px] max-w-[300px]">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
@@ -124,120 +140,8 @@ export function FilterBar({
           />
         </div>
 
-        {/* Category filter */}
-        <Select
-          items={categoryItems}
-          value={category || null}
-          onValueChange={onCategoryChange}
-        >
-          <SelectTrigger className="h-9 w-auto min-w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false} side="bottom">
-            <SelectGroup>
-              {categoryItems.map((item) => (
-                <SelectItem key={item.value ?? '__all__'} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {/* Capability type filter */}
-        <Select
-          items={capabilityItems}
-          value={capability || null}
-          onValueChange={onCapabilityChange}
-        >
-          <SelectTrigger className="h-9 w-auto min-w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false} side="bottom">
-            <SelectGroup>
-              {capabilityItems.map((item) => (
-                <SelectItem key={item.value ?? '__all__'} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {/* Industry filter */}
-        <Select
-          items={industryItems}
-          value={industry || null}
-          onValueChange={onIndustryChange}
-        >
-          <SelectTrigger className="h-9 w-auto min-w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false} side="bottom">
-            <SelectGroup>
-              {industryItems.map((item) => (
-                <SelectItem key={item.value ?? '__all__'} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {/* Model filter */}
-        <Select
-          items={modelItems}
-          value={model || null}
-          onValueChange={onModelChange}
-        >
-          <SelectTrigger className="h-9 w-auto min-w-[140px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false} side="bottom">
-            <SelectGroup>
-              {modelItems.map((item) => (
-                <SelectItem key={item.value ?? '__all__'} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {/* Status filter */}
-        <Select
-          items={statusItems}
-          value={status || null}
-          onValueChange={onStatusChange}
-        >
-          <SelectTrigger className="h-9 w-auto min-w-[120px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false} side="bottom">
-            <SelectGroup>
-              {statusItems.map((item) => (
-                <SelectItem key={item.value ?? '__all__'} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        {/* Effectiveness slider */}
-        <div className="flex items-center gap-2 min-w-[140px]">
-          <span className="text-[13px] text-muted-foreground whitespace-nowrap">
-            {minRating > 0 ? `≥${minRating}★` : 'All ratings'}
-          </span>
-          <Slider
-            min={0}
-            max={5}
-            step={0.5}
-            defaultValue={minRating}
-            onValueChange={(v) => onMinRatingChange(Array.isArray(v) ? (v as number[])[0] : (v as number) || null)}
-            className="w-24"
-          />
-        </div>
+        {/* Spacer */}
+        <div className="flex-1" />
 
         {/* Sort dropdown */}
         <Select
@@ -259,11 +163,23 @@ export function FilterBar({
           </SelectContent>
         </Select>
 
+        {/* Filters toggle button */}
+        <Button
+          variant={hasActiveFilters ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-9 gap-1.5"
+          onClick={() => setFiltersOpen((prev) => !prev)}
+          aria-expanded={filtersOpen}
+        >
+          <SlidersHorizontal className="size-4" />
+          <span>Filters{hasActiveFilters ? ` (${activeFilterCount})` : ''}</span>
+        </Button>
+
         {/* View toggle */}
         <TooltipProvider>
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-1">
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger render={<span />}>
                 <Button
                   variant={view === 'grid' ? 'secondary' : 'ghost'}
                   size="icon"
@@ -277,7 +193,7 @@ export function FilterBar({
               <TooltipContent>Grid view</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger render={<span />}>
                 <Button
                   variant={view === 'list' ? 'secondary' : 'ghost'}
                   size="icon"
@@ -293,6 +209,128 @@ export function FilterBar({
           </div>
         </TooltipProvider>
       </div>
+
+      {/* Expandable filter panel */}
+      {filtersOpen && (
+        <div className="py-3 border-t border-border mt-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Category filter */}
+            <Select
+              items={categoryItems}
+              value={category || null}
+              onValueChange={onCategoryChange}
+            >
+              <SelectTrigger className="h-9 w-auto min-w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false} side="bottom">
+                <SelectGroup>
+                  {categoryItems.map((item) => (
+                    <SelectItem key={item.value ?? '__all__'} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {/* Capability type filter */}
+            <Select
+              items={capabilityItems}
+              value={capability || null}
+              onValueChange={onCapabilityChange}
+            >
+              <SelectTrigger className="h-9 w-auto min-w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false} side="bottom">
+                <SelectGroup>
+                  {capabilityItems.map((item) => (
+                    <SelectItem key={item.value ?? '__all__'} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {/* Industry filter */}
+            <Select
+              items={industryItems}
+              value={industry || null}
+              onValueChange={onIndustryChange}
+            >
+              <SelectTrigger className="h-9 w-auto min-w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false} side="bottom">
+                <SelectGroup>
+                  {industryItems.map((item) => (
+                    <SelectItem key={item.value ?? '__all__'} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {/* Model filter */}
+            <Select
+              items={modelItems}
+              value={model || null}
+              onValueChange={onModelChange}
+            >
+              <SelectTrigger className="h-9 w-auto min-w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false} side="bottom">
+                <SelectGroup>
+                  {modelItems.map((item) => (
+                    <SelectItem key={item.value ?? '__all__'} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {/* Status filter */}
+            <Select
+              items={statusItems}
+              value={status || null}
+              onValueChange={onStatusChange}
+            >
+              <SelectTrigger className="h-9 w-auto min-w-[120px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false} side="bottom">
+                <SelectGroup>
+                  {statusItems.map((item) => (
+                    <SelectItem key={item.value ?? '__all__'} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {/* Effectiveness slider */}
+            <div className="flex items-center gap-2 min-w-[140px]">
+              <span className="text-[13px] text-muted-foreground whitespace-nowrap">
+                {minRating > 0 ? `≥${minRating}★` : 'All ratings'}
+              </span>
+              <Slider
+                min={0}
+                max={5}
+                step={0.5}
+                defaultValue={minRating}
+                onValueChange={(v) => onMinRatingChange(Array.isArray(v) ? (v as number[])[0] : (v as number) || null)}
+                className="w-24"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

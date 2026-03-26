@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
@@ -67,6 +68,7 @@ const complexityItems = [
 
 export function PromptForm({ prompt, action }: PromptFormProps) {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   // Controlled state for the markdown textarea (needed for MarkdownPreview)
   const [contentValue, setContentValue] = useState(prompt?.content ?? '')
@@ -103,18 +105,17 @@ export function PromptForm({ prompt, action }: PromptFormProps) {
     if (!validateForm(formData)) return
 
     startTransition(async () => {
-      try {
-        if (action === 'create') {
-          await createPrompt(formData)
-        } else {
-          const boundUpdate = updatePrompt.bind(null, prompt!.id)
-          await boundUpdate(formData)
-        }
-      } catch {
-        // redirect() throws — this is expected on success
+      const result = action === 'create'
+        ? await createPrompt(formData)
+        : await updatePrompt(prompt!.id, formData)
+
+      if (result?.error) {
+        toast.error(result.error)
+      } else if (result?.success) {
+        toast.success(action === 'create' ? 'Prompt created' : 'Prompt updated')
+        router.push(action === 'create' ? '/library' : `/library/${prompt!.id}`)
+        router.refresh()
       }
-      // If we reach here without redirect, it was an error
-      toast.error('Failed to save prompt. Please try again.')
     })
   }
 

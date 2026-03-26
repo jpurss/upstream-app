@@ -24,14 +24,11 @@ export default async function EngagementsPage() {
     <div className="p-8">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-xl font-semibold">Engagements</h1>
-        {engagements.length > 0 && (
-          <NewEngagementDialog prompts={prompts} />
-        )}
+        <NewEngagementDialog prompts={prompts} />
       </div>
       <EngagementGrid
         engagements={engagements}
         userId={user.id}
-        prompts={prompts}
       />
     </div>
   )

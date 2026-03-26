@@ -2,7 +2,7 @@
 
 import React, { useMemo, useEffect, useState } from 'react'
 import { useQueryState, parseAsString, parseAsFloat } from 'nuqs'
-import { SearchX } from 'lucide-react'
+import { SearchX, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Prompt } from '@/lib/types/prompt'
 import { PromptCard } from '@/components/library/prompt-card'
@@ -10,6 +10,10 @@ import { PromptCardList } from '@/components/library/prompt-card-list'
 import { FilterBar } from '@/components/library/filter-bar'
 import { FilterChips } from '@/components/library/filter-chips'
 import { createClient } from '@/lib/supabase/client'
+
+function escapeIlike(str: string): string {
+  return str.replace(/[%_\\]/g, '\\$&')
+}
 
 type LibraryGridProps = {
   initialPrompts: Prompt[]
@@ -44,7 +48,7 @@ export function LibraryGrid({ initialPrompts, isAdmin: _isAdmin, totalCount }: L
       setSearchLoading(true)
       try {
         const supabase = createClient()
-        const query = search.trim()
+        const query = escapeIlike(search.trim())
         const { data } = await supabase
           .from('prompts')
           .select('*')
@@ -161,7 +165,10 @@ export function LibraryGrid({ initialPrompts, isAdmin: _isAdmin, totalCount }: L
       />
 
       {searchLoading && (
-        <div className="text-sm text-muted-foreground py-2 px-4">Searching...</div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground py-3 px-4">
+          <Loader2 className="size-4 animate-spin" />
+          <span>Searching...</span>
+        </div>
       )}
 
       {filteredPrompts.length === 0 ? (

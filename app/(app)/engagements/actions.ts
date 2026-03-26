@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import type { EngagementStatus } from '@/lib/types/engagement'
 
@@ -18,6 +19,21 @@ async function getAuthenticatedUser() {
 }
 
 /**
+ * Ensures a profiles row exists for the given user.
+ * Uses admin client to bypass RLS. Best-effort — logs but doesn't throw on failure.
+ * Handles sessions that predate the login-time profile upsert (Plan 03-06).
+ */
+async function ensureProfile(userId: string, name: string, role: string) {
+  const adminClient = createAdminClient()
+  const { error } = await adminClient
+    .from('profiles')
+    .upsert({ id: userId, name, role }, { onConflict: 'id', ignoreDuplicates: true })
+  if (error) {
+    console.error('[ensureProfile] upsert failed:', error.message)
+  }
+}
+
+/**
  * Creates a new engagement for the authenticated user.
  * Auto-generates the engagement name from client_name + month/year suffix.
  * Validates required fields before inserting.
@@ -32,6 +48,11 @@ export async function createEngagement(formData: FormData) {
 
   if (!client_name?.trim()) return { error: 'Client name is required' }
   if (!industry?.trim()) return { error: 'Industry is required' }
+
+  // Ensure profile exists — catches sessions that predate login-time upsert
+  const displayName = user.user_metadata?.display_name ?? user.email?.split('@')[0] ?? 'User'
+  const role = user.app_metadata?.role ?? user.user_metadata?.demo_role ?? 'consultant'
+  await ensureProfile(user.id, displayName, role)
 
   // Auto-generate engagement name: "ClientName — Mon YYYY"
   const now = new Date()

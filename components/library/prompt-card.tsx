@@ -16,7 +16,8 @@ export function PromptCard({ prompt }: PromptCardProps) {
     <Link href={`/library/${prompt.id}`} className="block">
       <Card
         className={cn(
-          'transition-colors hover:border-primary/30 cursor-pointer h-full'
+          'transition-colors border-l-2 border-l-transparent hover:border-primary/30 cursor-pointer h-full',
+          prompt.status === 'deprecated' && 'opacity-60'
         )}
       >
         <CardHeader className="p-4 pb-0">
@@ -33,7 +34,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-2 flex flex-col gap-2">
-          <p className="text-sm text-muted-foreground line-clamp-1">
+          <p className="text-sm text-muted-foreground line-clamp-2">
             {prompt.description ?? ''}
           </p>
           <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
@@ -46,10 +47,13 @@ export function PromptCard({ prompt }: PromptCardProps) {
             )}
           </div>
           <div className="flex items-center justify-between text-[13px] text-muted-foreground mt-auto pt-1">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" role="img" aria-label={`Rating: ${prompt.avg_effectiveness.toFixed(1)} out of 5`}>
               <Star
                 data-icon="inline-start"
-                className="size-3.5 fill-[#FFB852] text-[#FFB852]"
+                className={cn(
+                  'size-3.5 text-[#FFB852]',
+                  prompt.avg_effectiveness >= 4.0 && 'fill-[#FFB852]'
+                )}
               />
               <span>{prompt.avg_effectiveness.toFixed(1)}</span>
               <span className="text-muted-foreground/60">({prompt.total_ratings})</span>

@@ -3,17 +3,14 @@
 import Link from 'next/link'
 import { Briefcase } from 'lucide-react'
 import { EngagementCard } from '@/components/engagements/engagement-card'
-import { NewEngagementDialog } from '@/components/engagements/new-engagement-dialog'
 import type { EngagementWithStats } from '@/lib/types/engagement'
-import type { Prompt } from '@/lib/types/prompt'
 
 type EngagementGridProps = {
   engagements: EngagementWithStats[]
   userId: string
-  prompts?: Prompt[]
 }
 
-export function EngagementGrid({ engagements, prompts }: EngagementGridProps) {
+export function EngagementGrid({ engagements }: EngagementGridProps) {
   if (engagements.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
@@ -22,7 +19,9 @@ export function EngagementGrid({ engagements, prompts }: EngagementGridProps) {
         <p className="text-sm text-muted-foreground max-w-[320px] text-center">
           Fork prompts into client workspaces, adapt them, and rate what works.
         </p>
-        <NewEngagementDialog prompts={prompts} />
+        <p className="text-sm text-muted-foreground">
+          Click <strong>New Engagement</strong> above to get started.
+        </p>
         <Link
           href="/library"
           className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"

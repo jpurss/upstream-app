@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Star, Download } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Prompt } from '@/lib/types/prompt'
 
@@ -13,7 +14,10 @@ export function PromptCardList({ prompt }: PromptCardListProps) {
   return (
     <Link
       href={`/library/${prompt.id}`}
-      className="flex items-center gap-4 px-4 border-b border-border hover:bg-card/50 cursor-pointer min-h-[48px] transition-colors"
+      className={cn(
+        'flex items-center gap-4 px-4 border-l-2 border-l-transparent hover:border-l-primary/30 hover:bg-card/50 cursor-pointer min-h-[48px] transition-colors',
+        prompt.status === 'deprecated' && 'opacity-60'
+      )}
     >
       <span className="flex-1 text-sm font-medium text-foreground truncate">
         {prompt.title}
@@ -27,8 +31,11 @@ export function PromptCardList({ prompt }: PromptCardListProps) {
       <Badge variant="secondary" className="text-[13px] shrink-0 hidden lg:flex">
         {prompt.target_model}
       </Badge>
-      <div className="flex items-center gap-1 text-[13px] text-muted-foreground shrink-0">
-        <Star className="size-3.5 fill-[#FFB852] text-[#FFB852]" />
+      <div className="flex items-center gap-1 text-[13px] text-muted-foreground shrink-0" role="img" aria-label={`Rating: ${prompt.avg_effectiveness.toFixed(1)} out of 5`}>
+        <Star className={cn(
+          'size-3.5 text-[#FFB852]',
+          prompt.avg_effectiveness >= 4.0 && 'fill-[#FFB852]'
+        )} />
         <span>{prompt.avg_effectiveness.toFixed(1)}</span>
       </div>
       <div className="flex items-center gap-1 text-[13px] text-muted-foreground shrink-0">

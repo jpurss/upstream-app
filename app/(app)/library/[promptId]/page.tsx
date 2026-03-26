@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import { BackToLibrary } from '@/components/library/back-to-library'
 import { fetchPromptById } from '@/lib/data/prompts'
 import { fetchUserEngagements } from '@/lib/data/engagements'
 import { countActiveForks } from '@/lib/data/forks'
@@ -62,12 +62,7 @@ export default async function PromptDetailPage({
   return (
     <div className="p-8">
       {/* Back link — D-08 */}
-      <Link
-        href="/library"
-        className="text-sm text-muted-foreground hover:text-primary mb-6 inline-block"
-      >
-        ← Library
-      </Link>
+      <BackToLibrary />
 
       {/* Title */}
       <h1 className="text-xl font-semibold mb-2">{prompt.title}</h1>

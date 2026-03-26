@@ -1,12 +1,13 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 
 /**
  * Checks if the current user is an admin (real or demo).
- * Returns the user object if admin, or null if not.
+ * Returns the user and an admin Supabase client (service role, bypasses RLS).
+ * Auth check uses the regular client; mutations use the admin client.
  */
 async function getAdminUser() {
   const supabase = await createClient()
@@ -22,7 +23,7 @@ async function getAdminUser() {
   const effectiveRole = role ?? (isAnonymous ? demoRole : null)
 
   if (effectiveRole !== 'admin') return null
-  return { user, supabase }
+  return { user, supabase: createAdminClient() }
 }
 
 /**
@@ -56,7 +57,7 @@ export async function createPrompt(formData: FormData) {
     ? useCaseTagsRaw.split(',').map((t) => t.trim()).filter(Boolean)
     : []
 
-  const { error } = await supabase.from('prompts').insert({
+  const { data, error } = await supabase.from('prompts').insert({
     title,
     description: description || null,
     content,
@@ -70,14 +71,18 @@ export async function createPrompt(formData: FormData) {
     output_schema: output_schema || null,
     created_by: user.id,
     status: 'active',
-  })
+  }).select()
 
   if (error) {
     return { error: error.message }
   }
 
+  if (!data || data.length === 0) {
+    return { error: 'Failed to create prompt. You may not have permission.' }
+  }
+
   revalidatePath('/library')
-  redirect('/library')
+  return { success: true }
 }
 
 /**
@@ -111,7 +116,7 @@ export async function updatePrompt(promptId: string, formData: FormData) {
     ? useCaseTagsRaw.split(',').map((t) => t.trim()).filter(Boolean)
     : []
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('prompts')
     .update({
       title,
@@ -128,14 +133,19 @@ export async function updatePrompt(promptId: string, formData: FormData) {
       updated_at: new Date().toISOString(),
     })
     .eq('id', promptId)
+    .select()
 
   if (error) {
     return { error: error.message }
   }
 
+  if (!data || data.length === 0) {
+    return { error: 'No prompt was updated. You may not have permission to edit this prompt.' }
+  }
+
   revalidatePath('/library')
   revalidatePath(`/library/${promptId}`)
-  redirect(`/library/${promptId}`)
+  return { success: true, promptId }
 }
 
 /**

@@ -3,7 +3,7 @@
 import { useActionState } from 'react'
 import { useTransition } from 'react'
 import Link from 'next/link'
-import { Library, GitFork, GitMerge, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,47 +38,13 @@ export default function LoginPage() {
         {/* Wordmark */}
         <div className="mb-16">
           <h1 className="text-xl font-semibold text-white">Upstream</h1>
-          <p className="text-sm text-zinc-400 mt-1">Every engagement makes your firm smarter</p>
         </div>
 
-        {/* Feature highlights */}
-        <div className="space-y-10">
-          <div className="flex gap-4">
-            <div className="mt-0.5 shrink-0">
-              <Library className="size-5 text-[#4287FF]" />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-white">Prompt Library</h3>
-              <p className="text-sm text-zinc-400 mt-1">
-                Central collection of field-tested prompts, searchable by category, model, and effectiveness.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="mt-0.5 shrink-0">
-              <GitFork className="size-5 text-[#4287FF]" />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-white">Fork &amp; Adapt</h3>
-              <p className="text-sm text-zinc-400 mt-1">
-                Check out prompts into client engagements. Adapt, test, and rate in the field.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4">
-            <div className="mt-0.5 shrink-0">
-              <GitMerge className="size-5 text-[#4287FF]" />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-white">Merge &amp; Improve</h3>
-              <p className="text-sm text-zinc-400 mt-1">
-                Push winning improvements back. Every engagement makes the firm smarter.
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Brand motto */}
+        <p className="font-display text-5xl font-black leading-[1.1] tracking-tight text-white">
+          Every engagement makes your firm{' '}
+          <span className="text-[#4287FF]">smarter</span>.
+        </p>
       </div>
 
       {/* Right column — auth panel (40% on desktop, full width on mobile) */}

@@ -54,13 +54,13 @@ export function PromptDetailSidebar({
   return (
     <div className="w-[280px] flex flex-col gap-4 shrink-0">
       {/* Section 1 — Copy Button */}
-      <Button variant="secondary" className="w-full" onClick={handleCopy}>
+      <Button variant="accent" className="w-full" onClick={handleCopy}>
         {copied ? (
           <Check data-icon="inline-start" data-testid="check-icon" />
         ) : (
           <Copy data-icon="inline-start" data-testid="copy-icon" />
         )}
-        Copy
+        Copy Prompt
       </Button>
 
       {userEngagements && (

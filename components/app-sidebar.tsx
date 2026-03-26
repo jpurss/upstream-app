@@ -88,7 +88,7 @@ export function AppSidebar({ userRole, userName, isAnonymous, pendingMergeCount 
       {/* Navigation */}
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className="sr-only">Navigation</SidebarGroupLabel>
           <SidebarMenu>
             {visibleItems.map((item) => {
               const Icon = item.icon

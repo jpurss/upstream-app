@@ -32,18 +32,18 @@ export function PromptDetailContent({ content }: PromptDetailContentProps) {
             )
           },
           pre: ({ children }) => (
-            <pre className="font-mono text-[13px] bg-muted p-4 rounded-lg overflow-x-auto mb-4">
+            <pre className="font-mono text-[13px] bg-muted p-4 rounded-lg overflow-x-auto mb-4 border border-border">
               {children}
             </pre>
           ),
           h1: ({ children }) => (
-            <h1 className="text-base font-semibold mb-3 mt-6">{children}</h1>
+            <h1 className="text-lg font-semibold mb-3 mt-8 text-foreground pb-2 border-b border-border">{children}</h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-base font-semibold mb-2 mt-5">{children}</h2>
+            <h2 className="text-base font-semibold mb-2 mt-6 text-foreground">{children}</h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-sm font-semibold mb-2 mt-4">{children}</h3>
+            <h3 className="text-sm font-semibold mb-2 mt-5 text-foreground">{children}</h3>
           ),
           ul: ({ children }) => (
             <ul className="font-mono text-[13px] list-disc pl-6 mb-4 flex flex-col gap-1">

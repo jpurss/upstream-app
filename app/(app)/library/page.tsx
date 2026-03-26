@@ -5,7 +5,15 @@ import { createClient } from '@/lib/supabase/server'
 import { LibraryGrid } from '@/components/library/library-grid'
 import { Button } from '@/components/ui/button'
 
-export default async function LibraryPage() {
+export default async function LibraryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  // Reading searchParams tells Next.js this page depends on URL params,
+  // so it re-renders on back-navigation instead of serving stale cache.
+  await searchParams
+
   const supabase = await createClient()
   const {
     data: { user },
