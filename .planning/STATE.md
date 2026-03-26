@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 04-04-PLAN.md — review detail page
-last_updated: "2026-03-26T12:05:49.782Z"
+status: Executing
+stopped_at: "Checkpoint: 04-06 Task 1 complete, awaiting human-verify Task 2"
+last_updated: "2026-03-26T11:12:00.000Z"
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 19
-  completed_plans: 19
+  completed_phases: 3
+  total_plans: 21
+  completed_plans: 20
 ---
 
 # Project State
@@ -143,8 +143,14 @@ None yet.
 - [Phase 1]: Smoke-test anonymous user isolation under RLS with two concurrent demo sessions before finalizing seed data
 - [Phase 4]: Confirm diff viewer dark mode theming (`react-diff-viewer-continued` vs `@git-diff-view/react`) before committing to implementation
 
+- [Phase 04-merge-workflow]: DiffViewer showDiffOnly default changed from false to true — fork-editor must pass showDiffOnly={false} explicitly (done in Plan 06)
+- [Phase 04-merge-workflow]: AlertDialogTrigger receives trigger as ReactNode child in ApproveConfirmDialog — cleaner parent-controlled trigger API
+- [Phase 04-merge-workflow]: ReviewContentEditor fully rewritten — old collapsible pattern deleted, replaced with always-visible textarea panel with originalContent/onReset props
+- [Phase 04-merge-workflow]: ReviewActionBar uses sticky bottom-0 with -mx-6 -mb-6 pattern — extends to page container edges without sidebar offset calculation
+- [Phase 04-merge-workflow]: ReviewSidebar deleted — replaced by ReviewContextBar (horizontal metadata bar) + ReviewActionBar (sticky bottom bar) in the new stacked layout
+
 ## Session Continuity
 
-Last session: 2026-03-26T12:00:08.280Z
-Stopped at: Completed 04-04-PLAN.md — review detail page
+Last session: 2026-03-26T11:12:00.000Z
+Stopped at: Checkpoint — 04-06 Task 1 complete, awaiting human-verify Task 2
 Resume file: None
