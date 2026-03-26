@@ -390,3 +390,364 @@ INSERT INTO prompts (
   'active',
   NULL
 );
+
+-- =============================================================================
+-- Update existing seed prompts with varied total_checkouts for dashboard data
+-- =============================================================================
+UPDATE prompts SET total_checkouts =
+  CASE title
+    WHEN 'Stakeholder Interview Synthesis'  THEN 38
+    WHEN 'Technology Landscape Assessment'  THEN 29
+    WHEN 'Process Mining from Documentation' THEN 21
+    WHEN 'AI Use Case Prioritization Matrix' THEN 45
+    WHEN 'Build vs Buy Analysis'            THEN 19
+    WHEN 'Change Impact Assessment'         THEN 14
+    WHEN 'Prompt Engineering Review'        THEN 33
+    WHEN 'Test Case Generation'             THEN 18
+    WHEN 'API Integration Specification'    THEN 12
+    WHEN 'Training Workshop Agenda Builder' THEN 27
+    WHEN 'Adoption Playbook Generator'      THEN 9
+    WHEN 'Quick Reference Card Creator'     THEN 41
+    WHEN 'Executive Summary Generator'      THEN 35
+    WHEN 'Weekly Status Report Compiler'    THEN 16
+    WHEN 'Risk Assessment Synthesizer'      THEN 22
+    WHEN 'Proposal Section Drafter'         THEN 31
+    WHEN 'Knowledge Base Article Writer'    THEN 8
+    WHEN 'Client Feedback Analyzer'         THEN 5
+    ELSE total_checkouts
+  END;
+
+-- =============================================================================
+-- PHASE 5: Demo Seed Data
+-- Two demo profiles (placeholder — claimed by signInAsDemo on login),
+-- 5 community profiles for upvote simulation,
+-- 2 engagements, 5 forks (varied ratings + merge statuses),
+-- 7 prompt requests (all statuses represented), upvote rows.
+-- =============================================================================
+
+-- Demo profiles (placeholder UUIDs — overwritten by signInAsDemo upsert claim)
+INSERT INTO profiles (id, name, role) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'Demo Consultant', 'consultant'),
+  ('00000000-0000-0000-0000-000000000002', 'Demo Admin',      'admin')
+ON CONFLICT (id) DO NOTHING;
+
+-- Community profiles for simulating upvotes from other consultants
+INSERT INTO profiles (id, name, role) VALUES
+  ('00000000-0000-0000-0000-000000000010', 'Alex Rivera',    'consultant'),
+  ('00000000-0000-0000-0000-000000000011', 'Sam Chen',       'consultant'),
+  ('00000000-0000-0000-0000-000000000012', 'Jordan Blake',   'consultant'),
+  ('00000000-0000-0000-0000-000000000013', 'Taylor Singh',   'consultant'),
+  ('00000000-0000-0000-0000-000000000014', 'Morgan Kim',     'consultant')
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- Engagements (2): owned by demo consultant placeholder
+-- =============================================================================
+INSERT INTO engagements (id, name, client_name, industry, status, created_by, created_at) VALUES
+  (
+    'aaaaaaaa-0000-0000-0000-000000000001',
+    'Acme Corp — Apr 2026',
+    'Acme Corp',
+    'Financial Services',
+    'active',
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '10 weeks'
+  ),
+  (
+    'aaaaaaaa-0000-0000-0000-000000000002',
+    'TechStart — Jan 2026',
+    'TechStart',
+    'Technology',
+    'completed',
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '18 weeks'
+  );
+
+-- =============================================================================
+-- Forked Prompts (5): linked to engagements above, referencing seed prompts
+-- forked_at timestamps spread over 10 weeks to create chart data
+-- =============================================================================
+INSERT INTO forked_prompts (
+  id,
+  source_prompt_id,
+  source_version,
+  engagement_id,
+  original_content,
+  adapted_content,
+  adaptation_notes,
+  effectiveness_rating,
+  usage_count,
+  feedback_notes,
+  issues,
+  merge_status,
+  merge_suggestion,
+  contains_client_context,
+  forked_by,
+  forked_at,
+  last_used
+) VALUES
+  -- Fork 1: Acme Corp, Stakeholder Interview Synthesis, pending merge
+  (
+    'bbbbbbbb-0000-0000-0000-000000000001',
+    (SELECT id FROM prompts WHERE title = 'Stakeholder Interview Synthesis' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000001',
+    (SELECT content FROM prompts WHERE title = 'Stakeholder Interview Synthesis' LIMIT 1),
+    E'You are an expert AI strategy consultant working with Acme Corp in the Financial Services sector.\n\n## Objective\nAnalyze the provided stakeholder interview transcripts and synthesize key findings for Acme''s digital transformation initiative. Pay particular attention to regulatory compliance concerns and legacy system integration challenges that are unique to FSI clients.\n\n## Context\n- Client: Acme Corp\n- Industry: Financial Services\n- Engagement scope: AI Readiness Assessment\n- Number of interviews: 12\n- Interviewees: C-suite, VP Operations, Compliance Lead\n\n## Instructions\n1. **Theme Extraction**: Identify the 3-5 most prominent themes, with special attention to compliance risk framing — FSI stakeholders will be more conservative than tech clients.\n2. **Pain Point Mapping**: List specific pain points. For Acme, distinguish between regulatory pain (compliance-driven friction) and operational pain (day-to-day inefficiency).\n3. **Decision Landscape**: Note existing decisions, contested decisions, and overdue decisions — especially any involving vendor lock-in or data residency.\n4. **Alignment Gaps**: Identify contradictions between C-suite ambitions and operational constraints.\n5. **Quick Wins**: Surface low-effort, high-visibility opportunities that can be delivered before the Q2 board presentation.\n6. **Risk Signals**: Flag organizational resistance, unrealistic timelines, data governance gaps.\n\n## Output Format\nProduce a structured report with these sections:\n- **Executive Summary** (3-5 bullets, suitable for Acme''s CFO)\n- **Key Themes** (table with theme, frequency, stakeholder groups, implication)\n- **Pain Points** (regulatory vs. operational, ranked by frequency)\n- **Alignment Gaps** (who disagrees, on what, why it matters)\n- **Quick Wins** (effort vs. impact matrix)\n- **Risk Signals** (risk, source, mitigation suggestion)',
+    'Added FSI-specific framing: distinguished regulatory pain from operational pain, added compliance risk angle throughout. Removed generic "cross-industry" language. Added Q2 board presentation as a deadline anchor for quick wins.',
+    5,
+    3,
+    'Excellent results in exec readiness session — CFO specifically called out the regulatory risk framing as exactly what they needed. Will suggest merging the FSI adaptations back.',
+    '{}',
+    'pending',
+    'The FSI-specific adaptations to this prompt significantly improved exec buy-in during the Acme engagement. Specifically: (1) distinguishing regulatory pain from operational pain is a reusable pattern for all FSI clients, (2) the compliance risk framing in the Risk Signals section caught issues that the generic version misses. Recommend adding a {{client_risk_profile}} variable and FSI-specific instructions as a configurable section.',
+    false,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '8 weeks',
+    NOW() - INTERVAL '3 weeks'
+  ),
+  -- Fork 2: Acme Corp, Technology Landscape Assessment, needs work
+  (
+    'bbbbbbbb-0000-0000-0000-000000000002',
+    (SELECT id FROM prompts WHERE title = 'Technology Landscape Assessment' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000001',
+    (SELECT content FROM prompts WHERE title = 'Technology Landscape Assessment' LIMIT 1),
+    E'You are a senior AI technology consultant conducting a landscape assessment for Acme Corp, a large enterprise in the Financial Services sector.\n\n## Objective\nAnalyze the provided technology documentation and identify high-value AI integration opportunities, with particular focus on compliance-safe automation patterns.\n\n## Context\n- Client: Acme Corp\n- Industry: Financial Services\n- Company size: Enterprise (5,000+ employees)\n- Current AI maturity level: 2 (basic automation, no generative AI in production)\n\n## Instructions\n1. **System Inventory**: Catalog all systems — core (mission-critical), supporting, and peripheral. Note age and vendor support status.\n2. **Data Flow Mapping**: Trace data flows, identify silos and manual handoffs.\n3. **AI Readiness Assessment**: For core systems, assess data quality, API accessibility, and organizational readiness. Flag any systems with PII/regulated data that require additional governance review.\n4. **Opportunity Identification**: Generate 8-10 AI use cases. Exclude any that would require regulated data in model training without explicit compliance approval.\n5. **Prioritization**: Rank by effort vs. impact, flagging compliance dependencies.\n6. **Risk Analysis**: Include data privacy, vendor SLA risks, and change readiness.\n\n## Output Format\n- Landscape Summary, System Inventory Table, Data Flow Observations\n- AI Opportunity Catalog, Priority Matrix, Top 3 Recommendations',
+    'Added compliance filter to opportunity identification — excludes use cases requiring regulated data in model training. Added PII flag to AI readiness assessment. Reduced from 12 to 8-10 opportunities to keep scope realistic for FSI client.',
+    3,
+    2,
+    'Too verbose for the client''s comfort level. They wanted a shorter, more executive-friendly output. The compliance additions were correct but the overall prompt still generates walls of text.',
+    '{"too_verbose"}',
+    'none',
+    NULL,
+    true,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '6 weeks',
+    NOW() - INTERVAL '5 weeks'
+  ),
+  -- Fork 3: Acme Corp, AI Use Case Prioritization Matrix, good rating
+  (
+    'bbbbbbbb-0000-0000-0000-000000000003',
+    (SELECT id FROM prompts WHERE title = 'AI Use Case Prioritization Matrix' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000001',
+    (SELECT content FROM prompts WHERE title = 'AI Use Case Prioritization Matrix' LIMIT 1),
+    E'You are a senior AI strategy consultant helping Acme Corp prioritize a portfolio of AI use cases for their 2026 implementation roadmap.\n\n## Objective\nEvaluate the provided list of AI use case candidates and produce a scored, ranked prioritization matrix with a recommended phased implementation roadmap. Account for Acme''s conservative risk appetite and Q3 delivery constraints.\n\n## Context\n- Client: Acme Corp\n- Industry: Financial Services\n- Available AI budget: $2-3M for year 1\n- Implementation team capacity: 4 engineers + 2 AI consultants (Human Agency)\n- Strategic priorities: (1) Reduce manual compliance review workload by 40%, (2) Accelerate client onboarding from 14 days to 5 days, (3) Improve analyst productivity\n- Constraints: No generative AI in customer-facing flows until Q4 board approval. Internal tools only for H1.\n\n## Scoring Framework\n(same as standard)\n\n## Instructions\n1-5 standard\n\n## Output Format\n(standard)',
+    'Added Acme-specific strategic priorities and constraint: no customer-facing GenAI until Q4. Added Q3 delivery constraint. This changes the Phase 1 recommendations significantly — shifts from highest-impact to highest-feasibility.',
+    4,
+    4,
+    'Very effective. The constraint-aware prioritization prevented the team from over-committing to H1 and gave execs a cleaner story for the board.',
+    '{}',
+    'none',
+    NULL,
+    true,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '4 weeks',
+    NOW() - INTERVAL '1 week'
+  ),
+  -- Fork 4: TechStart, Executive Summary Generator, approved merge
+  (
+    'bbbbbbbb-0000-0000-0000-000000000004',
+    (SELECT id FROM prompts WHERE title = 'Executive Summary Generator' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000002',
+    (SELECT content FROM prompts WHERE title = 'Executive Summary Generator' LIMIT 1),
+    E'You are a senior consultant preparing executive communications for TechStart''s AI Velocity program.\n\n## Objective\nTransform the provided raw project materials into a polished executive summary for a startup audience — concise, metric-driven, and VC-readable. TechStart''s exec team expects shorter, faster summaries than enterprise clients. Target: 300-400 words maximum.\n\n## Context\n- Client: TechStart\n- Project: AI Velocity Program\n- Audience: CEO, CTO, and Board Observer\n- Sentiment: On track\n\n## Executive Summary Principles\n1. **Lead with numbers** — startup execs respond to metrics more than narrative\n2. **Be direct about blockers** — no softening language\n3. **Keep it short** — 300-400 words maximum\n4. **One decision per summary** — don''t list 5 items needing attention, prioritize the most important one\n\n## Output Format\n- Status (1 line, RAG), Key Wins (3 bullets, each with a metric), One Decision Needed, Top Risk (1 item), Next 2 Weeks (3 milestones)',
+    'Compressed format significantly for startup context — removed financial summary section, reduced to single decision, shortened output to 300-400 words. Startup execs don''t want the full enterprise template.',
+    5,
+    6,
+    'Perfect for TechStart''s weekly board updates. CEO said it was the first status report he actually read end-to-end.',
+    '{}',
+    'approved',
+    NULL,
+    false,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '10 weeks',
+    NOW() - INTERVAL '6 weeks'
+  ),
+  -- Fork 5: TechStart, Training Workshop Agenda Builder, good rating
+  (
+    'bbbbbbbb-0000-0000-0000-000000000005',
+    (SELECT id FROM prompts WHERE title = 'Training Workshop Agenda Builder' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000002',
+    (SELECT content FROM prompts WHERE title = 'Training Workshop Agenda Builder' LIMIT 1),
+    E'You are a learning experience designer creating an AI training program for TechStart''s engineering and product teams.\n\n## Objective\nDesign a half-day (4-hour) workshop that builds practical AI prompting skills for technical professionals who are already familiar with AI tools but have inconsistent prompting quality.\n\n## Context\n- Client: TechStart\n- Target audience: Engineers and PMs (mixed technical backgrounds)\n- Current AI familiarity: intermediate (use Copilot and ChatGPT daily, no formal prompt training)\n- Workshop duration: 4 hours (half-day)\n- Format: in-person\n- Tools they use: GitHub Copilot, ChatGPT Plus, Claude\n- Primary use cases: code review assistance, spec writing, debugging, customer feedback synthesis\n\n## Design Principles\n(standard 4 principles)\n\n## Instructions\n1-7 standard, adapted for technical audience with intermediate familiarity\n\n## Output Format\n(standard)',
+    'Condensed to half-day format for TechStart''s time-constrained team. Focused on technical use cases (code review, debugging) rather than general prompting. Assumes intermediate familiarity so skipped basics section.',
+    4,
+    3,
+    'Good results. Would benefit from more hands-on debugging exercises. Team was most engaged during the live coding segment.',
+    '{"needs_more_exercises"}',
+    'none',
+    NULL,
+    false,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '3 weeks',
+    NOW() - INTERVAL '2 weeks'
+  );
+
+-- =============================================================================
+-- Prompt Requests (7): full status lifecycle for demo
+-- =============================================================================
+INSERT INTO prompt_requests (
+  id,
+  title,
+  description,
+  category,
+  urgency,
+  status,
+  decline_reason,
+  requested_by,
+  resolved_by_prompt,
+  resolved_at,
+  created_at
+) VALUES
+  -- 1. Open, urgent, high upvotes
+  (
+    'cccccccc-0000-0000-0000-000000000001',
+    'Competitive landscape analysis prompt',
+    'We need a structured prompt for generating competitive landscape analyses from publicly available information. Currently our consultants are writing these ad-hoc and the quality is wildly inconsistent. A strong template would save 3-4 hours per engagement during the discovery phase and ensure we''re covering the right dimensions (market positioning, pricing strategy, technology differentiation, go-to-market motions).',
+    'Discovery',
+    'urgent',
+    'open',
+    NULL,
+    '00000000-0000-0000-0000-000000000001',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '3 weeks'
+  ),
+  -- 2. Open, medium, moderate upvotes
+  (
+    'cccccccc-0000-0000-0000-000000000002',
+    'Client stakeholder mapping template',
+    'A prompt that helps consultants build a comprehensive stakeholder map at the start of an engagement. Should identify key decision-makers, influencers, blockers, and champions, and output a structured map with recommended engagement strategies for each stakeholder type. The Stakeholder Interview Synthesis prompt is great for analysis but we need something for the initial mapping step.',
+    'Discovery',
+    'medium',
+    'open',
+    NULL,
+    '00000000-0000-0000-0000-000000000010',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '5 weeks'
+  ),
+  -- 3. Open, nice_to_have, low upvotes
+  (
+    'cccccccc-0000-0000-0000-000000000003',
+    'ROI calculator prompt for AI initiatives',
+    'A structured prompt for building ROI models for AI initiatives. Clients always ask "what''s the business case?" and we need a rigorous, defensible framework that covers cost reduction, productivity gains, risk reduction, and revenue impact. Should generate a 3-year model with conservative, base, and optimistic scenarios.',
+    'Solution Design',
+    'nice_to_have',
+    'open',
+    NULL,
+    '00000000-0000-0000-0000-000000000011',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '7 weeks'
+  ),
+  -- 4. Open, medium, very low upvotes
+  (
+    'cccccccc-0000-0000-0000-000000000004',
+    'Data migration risk assessment framework',
+    'For engagements that involve migrating data to AI-ready platforms, we need a structured risk assessment prompt. Should cover data quality, lineage, compliance/PII risks, and migration sequencing. Currently borrowing from the general Risk Assessment Synthesizer but a migration-specific version would be much more useful.',
+    'Build',
+    'medium',
+    'open',
+    NULL,
+    '00000000-0000-0000-0000-000000000012',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '2 weeks'
+  ),
+  -- 5. Planned, medium upvotes
+  (
+    'cccccccc-0000-0000-0000-000000000005',
+    'Change management communication template',
+    'A prompt that generates a change management communication plan for AI rollout projects. Should produce a multi-channel communication calendar with templates for email, town hall talking points, and manager briefings. We have the Adoption Playbook Generator but need more granular communication templates that account for different stakeholder anxiety levels.',
+    'Enablement',
+    'medium',
+    'planned',
+    NULL,
+    '00000000-0000-0000-0000-000000000013',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '6 weeks'
+  ),
+  -- 6. Resolved, linked to Executive Summary Generator
+  (
+    'cccccccc-0000-0000-0000-000000000006',
+    'Executive summary generator for AI projects',
+    'We need a standardized way to produce executive summaries for AI initiative status updates. Format should be C-suite ready, RAG-status driven, and under one page. Our PMs are spending too much time formatting these manually.',
+    'Delivery',
+    'urgent',
+    'resolved',
+    NULL,
+    '00000000-0000-0000-0000-000000000001',
+    (SELECT id FROM prompts WHERE title = 'Executive Summary Generator' LIMIT 1),
+    NOW() - INTERVAL '2 weeks',
+    NOW() - INTERVAL '10 weeks'
+  ),
+  -- 7. Declined
+  (
+    'cccccccc-0000-0000-0000-000000000007',
+    'Generic email writer',
+    'A general-purpose email drafting prompt for writing professional emails.',
+    'Internal Ops',
+    'nice_to_have',
+    'declined',
+    'Too generic for our AI consulting context. Our prompt library focuses on specialized AI strategy, delivery, and enablement prompts — not general office productivity tools. Plenty of AI email assistants already exist. We should keep the library focused on what differentiates Human Agency''s delivery.',
+    '00000000-0000-0000-0000-000000000014',
+    NULL,
+    NULL,
+    NOW() - INTERVAL '8 weeks'
+  );
+
+-- =============================================================================
+-- Request Upvotes: simulate community voting
+-- Request 1 (competitive landscape): 14 upvotes
+-- Request 2 (stakeholder mapping): 8 upvotes
+-- Request 3 (ROI calculator): 5 upvotes
+-- Request 4 (data migration): 2 upvotes
+-- Request 5 (change management): 6 upvotes
+-- Request 6 (exec summary) and 7 (email writer): no upvotes (resolved/declined)
+-- =============================================================================
+
+-- Request 1: 14 upvotes — use all 7 demo profiles
+INSERT INTO request_upvotes (request_id, user_id) VALUES
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000010'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000011'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000012'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000013'),
+  ('cccccccc-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000014');
+
+-- Request 2: 8 upvotes — but we only have 7 profiles, use 5
+INSERT INTO request_upvotes (request_id, user_id) VALUES
+  ('cccccccc-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001'),
+  ('cccccccc-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000011'),
+  ('cccccccc-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000012'),
+  ('cccccccc-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000013'),
+  ('cccccccc-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000014');
+
+-- Request 3: 5 upvotes
+INSERT INTO request_upvotes (request_id, user_id) VALUES
+  ('cccccccc-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001'),
+  ('cccccccc-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000010'),
+  ('cccccccc-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000012'),
+  ('cccccccc-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000013'),
+  ('cccccccc-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000014');
+
+-- Request 4: 2 upvotes
+INSERT INTO request_upvotes (request_id, user_id) VALUES
+  ('cccccccc-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000010'),
+  ('cccccccc-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000011');
+
+-- Request 5: 6 upvotes
+INSERT INTO request_upvotes (request_id, user_id) VALUES
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001'),
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000010'),
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000011'),
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000012'),
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000013'),
+  ('cccccccc-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000014');
