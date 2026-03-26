@@ -1,19 +1,51 @@
 ---
-description: Verification report for Phase 04 (Merge Workflow) — confirms all 5 success criteria and MERGE-01 through MERGE-05 requirements are implemented and wired in the codebase.
+description: Re-verification report for Phase 04 (Merge Workflow) — confirms gap closure after plans 04-05 and 04-06 redesigned the review detail page with a stacked 4-zone layout, floating action bar, and DiffViewer showDiffOnly toggle.
 date_last_edited: 2026-03-26
 phase: 04-merge-workflow
-verified: 2026-03-26T08:05:00Z
-status: passed
+verified: 2026-03-26T12:00:00Z
+status: gaps_found
 score: 5/5 must-haves verified
-re_verification: false
+re_verification: true
+gaps:
+  - truth: "Action bar button text renders correctly (no HTML entity escaping visible to users)"
+    status: partial
+    reason: "review-action-bar.tsx line 66 uses &amp; in JSX text content, which renders as literal '&amp;' on screen instead of '&'. The plan explicitly called this out as a bug to fix. merge-suggestion-section.tsx line 82 has the same issue with 'Revise &amp; resubmit'."
+    artifacts:
+      - path: "components/review/review-action-bar.tsx"
+        issue: "Line 66: 'Approve &amp; Merge' in JSX text — renders as 'Approve &amp; Merge' on screen"
+      - path: "components/engagements/merge-suggestion-section.tsx"
+        issue: "Line 82: 'Revise &amp; resubmit' in JSX text — renders as 'Revise &amp; resubmit' on screen"
+    missing:
+      - "Replace &amp; with & in JSX text content in review-action-bar.tsx"
+      - "Replace &amp; with & in JSX text content in merge-suggestion-section.tsx"
+human_verification:
+  - test: "Verify stacked 4-zone layout and full merge workflow end-to-end"
+    expected: "Review detail page shows stacked layout (back link + status badge, horizontal context bar, Changes/Edit tabs, floating action bar). Approve opens confirmation dialog before executing. Decline expands inline form in action bar."
+    why_human: "Requires live Supabase DB, two-role auth sessions, and visual inspection of layout correctness"
 ---
 
-# Phase 4: Merge Workflow Verification Report
+# Phase 4: Merge Workflow — Re-Verification Report
 
 **Phase Goal:** The knowledge loop closes — consultants can suggest pushing field-tested improvements back to the central library, and admins can review, diff, approve, or reject them.
 **Verified:** 2026-03-26
-**Status:** PASSED
-**Re-verification:** No — initial verification
+**Status:** GAPS FOUND (1 minor bug)
+**Re-verification:** Yes — after gap closure plans 04-05 and 04-06
+
+---
+
+## Re-Verification Context
+
+Previous verification (`2026-03-26T08:05:00Z`) had status **passed** (5/5). The UAT then surfaced a major UI issue (Test 5): review detail page was cramped, text unreadable, sidebar buttons overlapping diff content. Plans 04-05 and 04-06 were executed to redesign the review detail page. This is the verification of that gap closure.
+
+**Previous gaps closed by 04-05/04-06:**
+- Review detail page cramped two-column layout replaced with stacked 4-zone layout
+- DiffViewer now supports showDiffOnly toggle for collapsing unchanged lines
+- ReviewContextBar replaces 280px sidebar with compact horizontal metadata bar
+- ReviewContentEditor rewritten as full-width panel (not collapsible)
+- ApproveConfirmDialog added — approve now requires confirmation before executing
+- Sticky floating action bar with version indicator on approve button
+
+**Re-verification focus:** Plans 04-05 and 04-06 must-haves, plus confirmation of original 5 truths.
 
 ---
 
@@ -23,64 +55,84 @@ re_verification: false
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | User can submit a merge suggestion from any forked prompt with a merge note — the suggestion enters a pending review queue | VERIFIED | `MergeSuggestionSection` component exists with full 4-state rendering (none/pending/approved/declined). Calls `suggestMerge` which sets `merge_status='pending'` and `merge_suggestion=note` in DB. |
-| 2 | The merge suggestion view shows a side-by-side diff of the original library content vs the adapted fork content | VERIFIED | `ReviewDetailClient` renders `DiffViewer` with `leftTitle="Library (current)"` and `rightTitle="Fork (adapted)"` using `suggestion.source_prompt_content` vs `suggestion.adapted_content`. |
-| 3 | Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status | VERIFIED | `/review` page (server component, admin-gated) calls `fetchMergeSuggestions(status)`. `ReviewQueueClient` renders filter tabs (Pending/Approved/Declined/All). `ReviewQueueCard` shows title, submitter, engagement, read-only `StarRating`, and merge note with tooltip. |
-| 4 | Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created | VERIFIED | `approveMerge` in `review/actions.ts`: fetches current version, updates `prompts.content` and `prompts.version` (+1), inserts into `prompt_changelog`, sets `forked_prompts.merge_status='approved'`. `ReviewSidebar` calls `approveMerge(suggestion.id, source_prompt_id, editedContent, merge_suggestion)`. |
-| 5 | Admin can decline a merge with a reason — the fork is notified of the rejection reason | VERIFIED | `declineMerge` in `review/actions.ts` sets `merge_status='declined'` and `merge_decline_reason=reason`. `DeclineReasonForm` component expands inline, requires non-empty reason before enabling "Confirm Decline". Declined state in `MergeSuggestionSection` renders the reason and a "Revise & resubmit" link. |
+| 1 | User can submit a merge suggestion from any forked prompt with a merge note — the suggestion enters a pending review queue | VERIFIED | `MergeSuggestionSection` (139 lines, all 4 states) wired in fork-sidebar.tsx Section 8. `suggestMerge` action sets `merge_status='pending'`. |
+| 2 | The merge suggestion view shows a side-by-side diff of the original library content vs the adapted fork content | VERIFIED | `ReviewDetailClient` renders `DiffViewer` with `source_prompt_content` vs `editedContent`, labels "Library (current)" / "Fork (adapted)". showDiffOnly toggle present. |
+| 3 | Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status | VERIFIED | `/review` page admin-gated, `ReviewQueueClient` with Pending/Approved/Declined/All tabs, `ReviewQueueCard` shows submitter, engagement, star rating, merge note. |
+| 4 | Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created | VERIFIED | `approveMerge` in `review/actions.ts` updates prompt content, bumps version, inserts changelog. `ApproveConfirmDialog` gates the action with version-aware copy. |
+| 5 | Admin can decline a merge with a reason — the fork is notified of the rejection reason | VERIFIED | `declineMerge` stores reason. `DeclineReasonForm` with `initialExpanded` and `onDiscard` props wired in `ReviewActionBar`. Declined state in `MergeSuggestionSection` shows reason and "Revise & resubmit" link. |
 
 **Score:** 5/5 truths verified
 
 ---
 
-## Required Artifacts
+## Plan 04-05 Must-Haves Verification
+
+### Truths from 04-05 PLAN frontmatter
+
+| Truth | Status | Evidence |
+|-------|--------|----------|
+| DiffViewer supports showDiffOnly mode that collapses unchanged lines | VERIFIED | `diff-viewer.tsx` lines 27-38: `showDiffOnly?: boolean` default `true`, `extraLinesSurroundingDiff?: number` default 3. Both passed to `ReactDiffViewer`. `key` prop forces re-render on toggle. |
+| ReviewContextBar displays suggestion metadata in a compact horizontal layout | VERIFIED | `review-context-bar.tsx` 125 lines: horizontal flex row with submitter, engagement link, star rating, issue tags separated by pipe dividers. Merge note in row 2 with tooltip. "More context" expandable toggle. |
+| ApproveConfirmDialog shows version-aware confirmation before merge | VERIFIED | `approve-confirm-dialog.tsx` 88 lines: two description variants based on `hasEdited`, version numbers N and N+1, "Keep Reviewing" cancel, "Approve & Merge" confirm with spinner. |
+| ReviewContentEditor is a full-width textarea panel (not a collapsible) | VERIFIED | `review-content-editor.tsx` 43 lines: always-visible `Textarea` with `min-h-[400px] font-mono`, character count, conditional "Reset to original adaptation" link. No expand/collapse state. |
+
+### Artifacts from 04-05 PLAN frontmatter
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `supabase/migrations/003_merge_decline_reason.sql` | Adds merge_decline_reason column | VERIFIED | Contains `ALTER TABLE forked_prompts ADD COLUMN merge_decline_reason TEXT;` |
-| `lib/types/merge.ts` | MergeSuggestion view type with joined fields | VERIFIED | Exports `MergeSuggestion` with all 20 fields including joined: source_prompt_title, source_prompt_content, source_prompt_version, submitter_name, engagement_name |
-| `lib/data/merge-suggestions.ts` | Data access layer | VERIFIED | Exports `fetchMergeSuggestions`, `fetchMergeSuggestionById`, `countPendingMerges` — all use `createAdminClient()`, 127 lines |
-| `app/(app)/review/actions.ts` | Admin server actions | VERIFIED | Exports `approveMerge` and `declineMerge`, starts with `'use server'`, contains self-contained `getAdminUser()` using `createAdminClient()` |
-| `app/(app)/engagements/[id]/forks/[forkId]/actions.ts` | Extended fork actions with suggestMerge | VERIFIED | Exports `suggestMerge` at line 116, uses `getAuthenticatedUser()` (regular client, RLS-scoped) |
-| `components/engagements/merge-suggestion-section.tsx` | Fork sidebar Section 8 | VERIFIED | 139 lines, `'use client'`, `statusConfig` object, Dialog (not AlertDialog), all 4 states rendered |
-| `components/engagements/fork-sidebar.tsx` | Updated sidebar with Section 8 | VERIFIED | Imports `MergeSuggestionSection`, renders as Section 8 with `border-t border-border` pattern |
-| `components/app-sidebar.tsx` | Activated Review Queue nav with badge | VERIFIED | Review Queue `enabled: true`, `pendingMergeCount?: number` prop, amber Badge rendered when count > 0 |
-| `app/(app)/layout.tsx` | Layout fetches pending count | VERIFIED | Imports `countPendingMerges`, calls it when `effectiveRole === 'admin'`, passes `pendingMergeCount` to `AppSidebar` |
-| `app/(app)/review/page.tsx` | Review queue server component | VERIFIED | No `'use client'`, admin gate redirects to `/engagements`, reads `searchParams.status`, calls `fetchMergeSuggestions` |
-| `app/(app)/review/review-queue-client.tsx` | Filter tabs + card list | VERIFIED | `'use client'`, Tabs with pending/approved/declined/all triggers, renders `ReviewQueueCard` list, status-aware empty state with `GitMerge` icon |
-| `app/(app)/review/loading.tsx` | Loading skeleton | VERIFIED | Renders 3 Skeleton cards |
-| `components/review/review-queue-card.tsx` | Rich context card | VERIFIED | Links to `/review/[id]`, statusConfig badge, `StarRating` read-only, merge note with `Tooltip`, `hover:border-[#4287FF]` |
-| `app/(app)/review/[suggestionId]/page.tsx` | Review detail server component | VERIFIED | Admin gate, calls `fetchMergeSuggestionById`, `notFound()` when missing, renders `ReviewDetailClient` |
-| `app/(app)/review/[suggestionId]/loading.tsx` | Review detail loading skeleton | VERIFIED | Skeleton components for two-column layout |
-| `components/review/review-detail-client.tsx` | Two-column orchestrator | VERIFIED | `'use client'`, `flex-1` left + `w-[280px]` right, `DiffViewer` with custom titles, `ReviewContentEditor`, `ReviewSidebar` |
-| `components/review/review-content-editor.tsx` | Collapsible admin edit textarea | VERIFIED | `'use client'`, `ChevronDown` toggle, `font-mono` textarea, "This content will replace the library prompt on approval." helper text |
-| `components/review/review-sidebar.tsx` | 7-section sidebar with approve/decline | VERIFIED | 7 sections with `py-4 border-t border-border` pattern, calls `approveMerge` with `editedContent`, renders `DeclineReasonForm` |
-| `components/review/decline-reason-form.tsx` | Inline decline form | VERIFIED | `'use client'`, inline expand pattern, "Confirm Decline" disabled when reason empty, calls `declineMerge` |
-| `components/engagements/diff-viewer.tsx` | DiffViewer with custom title props | VERIFIED | `leftTitle?: string` and `rightTitle?: string` props added, defaults preserved, empty state now "No differences found." |
-| `tests/merge-data.test.ts` | TDD test file for data access | VERIFIED | Exists, 5 test files total for phase 04 |
-| `tests/merge-suggest.test.ts` | TDD test file for suggestMerge | VERIFIED | Exists |
-| `tests/merge-approve.test.ts` | TDD test file for approveMerge | VERIFIED | Exists |
-| `tests/merge-decline.test.ts` | TDD test file for declineMerge | VERIFIED | Exists |
-| `tests/merge-diff.test.tsx` | TDD test file for DiffViewer | VERIFIED | Exists |
-| `tests/review-queue.test.ts` | TDD test file for admin gate | VERIFIED | Exists |
+| `components/engagements/diff-viewer.tsx` | Enhanced DiffViewer with showDiffOnly and extraLinesSurroundingDiff props | VERIFIED | 61 lines. `showDiffOnly` and `extraLinesSurroundingDiff` in interface and destructure with defaults. Both passed to ReactDiffViewer. `key` prop added in latest polish commit. |
+| `components/review/review-context-bar.tsx` | Horizontal metadata bar replacing 280px sidebar | VERIFIED | 125 lines (min_lines: 40). `MergeSuggestion` type import, `useState`, submitter/engagement/rating/issues/merge-note rendered. |
+| `components/review/approve-confirm-dialog.tsx` | AlertDialog confirmation with version-aware copy | VERIFIED | 88 lines (min_lines: 40). `approveMerge` import, version arithmetic, two description variants. |
+| `components/review/review-content-editor.tsx` | Full-width editor panel with reset link and character count | VERIFIED | 43 lines (min_lines: 30). All four required props: `content`, `originalContent`, `onChange`, `onReset`. |
 
----
-
-## Key Link Verification
+### Key Links from 04-05 PLAN frontmatter
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `components/engagements/merge-suggestion-section.tsx` | `app/(app)/engagements/[id]/forks/[forkId]/actions.ts` | `suggestMerge` import | WIRED | Line 17: `import { suggestMerge } from '@/app/(app)/engagements/[id]/forks/[forkId]/actions'` |
-| `app/(app)/layout.tsx` | `lib/data/merge-suggestions.ts` | `countPendingMerges` import | WIRED | Line 7: `import { countPendingMerges } from '@/lib/data/merge-suggestions'`. Called conditionally when `effectiveRole === 'admin'` at line 50. |
-| `components/app-sidebar.tsx` | `pendingMergeCount` prop from layout | Props from layout | WIRED | `pendingMergeCount?: number` in `AppSidebarProps`, used at line 104 to conditionally render amber Badge |
-| `lib/data/merge-suggestions.ts` | `lib/supabase/admin.ts` | `createAdminClient()` import | WIRED | Line 1: `import { createAdminClient } from '@/lib/supabase/admin'`. All 3 exported functions call `createAdminClient()` |
-| `app/(app)/review/actions.ts` | `lib/supabase/admin.ts` | `getAdminUser()` using `createAdminClient` | WIRED | Line 4: `import { createAdminClient } from '@/lib/supabase/admin'`. `getAdminUser()` returns `createAdminClient()` for mutations |
-| `app/(app)/review/page.tsx` | `lib/data/merge-suggestions.ts` | `fetchMergeSuggestions` import | WIRED | Line 3: import. Called at line 29 with `currentStatus` parameter |
-| `app/(app)/review/page.tsx` | `app/(app)/review/review-queue-client.tsx` | `ReviewQueueClient` import | WIRED | Line 4: import. Rendered at line 31 |
-| `components/review/review-queue-card.tsx` | `app/(app)/review/[suggestionId]` | `Link href` navigation | WIRED | Line 50: `<Link href={'/review/' + suggestion.id}` |
-| `components/review/review-detail-client.tsx` | `components/engagements/diff-viewer.tsx` | `DiffViewer` import | WIRED | Line 6: import. Used at line 38-43 with custom titles |
-| `components/review/review-sidebar.tsx` | `app/(app)/review/actions.ts` | `approveMerge` import | WIRED | Line 13: `import { approveMerge } from '@/app/(app)/review/actions'`. Called in `handleApprove` |
-| `components/review/decline-reason-form.tsx` | `app/(app)/review/actions.ts` | `declineMerge` import | WIRED | Line 9: `import { declineMerge } from '@/app/(app)/review/actions'`. Called in `handleDecline` |
+| `approve-confirm-dialog.tsx` | `app/(app)/review/actions.ts` | `approveMerge` import | WIRED | Line 17: `import { approveMerge } from '@/app/(app)/review/actions'` |
+| `review-context-bar.tsx` | `lib/types/merge.ts` | `MergeSuggestion` type import | WIRED | Line 10: `import type { MergeSuggestion } from '@/lib/types/merge'` |
+
+---
+
+## Plan 04-06 Must-Haves Verification
+
+### Truths from 04-06 PLAN frontmatter
+
+| Truth | Status | Evidence |
+|-------|--------|----------|
+| Review detail page uses stacked 4-zone layout instead of two-column | VERIFIED | `review-detail-client.tsx`: `flex flex-col gap-6` root. Zone 1 header, Zone 2 ReviewContextBar, Zone 3 Tabs (pending) or read-only diff, Zone 4 ReviewActionBar. No column layout. |
+| Admin can switch between Changes tab and Edit tab | VERIFIED | `Tabs value={activeTab} onValueChange={setActiveTab}` with `TabsTrigger value="changes"` and `value="edit"`. Both tabs render full-width content. |
+| Admin edits in Edit tab are reflected in the Changes diff | VERIFIED | `editedContent` state initialized from `suggestion.adapted_content`, bound to `ReviewContentEditor onChange={setEditedContent}`. DiffViewer receives `adapted={editedContent}`. |
+| Sticky action bar with Approve & Merge and Decline stays visible | VERIFIED | `review-action-bar.tsx` line 30: `fixed bottom-6 left-[var(--sidebar-width)] right-0 z-40 flex justify-center`. Floating pill above content. |
+| Approve button opens confirmation dialog before executing merge | VERIFIED | `ReviewActionBar` wraps `ApproveConfirmDialog` — clicking trigger opens AlertDialog, no direct mutation. |
+| Decline expands inline form within the sticky bar | VERIFIED | `isDeclineOpen` state in `ReviewActionBar`. When true, renders `DeclineReasonForm initialExpanded={true}`. Approve button `disabled={isDeclineOpen}`. |
+| Approved/declined suggestions show read-only view | VERIFIED | `isPending` check gates Tabs rendering. Non-pending path renders read-only diff with no Edit tab and no ReviewActionBar. |
+| Fork detail page still shows all diff lines (showDiffOnly={false}) | VERIFIED | `fork-editor.tsx` line 126: `<DiffViewer original={fork.original_content} adapted={content} showDiffOnly={false} />` |
+
+### Artifacts from 04-06 PLAN frontmatter
+
+| Artifact | Expected | Status | Details |
+|----------|----------|--------|---------|
+| `components/review/review-detail-client.tsx` | Stacked 4-zone layout orchestrator | VERIFIED | 195 lines (min_lines: 80). All 4 zones present. StatusBadge inline helper. |
+| `components/review/review-action-bar.tsx` | Sticky bottom bar with approve/decline | VERIFIED | 76 lines (min_lines: 50). Fixed positioning, pill styling, ApproveConfirmDialog + DeclineReasonForm. |
+
+### Key Links from 04-06 PLAN frontmatter
+
+| From | To | Via | Status | Details |
+|------|----|-----|--------|---------|
+| `review-detail-client.tsx` | `review-context-bar.tsx` | `ReviewContextBar` import | WIRED | Line 9: `import { ReviewContextBar } from '@/components/review/review-context-bar'`. Used line 82. |
+| `review-detail-client.tsx` | `review-action-bar.tsx` | `ReviewActionBar` import | WIRED | Line 10: `import { ReviewActionBar } from '@/components/review/review-action-bar'`. Used line 187. |
+| `review-detail-client.tsx` | `diff-viewer.tsx` | `DiffViewer` with `showDiffOnly` | WIRED | Line 8: import. Lines 132-139 and 174-181: `showDiffOnly={showDiffOnly}` passed. |
+| `review-action-bar.tsx` | `approve-confirm-dialog.tsx` | `ApproveConfirmDialog` import | WIRED | Line 8: `import { ApproveConfirmDialog } from '@/components/review/approve-confirm-dialog'`. Used line 52. |
+| `review-action-bar.tsx` | `decline-reason-form.tsx` | `DeclineReasonForm` import | WIRED | Line 7: `import { DeclineReasonForm } from '@/components/review/decline-reason-form'`. Used line 34. |
+
+---
+
+## Deletions Verified
+
+| File | Expected | Status |
+|------|----------|--------|
+| `components/review/review-sidebar.tsx` | Deleted — replaced by stacked layout | VERIFIED DELETED — file absent from `components/review/`. Zero orphan imports found. |
 
 ---
 
@@ -88,11 +140,10 @@ re_verification: false
 
 | Artifact | Data Variable | Source | Produces Real Data | Status |
 |----------|---------------|--------|--------------------|--------|
-| `review-queue-client.tsx` | `suggestions` | `fetchMergeSuggestions(status)` in `app/(app)/review/page.tsx` | Yes — DB query via `createAdminClient()` on `forked_prompts` with joins to `prompts`, `profiles`, `engagements` | FLOWING |
-| `review-detail-client.tsx` | `suggestion` | `fetchMergeSuggestionById(suggestionId)` in `app/(app)/review/[suggestionId]/page.tsx` | Yes — DB query via `createAdminClient()` with `.single()` | FLOWING |
-| `merge-suggestion-section.tsx` | `mergeStatus`, `declineReason` | `fork.merge_status`, `fork.merge_decline_reason` props (from Phase 3 fork detail page) | Yes — props hydrated from server-fetched `ForkedPromptWithTitle` | FLOWING |
-| `app-sidebar.tsx` badge | `pendingMergeCount` | `countPendingMerges()` in `app/(app)/layout.tsx` | Yes — DB count query via `createAdminClient()` on `forked_prompts` where `merge_status='pending'` | FLOWING |
-| `review-sidebar.tsx` | `suggestion`, `editedContent` | Passed from `ReviewDetailClient` (from server fetch) | Yes — `editedContent` initialized from `suggestion.adapted_content`, `suggestion` from real DB data | FLOWING |
+| `review-detail-client.tsx` | `suggestion` | `fetchMergeSuggestionById` in server page.tsx | Yes — DB query via `createAdminClient()` with `.single()` | FLOWING |
+| `review-context-bar.tsx` | `suggestion` | Props from `ReviewDetailClient` (server-fetched) | Yes — all fields come from real DB join query | FLOWING |
+| `review-action-bar.tsx` | `suggestion`, `editedContent`, `hasEdited` | Props from `ReviewDetailClient` | Yes — `editedContent` from component state initialized by real DB data | FLOWING |
+| `approve-confirm-dialog.tsx` | `currentVersion`, `editedContent` | Props from `ReviewActionBar` → `ReviewDetailClient` | Yes — `source_prompt_version` from DB | FLOWING |
 
 ---
 
@@ -100,12 +151,14 @@ re_verification: false
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| All 6 phase 04 test files pass | `npm test` (25 test files ran, 133 tests passed, 10 todo) | 133 passed, 0 failed | PASS |
+| merge-diff tests pass | `npm test -- tests/merge-diff.test.tsx` | 37/37 tests pass | PASS |
 | TypeScript compilation clean | `npx tsc --noEmit` | No output (zero errors) | PASS |
-| `suggestMerge` sets pending status and clears prior decline reason | Code inspection: `merge_status: 'pending'`, `merge_decline_reason: null` in update payload | Confirmed in `actions.ts` lines 120-123 | PASS |
-| `approveMerge` performs read-then-write for version bump | Code inspection: fetches `version`, computes `newVersion = (version ?? 1) + 1`, updates prompt, inserts changelog | Confirmed in `review/actions.ts` lines 46-73 | PASS |
-| `declineMerge` stores reason on fork | Code inspection: `merge_decline_reason: reason` in update payload | Confirmed in `review/actions.ts` line 101 | PASS |
-| Admin gate redirects non-admin to /engagements | `tests/review-queue.test.ts` — 4 tests pass | Confirmed | PASS |
+| fork-editor passes showDiffOnly={false} | `grep showDiffOnly fork-editor.tsx` | Line 126: `showDiffOnly={false}` found | PASS |
+| review-sidebar.tsx deleted and no orphan imports | `grep -r "review-sidebar"` across codebase | Zero results | PASS |
+| DiffViewer has key prop for re-render on toggle | `grep key diff-viewer.tsx` | `key={showDiffOnly ? 'diff-only' : 'full'}` on line 48 | PASS |
+| ApproveConfirmDialog wired to approveMerge action | `grep approveMerge approve-confirm-dialog.tsx` | Line 17 import, line 46 call | PASS |
+| Full test suite — phase 04 test files | 6 phase-04 test files, all pass | All pass (merge-suggest, merge-data, review-queue, merge-approve, merge-decline, merge-diff: 37/37) | PASS |
+| Pre-existing failures unrelated to phase 04 | Tests in auth-actions, sidebar, library-filter, library-create, library-edit, login-page, library-deprecate | 10 failures confirmed pre-existing from Phases 1-2 (created in commits 4577a0d, d73a900, 5a85a50, 7c30e31). No phase-04 commits touched these files. | INFO |
 
 ---
 
@@ -113,13 +166,13 @@ re_verification: false
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| MERGE-01 | 04-01, 04-02 | User can suggest a merge back to the central library from a forked prompt with a merge note | SATISFIED | `suggestMerge` action in `app/(app)/engagements/[id]/forks/[forkId]/actions.ts` + `MergeSuggestionSection` component wired in `fork-sidebar.tsx` Section 8 |
-| MERGE-02 | 04-04 | Merge suggestion shows side-by-side diff of original vs adapted content | SATISFIED | `ReviewDetailClient` renders `DiffViewer` with `source_prompt_content` (original) and `adapted_content` (adapted), custom titles "Library (current)" / "Fork (adapted)" |
-| MERGE-03 | 04-01, 04-03 | Admin can view a review queue of pending merge suggestions with context | SATISFIED | `fetchMergeSuggestions` with admin client + `/review` page with admin gate + `ReviewQueueClient` filter tabs + `ReviewQueueCard` showing submitter, engagement, effectiveness rating |
-| MERGE-04 | 04-01, 04-04 | Admin can approve a merge suggestion — updates central library prompt content, bumps version, creates changelog entry | SATISFIED | `approveMerge` in `review/actions.ts`: updates `prompts.content`, increments `prompts.version`, inserts into `prompt_changelog`, sets `merge_status='approved'`. Wired via `ReviewSidebar` |
-| MERGE-05 | 04-01, 04-04 | Admin can decline a merge suggestion with a reason | SATISFIED | `declineMerge` in `review/actions.ts` stores reason in `merge_decline_reason`. Wired via `DeclineReasonForm`. Declined consultant sees reason + "Revise & resubmit" link in `MergeSuggestionSection` |
+| MERGE-01 | 04-01, 04-02 | User can suggest a merge from a forked prompt with a merge note | SATISFIED | `suggestMerge` action + `MergeSuggestionSection` wired in fork-sidebar Section 8 |
+| MERGE-02 | 04-04, 04-05, 04-06 | Merge suggestion shows side-by-side diff | SATISFIED | `DiffViewer` with `showDiffOnly` toggle in `ReviewDetailClient`. Full-width, readable. |
+| MERGE-03 | 04-01, 04-03 | Admin can view review queue with context, filter by status | SATISFIED | `/review` page, `ReviewQueueClient` tabs, `ReviewQueueCard` rich context |
+| MERGE-04 | 04-01, 04-04, 04-05, 04-06 | Admin can approve — library content updates, version bumps, changelog created | SATISFIED | `approveMerge` action. `ApproveConfirmDialog` gates action with version-aware copy. |
+| MERGE-05 | 04-01, 04-04, 04-06 | Admin can decline with reason — consultant sees rejection reason | SATISFIED | `declineMerge` action. `DeclineReasonForm` with `initialExpanded`/`onDiscard` in sticky bar. Declined state surfaces reason to consultant. |
 
-**Orphaned requirements check:** No additional MERGE-* requirements appear in REQUIREMENTS.md beyond MERGE-01 through MERGE-05. No orphaned requirements.
+**Orphaned requirements check:** No additional MERGE-* requirements in REQUIREMENTS.md beyond MERGE-01 through MERGE-05. No orphaned requirements.
 
 ---
 
@@ -127,50 +180,53 @@ re_verification: false
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `components/review/decline-reason-form.tsx` | 49 | `placeholder="Why are you declining this?..."` | Info | Legitimate UI placeholder text in a textarea, not a stub pattern. No impact. |
-
-No blockers or warnings found. The single "placeholder" match is the textarea hint text for the admin, not a code stub.
+| `components/review/review-action-bar.tsx` | 66 | `Approve &amp; Merge` in JSX text content | WARNING | Renders as literal "Approve &amp; Merge" on screen instead of "Approve & Merge". Plan 06 explicitly listed fixing this as a requirement ("No &amp; entity encoding bugs" in verification checklist). |
+| `components/review/review-action-bar.tsx` | 68 | `v{N} &rarr; v{N+1}` in JSX text content | Info | `&rarr;` is a valid HTML entity that JSX resolves to "→". This renders correctly. Not a bug. |
+| `components/engagements/merge-suggestion-section.tsx` | 82 | `Revise &amp; resubmit` in JSX text content | WARNING | Renders as literal "Revise &amp; resubmit" on screen. Pre-dates plan 04-06 but should be fixed alongside the action bar fix. |
 
 ---
 
 ## Human Verification Required
 
-### 1. Full Merge Loop End-to-End
+### 1. Full Review Detail Page Layout
 
-**Test:** As a consultant, open a forked prompt in an engagement workspace. Click "Suggest Merge" in Section 8 of the sidebar. Enter a merge note and submit. Then switch to an admin session and navigate to /review.
-**Expected:** The pending merge appears in the review queue with the consultant's name, engagement name, and merge note. Click into the detail — side-by-side diff renders correctly with "Library (current)" and "Fork (adapted)" labels. Use "Edit content" to modify the content, then click "Approve & Merge". Confirm the library prompt's content and version updated, and a changelog entry was created.
-**Why human:** Requires live Supabase DB, auth sessions for two different roles, and visual inspection of the diff renderer.
+**Test:** As admin (Demo Bypass → admin), navigate to /review → click any pending merge suggestion.
+**Expected:** Page shows stacked layout (not side-by-side): back link + status badge at top, horizontal context bar (submitter, engagement, rating, merge note), then "Changes" / "Edit before approving" tabs, then full-width diff viewer. Floating pill action bar at bottom with "Decline" (destructive red, rounded-full) and "Approve & Merge v{N} → v{N+1}" buttons. The "Approve & Merge" button text should read with an ampersand, NOT "Approve &amp; Merge".
+**Why human:** Requires live Supabase DB, admin session, and visual layout inspection.
 
-### 2. Decline Flow with Reason Surfacing
+### 2. Tab Interaction and Edit State Sync
 
-**Test:** As an admin, decline a pending merge suggestion with a written reason. Then switch to the consultant session and open the forked prompt's sidebar.
-**Expected:** Section 8 shows a red "Declined" badge, the admin's decline reason appears in italics below it, and a "Revise & resubmit" link is present. Clicking the link reopens the merge note dialog.
-**Why human:** Requires two-role session handoff and visual inspection that the reason text displays correctly.
+**Test:** On a pending review detail page, click "Edit before approving" tab. Modify the content. Switch back to "Changes" tab.
+**Expected:** Changes tab diff now shows the edited content on the right side (title: "Edited (will be merged)"). A small blue dot appears on the "Changes" tab label. "Show all lines" / "Show changes only" toggle is functional.
+**Why human:** Requires live data and interactive session to verify state synchronization.
 
-### 3. Pending Count Badge
+### 3. Approve Confirmation Flow
 
-**Test:** As an admin, ensure there is at least one pending merge suggestion. Navigate to any page under the app layout.
-**Expected:** The "Review Queue" sidebar nav item shows an amber numeric badge next to its label indicating the pending count.
-**Why human:** Requires live data in the DB and visual inspection of the sidebar badge rendering.
+**Test:** Click "Approve & Merge" in the sticky bar.
+**Expected:** AlertDialog opens with title "Approve and merge this change?", description including current and next version numbers, "Keep Reviewing" cancel button, and "Approve & Merge" confirm button. Clicking cancel closes dialog without action. Clicking confirm executes merge and redirects to /review with success toast showing version number.
+**Why human:** Requires live DB mutation and two-step interaction flow.
+
+### 4. Decline Inline Expansion
+
+**Test:** Click "Decline" in the sticky bar.
+**Expected:** Decline button is replaced by an inline DeclineReasonForm (textarea pre-expanded). While form is open, "Approve & Merge" button is grayed out/disabled. Type a reason and click "Confirm Decline" — redirects to /review. Open another pending suggestion, click "Decline", then click "Discard reason" — form closes, approve re-enables.
+**Why human:** Requires live DB and interactive flow verification.
 
 ---
 
 ## Gaps Summary
 
-No gaps found. All 5 success criteria are verified. The complete merge workflow is implemented and wired:
+One gap blocking a clean pass: two files contain `&amp;` in JSX text content that renders as literal `&amp;` on screen. Plan 06 explicitly required fixing this ("No `&amp;` entity encoding bugs" in its verification checklist, and explicitly said "this plan fixes that by using proper JSX string content"). The fix was not applied.
 
-1. Consultant forks prompt, edits in workspace (Phase 3)
-2. Consultant submits merge suggestion via `MergeSuggestionSection` — status becomes "Pending Review"
-3. Admin sees pending count badge in sidebar nav
-4. Admin visits `/review` — sees `ReviewQueueCard` list with context, filter tabs
-5. Admin clicks card → `/review/[suggestionId]` — `ReviewDetailClient` with two-column diff
-6. Admin optionally edits content via collapsible `ReviewContentEditor`
-7. Admin approves (version bump + changelog) or declines (reason stored, reason surfaced to consultant)
-8. Both flows redirect to `/review`
+**Affected files:**
+- `components/review/review-action-bar.tsx` line 66: `Approve &amp; Merge` should be `Approve & Merge`
+- `components/engagements/merge-suggestion-section.tsx` line 82: `Revise &amp; resubmit` should be `Revise & resubmit`
 
-All 6 phase 04 TDD test files pass (133 tests, 0 failures). TypeScript compilation is clean.
+**All 5 phase success criteria are otherwise verified.** The review detail page redesign (plans 04-05 and 04-06) is structurally complete, correctly wired, and all 37 merge-diff tests pass. TypeScript compiles clean. The `&amp;` bug is a visible UI text rendering defect, not a structural gap.
+
+**Pre-existing test failures (unrelated to Phase 4):** 10 tests failing across auth-actions, sidebar, library-create, library-deprecate, library-edit, library-filter, and login-page test files. All originate from Phase 1-2 commits (4577a0d, d73a900, 5a85a50, 7c30e31, 7ed69ba). No Phase 4 commits modified these test files.
 
 ---
 
-_Verified: 2026-03-26T08:05:00Z_
+_Verified: 2026-03-26T12:00:00Z_
 _Verifier: Claude (gsd-verifier)_

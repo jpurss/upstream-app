@@ -91,7 +91,7 @@ Plans:
   3. Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status
   4. Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created
   5. Admin can decline a merge with a reason — the fork is notified of the rejection reason
-**Plans:** 7 plans (4 executed + 1 in progress + 2 gap closure)
+**Plans:** 5/7 plans executed
 
 Plans:
 - [x] 04-00-PLAN.md — Wave 0: Create 6 behavioral test stub files for TDD (merge-suggest, merge-data, review-queue, merge-approve, merge-decline, merge-diff)
