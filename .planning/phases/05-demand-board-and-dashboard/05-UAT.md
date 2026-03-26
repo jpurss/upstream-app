@@ -82,7 +82,7 @@ severity: blocker
 
 total: 14
 passed: 9
-issues: 5
+issues: 7
 pending: 0
 skipped: 0
 
@@ -141,3 +141,23 @@ skipped: 0
     - lib/supabase/middleware.ts
   missing:
     - "Middleware redirects non-admin from /library to /engagements — consultants cannot browse prompts"
+
+- truth: "Demand board cards should fill available width, not be capped at max-w-4xl"
+  status: failed
+  reason: "Design critique: max-w-4xl caps content at 896px, wasting 35% of screen. Violates density-over-whitespace principle."
+  severity: major
+  test: critique
+  artifacts:
+    - components/demand/demand-board-client.tsx
+  missing:
+    - "Remove max-w-4xl constraint so cards fill available width"
+
+- truth: "Admin controls should not crowd the card title row"
+  status: failed
+  reason: "Design critique: 4 admin buttons + status badge in title row causes title truncation and visual clutter"
+  severity: major
+  test: critique
+  artifacts:
+    - components/demand/request-card.tsx
+  missing:
+    - "Move admin controls to a separate row below card metadata"
