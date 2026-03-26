@@ -1,10 +1,13 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { ArrowUp, CircleDot, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowUp, CircleDot, Clock, CheckCircle, XCircle, Link as LinkIcon, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { toggleUpvote } from '@/app/(app)/demand/actions'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Spinner } from '@/components/ui/spinner'
+import { toggleUpvote, markPlanned, revertToOpen, declineRequest } from '@/app/(app)/demand/actions'
 import { getRelativeTime } from '@/lib/utils/date'
 import { URGENCY_LABELS } from '@/lib/types/prompt-request'
 import type { PromptRequest } from '@/lib/types/prompt-request'
@@ -26,10 +29,15 @@ interface RequestCardProps {
   request: PromptRequest
   isAdmin: boolean
   onAdminAction?: (action: string, requestId: string) => void
+  onResolveClick?: (requestId: string) => void
 }
 
-export function RequestCard({ request, isAdmin, onAdminAction }: RequestCardProps) {
+export function RequestCard({ request, isAdmin, onResolveClick }: RequestCardProps) {
   const [isPending, startTransition] = useTransition()
+  const [isAdminPending, startAdminTransition] = useTransition()
+  const [isDeclining, setIsDeclining] = useState(false)
+  const [declineReason, setDeclineReason] = useState('')
+  const [isDeclinePending, startDeclineTransition] = useTransition()
 
   const status = statusConfig[request.status as keyof typeof statusConfig] ?? statusConfig.open
   const urgency = urgencyConfig[request.urgency as keyof typeof urgencyConfig] ?? urgencyConfig.nice_to_have
@@ -42,6 +50,46 @@ export function RequestCard({ request, isAdmin, onAdminAction }: RequestCardProp
         toast.error('Could not save upvote. Try again.')
       }
     })
+  }
+
+  function handleMarkPlanned() {
+    startAdminTransition(async () => {
+      const result = await markPlanned(request.id)
+      if (result?.error) {
+        toast.error('Could not update request. Try again.')
+      } else {
+        toast.success('Request marked as planned')
+      }
+    })
+  }
+
+  function handleRevertToOpen() {
+    startAdminTransition(async () => {
+      const result = await revertToOpen(request.id)
+      if (result?.error) {
+        toast.error('Could not update request. Try again.')
+      } else {
+        toast.success('Request reverted to open')
+      }
+    })
+  }
+
+  function handleDeclineConfirm() {
+    startDeclineTransition(async () => {
+      const result = await declineRequest(request.id, declineReason)
+      if (result?.error) {
+        toast.error('Could not decline request. Try again.')
+      } else {
+        toast.success('Request declined')
+        setIsDeclining(false)
+        setDeclineReason('')
+      }
+    })
+  }
+
+  function handleDeclineDiscard() {
+    setIsDeclining(false)
+    setDeclineReason('')
   }
 
   return (
@@ -69,17 +117,69 @@ export function RequestCard({ request, isAdmin, onAdminAction }: RequestCardProp
 
       {/* Content area */}
       <div className="flex-1 flex flex-col gap-1 min-w-0">
-        {/* Title row with status badge */}
+        {/* Title row with status badge + admin controls */}
         <div className="flex items-start justify-between gap-2">
           <span className="text-[20px] font-semibold leading-tight truncate">
             {request.title}
           </span>
-          <span
-            className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[12px] font-medium ${status.bg} ${status.text}`}
-          >
-            <StatusIcon className="size-3" />
-            {status.label}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Admin controls for open cards */}
+            {isAdmin && request.status === 'open' && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[13px] px-2"
+                  onClick={handleMarkPlanned}
+                  disabled={isAdminPending}
+                >
+                  <Clock className="size-3 mr-1" />
+                  Mark Planned
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[13px] px-2"
+                  onClick={() => onResolveClick?.(request.id)}
+                  disabled={isAdminPending}
+                >
+                  <LinkIcon className="size-3 mr-1" />
+                  Resolve
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[13px] px-2 text-[#E3392A] hover:text-[#E3392A]"
+                  onClick={() => setIsDeclining(true)}
+                  disabled={isAdminPending}
+                >
+                  <X className="size-3 mr-1" />
+                  Decline
+                </Button>
+              </div>
+            )}
+
+            {/* Admin controls for planned cards */}
+            {isAdmin && request.status === 'planned' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-[13px] px-2"
+                onClick={handleRevertToOpen}
+                disabled={isAdminPending}
+              >
+                Revert to Open
+              </Button>
+            )}
+
+            {/* Status badge */}
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium ${status.bg} ${status.text}`}
+            >
+              <StatusIcon className="size-3" />
+              {status.label}
+            </span>
+          </div>
         </div>
 
         {/* Description */}
@@ -120,7 +220,37 @@ export function RequestCard({ request, isAdmin, onAdminAction }: RequestCardProp
           </Link>
         )}
 
-        {/* Admin controls rendered in Plan 03 */}
+        {/* Inline decline form — expands when admin clicks Decline */}
+        {isAdmin && isDeclining && (
+          <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+            <Textarea
+              placeholder="Why are you declining this request? The requester will see your reason."
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+              className="min-h-[64px] resize-none text-[13px]"
+            />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[13px]"
+                onClick={handleDeclineDiscard}
+                disabled={isDeclinePending}
+              >
+                Discard
+              </Button>
+              <Button
+                size="sm"
+                className="text-[13px] bg-[#E3392A] hover:bg-[#E3392A]/90 text-white"
+                onClick={handleDeclineConfirm}
+                disabled={!declineReason.trim() || isDeclinePending}
+              >
+                {isDeclinePending && <Spinner className="size-3 mr-1" />}
+                Confirm Decline
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
