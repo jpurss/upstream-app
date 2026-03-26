@@ -58,18 +58,18 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Demand Board
 
-- [ ] **DEMAND-01**: User can submit a prompt request with title, description, category, and urgency level
-- [ ] **DEMAND-02**: User can view open prompt requests sorted by upvotes
-- [ ] **DEMAND-03**: User can upvote a prompt request (toggle)
-- [ ] **DEMAND-04**: Admin can resolve a request by linking it to a created prompt
-- [ ] **DEMAND-05**: Admin can decline a request with a reason
+- [x] **DEMAND-01**: User can submit a prompt request with title, description, category, and urgency level
+- [x] **DEMAND-02**: User can view open prompt requests sorted by upvotes
+- [x] **DEMAND-03**: User can upvote a prompt request (toggle)
+- [x] **DEMAND-04**: Admin can resolve a request by linking it to a created prompt
+- [x] **DEMAND-05**: Admin can decline a request with a reason
 
 ### Dashboard
 
-- [ ] **DASH-01**: Admin can view top-level metrics: total active prompts, avg effectiveness, total checkouts, open merge requests, open prompt requests
-- [ ] **DASH-02**: Admin can view usage chart (checkouts over time)
-- [ ] **DASH-03**: Admin can view top 10 most used prompts and bottom 10 lowest-rated prompts
-- [ ] **DASH-04**: Admin can view demand vs supply (requests opened vs resolved)
+- [x] **DASH-01**: Admin can view top-level metrics: total active prompts, avg effectiveness, total checkouts, open merge requests, open prompt requests
+- [x] **DASH-02**: Admin can view usage chart (checkouts over time)
+- [x] **DASH-03**: Admin can view top 10 most used prompts and bottom 10 lowest-rated prompts
+- [x] **DASH-04**: Admin can view demand vs supply (requests opened vs resolved)
 
 ### UI/UX
 
@@ -81,8 +81,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Seed Data
 
 - [ ] **SEED-01**: 18 realistic AI consulting prompts pre-loaded across 6 categories (Discovery, Solution Design, Build, Enablement, Delivery, Internal Ops)
-- [ ] **SEED-02**: Seed data includes 2-3 sample engagements with forked prompts showing the workflow in action
-- [ ] **SEED-03**: Seed data includes sample prompt requests on the demand board
+- [x] **SEED-02**: Seed data includes 2-3 sample engagements with forked prompts showing the workflow in action
+- [x] **SEED-03**: Seed data includes sample prompt requests on the demand board
 
 ## v2 Requirements
 
@@ -162,17 +162,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MERGE-03 | Phase 4 | Complete |
 | MERGE-04 | Phase 4 | Complete |
 | MERGE-05 | Phase 4 | Complete |
-| DEMAND-01 | Phase 5 | Pending |
-| DEMAND-02 | Phase 5 | Pending |
-| DEMAND-03 | Phase 5 | Pending |
-| DEMAND-04 | Phase 5 | Pending |
-| DEMAND-05 | Phase 5 | Pending |
-| DASH-01 | Phase 5 | Pending |
-| DASH-02 | Phase 5 | Pending |
-| DASH-03 | Phase 5 | Pending |
-| DASH-04 | Phase 5 | Pending |
-| SEED-02 | Phase 5 | Pending |
-| SEED-03 | Phase 5 | Pending |
+| DEMAND-01 | Phase 5 | Complete |
+| DEMAND-02 | Phase 5 | Complete |
+| DEMAND-03 | Phase 5 | Complete |
+| DEMAND-04 | Phase 5 | Complete |
+| DEMAND-05 | Phase 5 | Complete |
+| DASH-01 | Phase 5 | Complete |
+| DASH-02 | Phase 5 | Complete |
+| DASH-03 | Phase 5 | Complete |
+| DASH-04 | Phase 5 | Complete |
+| SEED-02 | Phase 5 | Complete |
+| SEED-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 38 total

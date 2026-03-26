@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-26T18:00:22.891Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-05-PLAN.md
+last_updated: "2026-03-26T19:27:57.017Z"
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 21
-  completed_plans: 21
+  completed_phases: 5
+  total_plans: 26
+  completed_plans: 26
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Every engagement makes the firm smarter — field-tested prompt improvements flow back into the central library through a Git-like checkout/fork/merge workflow.
-**Current focus:** Phase 04 — merge-workflow
+**Current focus:** Phase 05 — demand-board-and-dashboard
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (demand-board-and-dashboard) — EXECUTING
+Plan: 5 of 5
 
 ## Performance Metrics
 
@@ -66,6 +66,11 @@ Plan: Not started
 | Phase 04-merge-workflow P03 | 4 | 2 tasks | 6 files |
 | Phase 04-merge-workflow P04 | 6 | 2 tasks | 10 files |
 | Phase 04-merge-workflow P05 | 224 | 2 tasks | 6 files |
+| Phase 05-demand-board-and-dashboard P01 | 4 | 2 tasks | 13 files |
+| Phase 05-demand-board-and-dashboard P04 | 12 | 2 tasks | 9 files |
+| Phase 05-demand-board-and-dashboard P02 | 6 | 2 tasks | 12 files |
+| Phase 05-demand-board-and-dashboard P03 | 5 | 2 tasks | 7 files |
+| Phase 05-demand-board-and-dashboard P05 | 260 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -138,6 +143,20 @@ Recent decisions affecting current work:
 - [Phase 04-merge-workflow]: ReviewContentEditor fully rewritten — old collapsible pattern deleted, replaced with always-visible textarea panel with originalContent/onReset props
 - [Phase 04]: ReviewActionBar uses sticky bottom-0 with -mx-6 -mb-6 pattern — extends to page container edges without sidebar offset calculation
 - [Phase 04]: ReviewSidebar deleted — replaced by ReviewContextBar (horizontal metadata bar) + ReviewActionBar (sticky bottom bar) in the new stacked layout
+- [Phase 05-demand-board-and-dashboard]: recharts@^2.15.4 installed (v2 not v3) per D-12 — v3 has breaking API changes
+- [Phase 05-demand-board-and-dashboard]: getRelativeTime extracted to lib/utils/date.ts — was inline in review-queue-card, demand board is second consumer
+- [Phase 05-demand-board-and-dashboard]: Data layer stubs created as empty comment-only files — Plans 02 and 04 fill them in
+- [Phase 05-04]: Dashboard admin gate redirects to /library (not /engagements) — non-admin users belong in library per D-01
+- [Phase 05-04]: Recharts chart config encapsulated inside wrapper components — parents pass typed data arrays only, no Recharts internals at page level
+- [Phase 05-04]: Dark mode Recharts colors hardcoded as inline props — Recharts cannot inherit CSS variables (#4287FF line, #FFB852 opened, #65CFB2 resolved)
+- [Phase 05-04]: JS-side date grouping for usage/demand charts — Supabase JS client lacks date_trunc, fetch raw rows and group in-memory
+- [Phase 05-demand-board-and-dashboard]: Demand board accessible to all authenticated users — no admin gate in demand/page.tsx per D-08 (consultants see read-only cards)
+- [Phase 05-demand-board-and-dashboard]: Upvote sort is JS-side after data mapping — Supabase cannot ORDER BY aggregate join count from request_upvotes
+- [Phase 05-demand-board-and-dashboard]: getRelativeTime extracted from review-queue-card.tsx to lib/utils/date.ts as shared utility
+- [Phase 05-demand-board-and-dashboard]: ResolveRequestDialog owned by DemandBoardClient — RequestCard emits onResolveClick callback, client holds dialog state
+- [Phase 05-demand-board-and-dashboard]: Active prompts fetched server-side only for admin role in demand page — avoids unnecessary admin DB call for consultants
+- [Phase 05-demand-board-and-dashboard]: Demo seed claim uses admin client to transfer placeholder UUID ownership to new anonymous session on signInAsDemo — works around per-session UUID isolation
+- [Phase 05-demand-board-and-dashboard]: Admin post-login landing changed from /library to /dashboard — dashboard now exists and is the correct admin home
 
 ### Pending Todos
 
@@ -157,11 +176,6 @@ None yet.
 
 ## Session Continuity
 
-<<<<<<< Updated upstream
-Last session: 2026-03-26T18:00:22.887Z
-Stopped at: Phase 5 context gathered
-=======
-Last session: 2026-03-26T15:13:05.104Z
-Stopped at: Checkpoint: 04-06 Task 1 complete, awaiting human-verify Task 2
->>>>>>> Stashed changes
-Resume file: .planning/phases/05-demand-board-and-dashboard/05-CONTEXT.md
+Last session: 2026-03-26T19:27:57.015Z
+Stopped at: Completed 05-05-PLAN.md
+Resume file: None
