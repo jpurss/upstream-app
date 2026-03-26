@@ -13,6 +13,7 @@ import {
   updateForkFeedback,
   updateForkMeta,
 } from '@/app/(app)/engagements/[id]/forks/[forkId]/actions'
+import { MergeSuggestionSection } from '@/components/engagements/merge-suggestion-section'
 import type { ForkedPromptWithTitle, IssueTag } from '@/lib/types/fork'
 
 interface ForkSidebarProps {
@@ -199,6 +200,11 @@ export function ForkSidebar({ fork, engagementId }: ForkSidebarProps) {
       <div className="py-4 border-t border-border flex flex-col gap-1">
         <span className="text-[13px] text-muted-foreground">Forked</span>
         <span className="text-[13px]">{formatDate(fork.forked_at)}</span>
+      </div>
+
+      {/* Section 8 — Merge Suggestion */}
+      <div className="py-4 border-t border-border">
+        <MergeSuggestionSection fork={fork} engagementId={engagementId} />
       </div>
     </div>
   )
