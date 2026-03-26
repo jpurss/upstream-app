@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowUp, CircleDot, Clock, CheckCircle, XCircle, Link as LinkIcon, X } from 'lucide-react'
 import { toast } from 'sonner'
@@ -39,14 +39,32 @@ export function RequestCard({ request, isAdmin, onResolveClick }: RequestCardPro
   const [declineReason, setDeclineReason] = useState('')
   const [isDeclinePending, startDeclineTransition] = useTransition()
 
+  // Optimistic upvote state
+  const [localUpvoteCount, setLocalUpvoteCount] = useState(request.upvote_count)
+  const [localHasUpvoted, setLocalHasUpvoted] = useState(request.user_has_upvoted)
+
+  // Sync local state if props change (e.g., after server revalidation from another action)
+  useEffect(() => {
+    setLocalUpvoteCount(request.upvote_count)
+    setLocalHasUpvoted(request.user_has_upvoted)
+  }, [request.upvote_count, request.user_has_upvoted])
+
   const status = statusConfig[request.status as keyof typeof statusConfig] ?? statusConfig.open
   const urgency = urgencyConfig[request.urgency as keyof typeof urgencyConfig] ?? urgencyConfig.nice_to_have
   const StatusIcon = status.icon
 
   function handleUpvote() {
+    // Optimistic update
+    const wasUpvoted = localHasUpvoted
+    setLocalHasUpvoted(!wasUpvoted)
+    setLocalUpvoteCount((prev) => (wasUpvoted ? prev - 1 : prev + 1))
+
     startTransition(async () => {
       const result = await toggleUpvote(request.id)
       if (result?.error) {
+        // Revert on failure
+        setLocalHasUpvoted(wasUpvoted)
+        setLocalUpvoteCount((prev) => (wasUpvoted ? prev + 1 : prev - 1))
         toast.error('Could not save upvote. Try again.')
       }
     })
@@ -101,85 +119,34 @@ export function RequestCard({ request, isAdmin, onResolveClick }: RequestCardPro
         <button
           onClick={handleUpvote}
           disabled={isPending}
-          aria-label={request.user_has_upvoted ? 'Remove upvote' : 'Upvote this request'}
+          aria-label={localHasUpvoted ? 'Remove upvote' : 'Upvote this request'}
           className="flex flex-col items-center gap-1 group disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ArrowUp
-            className={`size-4 transition-colors${request.user_has_upvoted ? ' text-[#4287FF] fill-[#4287FF]' : ' text-muted-foreground group-hover:text-foreground'}`}
+            className={`size-4 transition-colors${localHasUpvoted ? ' text-[#4287FF] fill-[#4287FF]' : ' text-muted-foreground group-hover:text-foreground'}`}
           />
           <span
-            className={`text-[13px] font-semibold${request.user_has_upvoted ? ' text-[#4287FF]' : ' text-muted-foreground'}`}
+            className={`text-[13px] font-semibold${localHasUpvoted ? ' text-[#4287FF]' : ' text-muted-foreground'}`}
           >
-            {request.upvote_count}
+            {localUpvoteCount}
           </span>
         </button>
       </div>
 
       {/* Content area */}
       <div className="flex-1 flex flex-col gap-1 min-w-0">
-        {/* Title row with status badge + admin controls */}
+        {/* Title row — title + status badge only */}
         <div className="flex items-start justify-between gap-2">
           <span className="text-[20px] font-semibold leading-tight truncate">
             {request.title}
           </span>
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Admin controls for open cards */}
-            {isAdmin && request.status === 'open' && (
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-[13px] px-2"
-                  onClick={handleMarkPlanned}
-                  disabled={isAdminPending}
-                >
-                  <Clock className="size-3 mr-1" />
-                  Mark Planned
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-[13px] px-2"
-                  onClick={() => onResolveClick?.(request.id)}
-                  disabled={isAdminPending}
-                >
-                  <LinkIcon className="size-3 mr-1" />
-                  Resolve
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 text-[13px] px-2 text-[#E3392A] hover:text-[#E3392A]"
-                  onClick={() => setIsDeclining(true)}
-                  disabled={isAdminPending}
-                >
-                  <X className="size-3 mr-1" />
-                  Decline
-                </Button>
-              </div>
-            )}
-
-            {/* Admin controls for planned cards */}
-            {isAdmin && request.status === 'planned' && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-[13px] px-2"
-                onClick={handleRevertToOpen}
-                disabled={isAdminPending}
-              >
-                Revert to Open
-              </Button>
-            )}
-
-            {/* Status badge */}
-            <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium ${status.bg} ${status.text}`}
-            >
-              <StatusIcon className="size-3" />
-              {status.label}
-            </span>
-          </div>
+          {/* Status badge */}
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium shrink-0 ${status.bg} ${status.text}`}
+          >
+            <StatusIcon className="size-3" />
+            {status.label}
+          </span>
         </div>
 
         {/* Description */}
@@ -209,6 +176,52 @@ export function RequestCard({ request, isAdmin, onResolveClick }: RequestCardPro
           <span>·</span>
           <span>{getRelativeTime(request.created_at)}</span>
         </div>
+
+        {/* Admin controls — separate row below metadata */}
+        {isAdmin && request.status === 'open' && (
+          <div className="flex items-center gap-1 mt-1 pt-1 border-t border-border">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[12px] px-2"
+              onClick={handleMarkPlanned}
+              disabled={isAdminPending}
+            >
+              <Clock className="size-3 mr-1" /> Mark Planned
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[12px] px-2"
+              onClick={() => onResolveClick?.(request.id)}
+              disabled={isAdminPending}
+            >
+              <LinkIcon className="size-3 mr-1" /> Resolve
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[12px] px-2 text-[#E3392A] hover:text-[#E3392A]"
+              onClick={() => setIsDeclining(true)}
+              disabled={isAdminPending}
+            >
+              <X className="size-3 mr-1" /> Decline
+            </Button>
+          </div>
+        )}
+        {isAdmin && request.status === 'planned' && (
+          <div className="flex items-center gap-1 mt-1 pt-1 border-t border-border">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[12px] px-2"
+              onClick={handleRevertToOpen}
+              disabled={isAdminPending}
+            >
+              Revert to Open
+            </Button>
+          </div>
+        )}
 
         {/* Resolved: link to prompt */}
         {request.status === 'resolved' && request.resolved_prompt_title && (

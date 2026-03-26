@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useMemo } from 'react'
 import { InboxIcon } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -32,6 +31,12 @@ const SORT_OPTIONS = [
   { value: 'urgent', label: 'Urgent first' },
 ]
 
+const URGENCY_PRIORITY: Record<string, number> = {
+  urgent: 0,
+  medium: 1,
+  nice_to_have: 2,
+}
+
 interface ActivePrompt {
   id: string
   title: string
@@ -39,36 +44,66 @@ interface ActivePrompt {
 }
 
 interface DemandBoardClientProps {
-  requests: PromptRequest[]
-  currentStatus: string
-  currentSort: string
-  statusCounts: Record<string, number>
+  allRequests: PromptRequest[]
   isAdmin: boolean
   userId: string
   activePrompts?: ActivePrompt[]
 }
 
 export function DemandBoardClient({
-  requests,
-  currentStatus,
-  currentSort,
-  statusCounts,
+  allRequests,
   isAdmin,
   userId: _userId,
   activePrompts = [],
 }: DemandBoardClientProps) {
-  const router = useRouter()
+  const [currentStatus, setCurrentStatus] = useState<string>('open')
+  const [currentSort, setCurrentSort] = useState<string>('upvotes')
   const [newRequestOpen, setNewRequestOpen] = useState(false)
   const [resolvingRequestId, setResolvingRequestId] = useState<string | null>(null)
 
   function handleTabChange(val: string) {
-    router.push(`/demand?status=${val}&sort=${currentSort}`)
+    setCurrentStatus(val)
   }
 
   function handleSortChange(val: string | null) {
-    if (!val) return
-    router.push(`/demand?status=${currentStatus}&sort=${val}`)
+    if (val) setCurrentSort(val)
   }
+
+  const { filteredRequests, statusCounts } = useMemo(() => {
+    // Compute counts from full dataset
+    const counts: Record<string, number> = {}
+    for (const r of allRequests) {
+      counts[r.status] = (counts[r.status] ?? 0) + 1
+    }
+
+    // Filter by status
+    let result =
+      currentStatus === 'all'
+        ? [...allRequests]
+        : allRequests.filter((r) => r.status === currentStatus)
+
+    // Sort
+    switch (currentSort) {
+      case 'upvotes':
+        result.sort((a, b) => b.upvote_count - a.upvote_count)
+        break
+      case 'newest':
+        result.sort(
+          (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+        break
+      case 'urgent':
+        result.sort((a, b) => {
+          const aPri = URGENCY_PRIORITY[a.urgency] ?? 2
+          const bPri = URGENCY_PRIORITY[b.urgency] ?? 2
+          if (aPri !== bPri) return aPri - bPri
+          return b.upvote_count - a.upvote_count
+        })
+        break
+    }
+
+    return { filteredRequests: result, statusCounts: counts }
+  }, [allRequests, currentStatus, currentSort])
 
   function getTabLabel(value: string, baseLabel: string): string {
     if (value === 'all') return baseLabel
@@ -76,10 +111,10 @@ export function DemandBoardClient({
     return count > 0 ? `${baseLabel} (${count})` : baseLabel
   }
 
-  const isEmpty = requests.length === 0
+  const isEmpty = filteredRequests.length === 0
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       {/* Page header */}
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-semibold">Demand Board</h1>
@@ -127,7 +162,7 @@ export function DemandBoardClient({
           <EmptyState status={currentStatus} onNewRequest={() => setNewRequestOpen(true)} />
         ) : (
           <div className="flex flex-col gap-3">
-            {requests.map((request) => (
+            {filteredRequests.map((request) => (
               <RequestCard
                 key={request.id}
                 request={request}
@@ -146,7 +181,9 @@ export function DemandBoardClient({
       {resolvingRequestId && (
         <ResolveRequestDialog
           open={true}
-          onOpenChange={(open) => { if (!open) setResolvingRequestId(null) }}
+          onOpenChange={(open) => {
+            if (!open) setResolvingRequestId(null)
+          }}
           requestId={resolvingRequestId}
           prompts={activePrompts}
         />
@@ -199,7 +236,7 @@ function EmptyState({
  */
 export function DemandBoardSkeleton() {
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6">
       <div className="flex items-center justify-between">
         <Skeleton className="h-6 w-36" />
         <Skeleton className="h-8 w-28" />

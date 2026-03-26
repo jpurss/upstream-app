@@ -1,11 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { fetchPromptRequests, countRequestsByStatus } from '@/lib/data/prompt-requests'
+import { fetchPromptRequests } from '@/lib/data/prompt-requests'
 import { DemandBoardClient } from '@/components/demand/demand-board-client'
 
 export default async function DemandBoardPage({
-  searchParams,
+  searchParams: _searchParams,
 }: {
   searchParams: Promise<{ status?: string; sort?: string }>
 }) {
@@ -16,24 +16,12 @@ export default async function DemandBoardPage({
 
   if (!user) redirect('/login')
 
-  const { status = 'open', sort = 'upvotes' } = await searchParams
-  const validStatuses = ['open', 'planned', 'resolved', 'declined', 'all']
-  const validSorts = ['upvotes', 'newest', 'urgent']
-  const currentStatus = validStatuses.includes(status) ? status : 'open'
-  const currentSort = validSorts.includes(sort) ? sort : 'upvotes'
-
   const role = user.app_metadata?.role as string | null
   const isAnonymous = user.is_anonymous ?? false
   const demoRole = isAnonymous ? (user.user_metadata?.demo_role as string ?? 'consultant') : null
   const effectiveRole = role ?? (isAnonymous ? demoRole : null)
 
-  const requests = await fetchPromptRequests(
-    currentStatus as any,
-    currentSort as any,
-    user.id
-  )
-
-  const statusCounts = await countRequestsByStatus()
+  const allRequests = await fetchPromptRequests('all', 'upvotes', user.id)
 
   // Only fetch active prompts for admins — needed for the resolve dialog autocomplete
   let activePrompts: { id: string; title: string; category: string }[] = []
@@ -49,10 +37,7 @@ export default async function DemandBoardPage({
 
   return (
     <DemandBoardClient
-      requests={requests}
-      currentStatus={currentStatus}
-      currentSort={currentSort}
-      statusCounts={statusCounts}
+      allRequests={allRequests}
       isAdmin={effectiveRole === 'admin'}
       userId={user.id}
       activePrompts={activePrompts}
