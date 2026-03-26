@@ -1,6 +1,6 @@
 ---
-description: Phase 4 UI design contract for Upstream Merge Workflow — visual and interaction specs for suggest-merge flow, review queue, review detail, and post-merge states.
-date_last_edited: 2026-03-25
+description: Phase 4 UI design contract for Upstream Merge Workflow — visual and interaction specs for suggest-merge flow, review queue, review detail, and post-merge states. Updated 2026-03-26 with review detail page redesign (stacked layout, approve confirmation, edit-while-reviewing).
+date_last_edited: 2026-03-26
 phase: 4
 slug: merge-workflow
 status: draft
@@ -47,8 +47,10 @@ Exceptions:
 - Fork sidebar fixed width: 280px (established in Phase 3, mirrors review detail sidebar)
 - Review detail sidebar width: 280px (matches fork-detail-client.tsx pattern)
 - Review queue card touch target minimum: 44px height
+- Review detail context bar height: auto (content-sized, typically ~60-80px)
+- Sticky action bar height: 64px (includes 16px vertical padding)
 
-Source: `.impeccable.md` § Spacing
+Source: `.impeccable.md` SS Spacing
 
 ---
 
@@ -66,7 +68,7 @@ Weights used: 400 (regular) and 600 (semibold) only. No other weights.
 
 Body/Label distinction: Body (15px) vs Label (13px) = 2px gap. Distinguished additionally by context — Body for interactive input and primary content; Label for metadata, badges, and muted annotations. Body renders at `--foreground`; Label typically renders at `--muted-foreground`.
 
-Source: `.impeccable.md` § Typography; revised 2026-03-25 (bumped Body from 14px to 15px to establish 2px hierarchy gap over Label)
+Source: `.impeccable.md` SS Typography; revised 2026-03-25 (bumped Body from 14px to 15px to establish 2px hierarchy gap over Label)
 
 ---
 
@@ -75,18 +77,19 @@ Source: `.impeccable.md` § Typography; revised 2026-03-25 (bumped Body from 14p
 | Role | Value | CSS Variable | Usage |
 |------|-------|--------------|-------|
 | Dominant (60%) | `#09090b` zinc-950 | `--background` | Page backgrounds, app shell, diff viewer background |
-| Secondary (30%) | `#18181b` zinc-900 | `--card` | Review queue cards, review detail sidebar, dialogs, modals |
+| Secondary (30%) | `#18181b` zinc-900 | `--card` | Review queue cards, review detail context bar, dialogs, modals |
 | Accent (10%) | `#4287FF` | `--primary` | "Suggest Merge" button, primary CTAs, active nav state, focus rings |
 | Destructive | `#E3392A` | custom | "Declined" status badge, decline action button, decline badge background tint |
 | Warning / Pending | `#FFB852` | custom | "Pending Review" status badge, pending count badge on sidebar nav |
 | Success / Merged | `#65CFB2` | custom | "Merged" status badge, approved diff additions |
 | Text primary | `oklch(0.985 0 0)` | `--foreground` | Primary content text, form values |
 | Text muted | `#71717a` zinc-500 | `--muted-foreground` | Metadata, timestamps, section labels, diff gutter |
-| Border | `#27272a` zinc-800 | `--border` | Card borders, dividers, sidebar section separators |
+| Border | `#27272a` zinc-800 | `--border` | Card borders, dividers, context bar border, action bar border |
 
 Accent (`#4287FF`) reserved for:
 - "Suggest Merge" primary button in fork sidebar
-- "Approve & Merge" primary action button in review detail sidebar
+- "Approve & Merge" primary action button in review detail sticky bar
+- "Approve & Merge" confirmation button in AlertDialog
 - Active "Review Queue" sidebar nav item
 - Filter tab active state (Pending/Approved/Declined/All)
 - Focus rings on all interactive inputs
@@ -98,7 +101,7 @@ Destructive (`#E3392A`) reserved for:
 
 Status colors are semantic — not interchangeable. Amber = waiting, Teal = success, Red = rejected.
 
-Source: `.impeccable.md` § Color System; `app/globals.css` dark mode variables
+Source: `.impeccable.md` SS Color System; `app/globals.css` dark mode variables
 
 ---
 
@@ -108,18 +111,18 @@ Components to reuse without modification:
 
 | Component | File | Used For |
 |-----------|------|----------|
-| DiffViewer | `components/engagements/diff-viewer.tsx` | Side-by-side diff in review detail left column — already dark-themed |
-| DeprecationDialog pattern | `components/library/deprecation-dialog.tsx` | AlertDialog + server action + toast pattern for merge suggestion dialog |
-| ForkDetailClient layout | `components/engagements/fork-detail-client.tsx` | Two-column layout template (flex-1 left + 280px right sidebar) for review detail page |
+| DiffViewer | `components/engagements/diff-viewer.tsx` | Full-width diff in review detail main area (modified — see below) |
+| DeprecationDialog pattern | `components/library/deprecation-dialog.tsx` | AlertDialog + server action + toast pattern — reused for approve confirmation |
 | ForkSidebar sections | `components/engagements/fork-sidebar.tsx` | Section structure (py-4 + border-t + gap-2) — new merge section appended at bottom |
 | Skeleton | `components/ui/skeleton.tsx` | Loading skeletons for review queue cards and review detail |
 | Badge | `components/ui/badge.tsx` | Status badges (Pending Review, Merged, Declined), category and engagement labels |
 | Dialog | `components/ui/dialog.tsx` | Merge suggestion dialog |
-| Textarea | `components/ui/textarea.tsx` | Merge note input, decline reason input |
+| AlertDialog | `components/ui/alert-dialog.tsx` | Approve confirmation dialog |
+| Textarea | `components/ui/textarea.tsx` | Merge note input, decline reason input, content editor |
 | Button | `components/ui/button.tsx` | All action buttons — primary/destructive/ghost variants |
-| Tabs | `components/ui/tabs.tsx` | Review queue filter tabs (Pending / Approved / Declined / All) |
+| Tabs | `components/ui/tabs.tsx` | Review queue filter tabs (Pending / Approved / Declined / All), diff view mode toggle |
 | Tooltip | `components/ui/tooltip.tsx` | Truncated merge note hover expansion |
-| Separator | `components/ui/separator.tsx` | Review detail sidebar section dividers |
+| Separator | `components/ui/separator.tsx` | Context bar section dividers |
 
 New components to create:
 
@@ -127,11 +130,19 @@ New components to create:
 |-----------|------|---------|
 | MergeSuggestionSection | `components/engagements/merge-suggestion-section.tsx` | Fork sidebar Section 8 — merge button, status badge, decline reason |
 | ReviewQueueCard | `components/review/review-queue-card.tsx` | Rich context card for review queue list |
-| ReviewDetailClient | `components/review/review-detail-client.tsx` | Two-column review detail page client orchestrator |
-| ReviewSidebar | `components/review/review-sidebar.tsx` | 280px sidebar with fork context + approve/decline actions |
-| ReviewContentEditor | `components/review/review-content-editor.tsx` | Editable textarea for admin pre-approve content edit |
+| ReviewDetailClient | `components/review/review-detail-client.tsx` | **REDESIGNED** — stacked layout orchestrator (context bar + diff/editor + sticky actions) |
+| ReviewContextBar | `components/review/review-context-bar.tsx` | **NEW** — horizontal metadata bar replacing the 280px sidebar |
+| ReviewActionBar | `components/review/review-action-bar.tsx` | **NEW** — sticky bottom bar with approve/decline actions |
+| ReviewContentEditor | `components/review/review-content-editor.tsx` | Editable textarea for admin pre-approve content edit (tabbed, not collapsible) |
 | DeclineReasonForm | `components/review/decline-reason-form.tsx` | Inline expanding textarea + submit for decline flow |
+| ApproveConfirmDialog | `components/review/approve-confirm-dialog.tsx` | **NEW** — AlertDialog confirmation before merge |
 | PendingCountBadge | `components/review/pending-count-badge.tsx` | Numeric badge rendered in sidebar nav beside "Review Queue" |
+
+Components to modify:
+
+| Component | File | Change |
+|-----------|------|--------|
+| DiffViewer | `components/engagements/diff-viewer.tsx` | Add `showDiffOnly` prop (default `true`), add `extraLinesSurroundingDiff` prop (default `3`), expose toggle UI |
 
 ---
 
@@ -175,7 +186,7 @@ New components to create:
 
 **Review queue card anatomy (vertical stack, py-16px px-16px, bg-card, border-border, rounded-md):**
 - Row 1: prompt title (16px, semibold) + status badge (right-aligned)
-- Row 2: "Suggested by {name} · {engagement name} · {relative time}" (13px, muted)
+- Row 2: "Suggested by {name} . {engagement name} . {relative time}" (13px, muted)
 - Row 3: star rating display (read-only StarRating, showLabel={false}) + effectiveness label "13px muted"
 - Row 4: merge note preview — truncated to 2 lines, 13px, text-foreground, italic. Tooltip on hover shows full text.
 - Card hover: `border-[#4287FF]` transition (matches library card hover pattern from Phase 2)
@@ -191,64 +202,391 @@ New components to create:
 
 **Sidebar nav badge:** `PendingCountBadge` renders "Review Queue (N)" where N = count of pending suggestions. Fetched server-side at layout render. N=0 shows no badge — item reads "Review Queue" only.
 
-### Review Detail Page (`/review/[suggestionId]`)
+---
 
-**Layout:** Two-column, identical proportions to `ForkDetailClient` — `flex gap-8 items-start`. Left: `flex-1 min-w-0`. Right: `w-[280px] shrink-0`.
+## Review Detail Page — Redesigned Layout
 
-**Page header (above columns):**
-- Back link: `ArrowLeft` icon + "Back to Review Queue" — same pattern as fork detail
-- Prompt title: 20px, semibold
+> This section supersedes the original "Review Detail Page (`/review/[suggestionId]`)" interaction contract above. The original two-column layout (diff + 280px sidebar) is replaced with a stacked layout that gives the diff full viewport width.
 
-**Left column — Diff + optional content editor:**
-- Section heading: "Changes" (16px, semibold, border-b border-border pb-2 mb-4)
-- `DiffViewer` component rendered directly — `leftTitle="Library (current)"`, `rightTitle="Fork (adapted)"`
-- Below diff: collapsible section "Edit before approving" (collapsed by default)
-  - Trigger: "Edit content" button — `variant="ghost"`, `ChevronDown` icon, 15px
-  - Expanded: `Textarea` pre-filled with adapted content (monospace 13px), full height auto-resize
-  - Label: "This content will replace the library prompt on approval." (13px, muted)
+### Problem Statement
 
-**Right sidebar — Context + actions (`ReviewSidebar`):**
-Section structure mirrors ForkSidebar (py-4 + border-t pattern):
+The original design squeezed a side-by-side diff viewer (itself 2 columns) into the left portion of a two-column layout, with a 280px metadata sidebar on the right. This created 3 effective columns of cramped, unreadable content. The sidebar's 7 sections + action buttons competed for the same viewport as the admin's primary task: reading the diff. Action buttons scrolled out of view on long diffs. Approve had no confirmation, risking accidental merges. The edit-before-approve flow was a hidden collapsible at the bottom of the page, disconnected from the diff context.
 
-- Section 1 — Who / Where (no border-t, first section)
-  - Label: "Suggested by" (13px, muted)
-  - Value: consultant name (15px)
-  - Label: "Engagement" (13px, muted)
-  - Value: engagement name with external link icon → `/engagements/[id]`
+### Admin Decision Flow
 
-- Section 2 — Effectiveness
-  - `StarRating` component, `showLabel={true}`, read-only (no `onRate` prop)
+The admin's cognitive workflow is sequential with an optional branch:
 
-- Section 3 — Issue Tags
-  - Read-only `IssueTagGroup` display (or flat badge list if no onToggle wired)
+```
+1. SCAN context (who suggested, from where, how effective)
+   |
+2. READ the diff carefully (primary task — needs maximum space)
+   |
+   +--- optional branch: EDIT the content before approving
+   |    (reference diff while editing)
+   |
+3. DECIDE: approve or decline
+   |
+   +--- approve --> confirmation dialog --> done
+   +--- decline --> inline reason --> done
+```
 
-- Section 4 — Feedback Notes
-  - Label: "Consultant feedback" (13px, muted)
-  - Value: feedback text or "—" if none (13px)
+Step 1 is a 3-second scan. Step 2 is the dominant task (30 seconds to several minutes). Step 3 is a deliberate action. The layout must optimize for Step 2 while keeping Steps 1 and 3 always accessible.
 
-- Section 5 — Adaptation Notes
-  - Label: "Adaptation notes" (13px, muted)
-  - Value: adaptation text or "—" if none (13px)
+### Layout Architecture
 
-- Section 6 — Merge Note
-  - Label: "Merge note" (13px, muted)
-  - Value: merge note text (13px, italic)
+The page uses a **vertical stack** with three zones:
 
-- Section 7 — Actions
-  - "Approve & Merge" button: `variant="default"` (primary `#4287FF`), full width, icon `Check`
-  - `DeclineReasonForm` below (see interaction below)
+```
++------------------------------------------------------------------+
+| Back link                                              Status badge|
+| Prompt Title (20px semibold)                                       |
++------------------------------------------------------------------+
+| CONTEXT BAR (bg-card, border-border, rounded-md, p-16px)          |
+| [Suggested by: Name] | [Engagement: Link] | [Rating: Stars] |    |
+| [Merge note (italic, truncated)]                                   |
++------------------------------------------------------------------+
+|                                                                    |
+| MAIN CONTENT AREA (full width, scrollable)                         |
+|                                                                    |
+| Tab bar: [Diff] [Edit]                                             |
+| ------------------------------------------------------------------ |
+| Diff tab: Full-width DiffViewer (showDiffOnly=true, toggle avail) |
+|   OR                                                               |
+| Edit tab: Full-width Textarea (mono, pre-filled with adapted)     |
+|                                                                    |
++------------------------------------------------------------------+
+| STICKY ACTION BAR (fixed to bottom, border-t, bg-background)      |
+| [Decline] .......................... [Approve & Merge (v2 -> v3)]  |
++------------------------------------------------------------------+
+```
 
-**Decline inline flow (`DeclineReasonForm`):**
-- Initially: "Decline" button, `variant="outline"` full width, icon `X`
-- On click: button replaced by inline form — no modal
-  - `Textarea`: placeholder "Why are you declining this? The consultant will see your reason." min-height 64px
-  - Two buttons below: "Discard reason" (ghost, collapses form) + "Confirm Decline" (destructive `#E3392A`, requires non-empty textarea)
-- On confirm: server action, toast "Merge suggestion declined", redirect to `/review`
+### Zone 1: Page Header
 
-**Approve flow:**
-- "Approve & Merge" click → `useTransition` spinner on button, disabled state
-- On success: toast "Prompt updated — version bumped", redirect to `/review`
-- On error: toast error "Couldn't approve merge. Try again."
+```
+className="flex flex-col gap-4"
+```
+
+**Row 1 — navigation + status:**
+```
+className="flex items-center justify-between"
+```
+- Left: Back link — `ArrowLeft` icon (size-4) + "Back to Review Queue" (14px, muted-foreground, hover:foreground)
+- Right: Status badge (Pending Review / Merged / Declined) — using the standard badge visual contract
+
+**Row 2 — title:**
+- Prompt title: 20px, semibold, `text-foreground`
+- `className="text-[20px] font-semibold"`
+
+### Zone 2: Context Bar (`ReviewContextBar`)
+
+**Purpose:** Compressed horizontal metadata that the admin scans in 3 seconds. Replaces the 280px sidebar's 7 sections with a dense, single-band display.
+
+**Container styling:**
+```
+className="bg-card border border-border rounded-md px-4 py-3"
+```
+
+**Layout — two rows:**
+
+Row 1 — key metadata (flex, items-center, gap-6):
+```
+[Suggested by: {name}] | [Engagement: {name + link}] | [Rating: {stars}] | [Issues: {tag badges}]
+```
+
+- Each item is a label-value pair: label at 13px muted, value at 13px foreground, inline (label and value on same line separated by a colon)
+- Engagement name is a link (text-foreground, hover:text-primary, ExternalLink icon size-3)
+- StarRating component rendered inline, compact mode, read-only
+- Issue tags rendered as inline badges (13px)
+- Pipe separators: `border-l border-border h-4` between each group, with `pl-6` on the right side
+- If no rating: show "No rating" in muted
+- If no issues: omit the issues group entirely (no "No issues" label)
+
+Row 2 — merge note (conditional, only shown if merge note exists):
+```
+className="mt-2 pt-2 border-t border-border"
+```
+- Label: "Merge note:" (13px, muted, inline)
+- Value: merge note text (13px, italic, foreground), truncated to 2 lines with `line-clamp-2`
+- Tooltip on hover shows full text if truncated
+
+**Expandable details (optional — for feedback/adaptation notes):**
+- If feedback_notes OR adaptation_notes exist: show a "More context" toggle (13px, muted, ChevronDown icon, ghost button style)
+- On click: reveals additional rows below the merge note:
+  - "Consultant feedback:" + value (13px)
+  - "Adaptation notes:" + value (13px)
+  - "Contains client context: Yes/No" (13px, muted)
+- Default: collapsed. Most reviews do not need these — the diff and merge note are sufficient.
+
+**Space budget:** The context bar should be approximately 60-80px tall when collapsed (1 metadata row + 1 merge note row), expandable to approximately 160px when "More context" is open.
+
+### Zone 3: Main Content Area — Tabbed Diff/Edit
+
+**The Edit-While-Reviewing Solution: Side-by-Side Tabs**
+
+Design choice: **Tabbed view with persistent diff reference.** The admin switches between a Diff tab (read the changes) and an Edit tab (modify the final content). This is superior to the alternatives because:
+
+- **vs. split (diff top, editor bottom):** A split forces both into half the viewport height. The diff is already two columns — halving its height makes it unreadable. The editor needs vertical space for long prompts.
+- **vs. slide-out panel:** Adds complexity, hides the diff behind a drawer, requires extra click to reference.
+- **vs. inline editing on the diff:** react-diff-viewer-continued does not support editable cells. Would require a custom diff renderer.
+- **Tabs win** because each view gets full width and height. The admin can flip between tabs rapidly (keyboard shortcut: `Ctrl+1` for Diff, `Ctrl+2` for Edit). The mental model matches code review tools (GitHub's "Files changed" vs. editing a file). The tab bar is persistent so the admin always knows which mode they are in.
+
+**Tab bar:**
+```
+className="border-b border-border mb-0"
+```
+- Two tabs: "Changes" (default active) | "Edit before approving"
+- Use `Tabs` component from shadcn
+- Active tab: `#4287FF` underline
+- "Edit before approving" tab shows a pencil icon (`Pencil` from lucide, size-3.5) before the text
+- Tab label sizes: 15px, weight 400
+
+**When "Changes" tab is active (DiffViewer):**
+
+Full-width `DiffViewer` with these props:
+
+```tsx
+<DiffViewer
+  original={suggestion.source_prompt_content}
+  adapted={editedContent}  // NOT suggestion.adapted_content — shows admin edits live
+  leftTitle="Library (current)"
+  rightTitle={hasEdited ? "Edited (will be merged)" : "Fork (adapted)"}
+  showDiffOnly={true}
+  extraLinesSurroundingDiff={3}
+/>
+```
+
+Key behaviors:
+- `showDiffOnly={true}` by default — only shows changed lines plus 3 lines of surrounding context. Long prompts with small changes become scannable.
+- Toggle in top-right corner of diff area: "Show all lines" / "Show changes only" — small ghost button (13px, muted). Persisted in component state, not URL.
+- `rightTitle` updates dynamically when the admin has edited content in the Edit tab — visual signal that the diff now reflects admin modifications.
+- If admin has edited content: the diff compares library (current) vs. admin's edited version, not the original fork adaptation. This is critical — the admin must see what will actually be merged.
+
+**When "Edit before approving" tab is active (ReviewContentEditor):**
+
+Full-width editor for the content that will replace the library prompt on merge:
+
+```
+className="flex flex-col gap-3"
+```
+
+- Helper text: "Edit the content below. This version will replace the library prompt when you approve." (13px, muted, mb-2)
+- `Textarea` pre-filled with `adapted_content` on first render. Admin edits are tracked in component state.
+- Textarea styling: `font-mono text-[13px] leading-[1.6] min-h-[400px] bg-card border-border resize-y`
+- The textarea uses `resize-y` so the admin can drag to expand vertically.
+- A "Reset to original adaptation" ghost link (13px, muted) below the textarea — reverts admin edits back to `suggestion.adapted_content`. Only visible when content differs from the original adaptation.
+- Character count in bottom-right corner (13px, muted): "{N} characters"
+
+**State synchronization between tabs:**
+- `editedContent` is held in `ReviewDetailClient` state (already exists in current implementation)
+- Switching between tabs preserves edits — no data loss
+- The Diff tab always diffs against `editedContent`, so after editing, switching back to Diff shows the admin exactly what will be merged
+- A small indicator appears on the "Changes" tab label when edits exist: a blue dot (4px, `bg-primary`, rounded-full) next to "Changes" — signals "diff has been updated by your edits"
+
+### Zone 4: Sticky Action Bar (`ReviewActionBar`)
+
+**Purpose:** Approve and Decline actions are always visible regardless of scroll position. Solves the critical bug where actions scrolled out of view on long diffs.
+
+**Container styling:**
+```
+className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm"
+```
+
+Note: The `left` value must account for the app sidebar width. Use `left-[var(--sidebar-width)]` or measure from the sidebar component. Fallback: wrap the action bar inside the page content area and use `sticky bottom-0` instead of `fixed`. Sticky is preferred because it naturally respects the sidebar without manual offset calculation.
+
+**Preferred implementation — sticky:**
+```
+className="sticky bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm px-6 py-4 -mx-6 -mb-6"
+```
+The negative margins (`-mx-6 -mb-6`) extend the bar to the edges of the page padding container. The `backdrop-blur-sm` with 95% opacity allows content to subtly show through when scrolling, signaling that content exists below the fold.
+
+**Inner layout:**
+```
+className="flex items-center justify-between max-w-6xl"
+```
+
+- Left side: "Decline" button — `variant="outline"`, icon `X` (size-4), 15px text. On click: transforms inline into the `DeclineReasonForm`.
+- Right side: "Approve & Merge" button — `variant="default"` (primary `#4287FF`), icon `Check` (size-4), 15px text. Includes version indicator.
+
+**Version indicator on approve button:**
+- Button copy: "Approve & Merge" with a muted version hint to the right: "(v{N} -> v{N+1})" at 13px, muted, inside the button but visually separated
+- Implementation: `"Approve & Merge"` as button children, with a `<span className="text-[13px] opacity-60 ml-2">v{current} -> v{next}</span>` inside
+- This makes the version bump visible at decision time — the admin knows they are creating version 3, not just "approving"
+
+**Decline inline expansion within sticky bar:**
+When "Decline" is clicked, the left side of the bar expands vertically to show the `DeclineReasonForm`:
+
+```
++------------------------------------------------------------------+
+| [Textarea: "Why are you declining this?..."]                       |
+| [Discard reason (ghost)]  [Confirm Decline (destructive)]          |
+|                                            [Approve & Merge (...)] |
++------------------------------------------------------------------+
+```
+
+- The sticky bar grows in height to accommodate the textarea (min-height 64px)
+- "Approve & Merge" remains visible but shifts down — it is not hidden during decline flow
+- "Approve & Merge" becomes disabled (opacity-50) while decline form is open — prevents conflicting actions
+- On "Discard reason": bar collapses back to single row, approve re-enables
+
+### Approve Confirmation Dialog (`ApproveConfirmDialog`)
+
+**Rationale:** Approve is irreversible — it replaces library content and bumps the version. The current implementation has no confirmation, which caused an accidental merge during UAT. An AlertDialog is the correct pattern (matches the `DeprecationDialog` precedent).
+
+**Trigger:** Clicking "Approve & Merge" in the sticky action bar opens the dialog. Does NOT start the server action immediately.
+
+**Dialog content:**
+
+```
+AlertDialogTitle: "Approve and merge this change?"
+AlertDialogDescription: (dynamic, based on whether admin edited content)
+```
+
+If admin did NOT edit (content matches original adaptation):
+```
+"The fork's adapted content will replace the library prompt. Version will be bumped from {N} to {N+1}. This cannot be undone."
+```
+
+If admin DID edit:
+```
+"Your edited content (not the original fork adaptation) will replace the library prompt. Version will be bumped from {N} to {N+1}. This cannot be undone."
+```
+
+**Footer:**
+- Cancel: "Keep Reviewing" (ghost) — closes dialog, no side effects
+- Confirm: "Approve & Merge" (primary `#4287FF`) — triggers `approveMerge` server action with `useTransition` spinner
+
+**On confirm success:**
+- Toast: "Prompt merged — now at version {N+1}" (updated copy — shows the actual version number, not generic text)
+- Redirect to `/review`
+
+**On confirm error:**
+- Toast: "Merge failed — the library prompt may have been updated by someone else. Refresh and try again." (specific error — points to likely cause and resolution)
+- Dialog stays open so admin can retry or cancel
+
+### State Variations
+
+The review detail page renders differently based on `suggestion.merge_status`:
+
+**Status: "pending" (default — full review flow)**
+- Context bar: all metadata visible
+- Tab area: both "Changes" and "Edit before approving" tabs available
+- Sticky action bar: "Decline" + "Approve & Merge" buttons visible
+- This is the primary/default state described in full above
+
+**Status: "approved" (read-only review of merged change)**
+- Context bar: all metadata visible, with "Merged" badge in header (teal)
+- Tab area: only "Changes" tab visible (no Edit tab — nothing to edit after merge)
+- Diff viewer: `leftTitle="Library (before merge)"`, `rightTitle="Merged content"`
+- Sticky action bar: **hidden entirely** — no actions available
+- Additional info below context bar: "Merged on {date}" (13px, muted) — if available from data
+
+**Status: "declined" (read-only with decline reason)**
+- Context bar: all metadata visible, with "Declined" badge in header (red)
+- Tab area: only "Changes" tab visible (no Edit tab)
+- Diff viewer: same as pending (shows what was proposed)
+- Sticky action bar: **hidden entirely** — no actions available
+- Additional info below context bar: Decline reason panel:
+  ```
+  className="bg-[#E3392A]/5 border border-[#E3392A]/20 rounded-md px-4 py-3 mt-4"
+  ```
+  - Label: "Decline reason" (13px, muted)
+  - Value: decline reason text (15px, foreground)
+
+### DiffViewer Enhancement
+
+The existing `DiffViewer` component needs two new props to support the review detail page effectively:
+
+**Current state:** `showDiffOnly={false}` — shows all lines including unchanged. For long prompts (200+ lines), the actual changes are buried in walls of unchanged text.
+
+**Required changes to `components/engagements/diff-viewer.tsx`:**
+
+```tsx
+interface DiffViewerProps {
+  original: string
+  adapted: string
+  leftTitle?: string
+  rightTitle?: string
+  showDiffOnly?: boolean          // NEW — default true
+  extraLinesSurroundingDiff?: number  // NEW — default 3
+}
+```
+
+- `showDiffOnly={true}`: Collapses unchanged lines into fold indicators. react-diff-viewer-continued natively supports this — the fold indicators are clickable to expand.
+- `extraLinesSurroundingDiff={3}`: Shows 3 lines of context above and below each change block. Enough to understand placement without overwhelming.
+- Default behavior changes: The review detail page passes `showDiffOnly={true}`. The fork detail "Diff" tab continues to pass `showDiffOnly={false}` (existing behavior preserved — fork detail shows the full document).
+
+**Toggle UI (rendered inside ReviewDetailClient, not DiffViewer):**
+- A ghost button above the diff viewer, right-aligned: "Show all lines" / "Show changes only"
+- Icon: `Expand` / `Minimize2` from lucide (size-3.5)
+- 13px, muted-foreground text
+- Toggles the `showDiffOnly` prop on the DiffViewer instance
+
+### Keyboard Shortcuts
+
+Power-user acceleration for the review flow:
+
+| Shortcut | Action | Scope |
+|----------|--------|-------|
+| `Ctrl+1` / `Cmd+1` | Switch to Changes tab | Review detail page |
+| `Ctrl+2` / `Cmd+2` | Switch to Edit tab | Review detail page (pending only) |
+| `Ctrl+Enter` / `Cmd+Enter` | Open approve confirmation dialog | Review detail page (pending only) |
+
+Implementation: `useEffect` with `keydown` listener on the page component. Clean up on unmount. Only active when no modal/dialog is open.
+
+### Component Props Specification
+
+**ReviewDetailClient** (refactored):
+```tsx
+interface ReviewDetailClientProps {
+  suggestion: MergeSuggestion
+}
+```
+State:
+- `editedContent: string` — initialized from `suggestion.adapted_content`
+- `activeTab: 'changes' | 'edit'` — default `'changes'`
+- `showDiffOnly: boolean` — default `true`
+- `hasEdited: boolean` — derived: `editedContent !== suggestion.adapted_content`
+
+**ReviewContextBar**:
+```tsx
+interface ReviewContextBarProps {
+  suggestion: MergeSuggestion
+  showExpandedDetails?: boolean  // controlled from parent or internal state
+}
+```
+
+**ReviewActionBar**:
+```tsx
+interface ReviewActionBarProps {
+  suggestion: MergeSuggestion
+  editedContent: string
+  hasEdited: boolean
+}
+```
+
+**ApproveConfirmDialog**:
+```tsx
+interface ApproveConfirmDialogProps {
+  suggestionId: string
+  sourcePromptId: string
+  editedContent: string
+  hasEdited: boolean
+  currentVersion: number
+  mergeNote: string
+  onSuccess: () => void
+  trigger: React.ReactNode  // the button that opens the dialog
+}
+```
+
+**ReviewContentEditor** (refactored):
+```tsx
+interface ReviewContentEditorProps {
+  content: string
+  originalContent: string  // for "reset to original" comparison
+  onChange: (content: string) => void
+  onReset: () => void
+}
+```
 
 ---
 
@@ -259,6 +597,13 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 | Primary CTA (consultant) | "Suggest Merge" |
 | Primary CTA (admin approve) | "Approve & Merge" |
 | Primary CTA (admin decline) | "Confirm Decline" |
+| Approve confirmation title | "Approve and merge this change?" |
+| Approve confirmation body (no edits) | "The fork's adapted content will replace the library prompt. Version will be bumped from {N} to {N+1}. This cannot be undone." |
+| Approve confirmation body (with edits) | "Your edited content (not the original fork adaptation) will replace the library prompt. Version will be bumped from {N} to {N+1}. This cannot be undone." |
+| Approve confirmation cancel | "Keep Reviewing" |
+| Approve confirmation confirm | "Approve & Merge" |
+| Approve success toast | "Prompt merged — now at version {N+1}" |
+| Approve error toast | "Merge failed — the library prompt may have been updated by someone else. Refresh and try again." |
 | Merge dialog title | "Suggest a merge" |
 | Merge dialog body | "Your adaptation notes, rating, and feedback will be shared with the reviewer automatically." |
 | Merge note label | "Why should this be merged back?" |
@@ -273,25 +618,34 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 | Review queue empty heading | "No pending merge suggestions" |
 | Review queue empty body | "When consultants suggest merging their improvements, they'll appear here for review." |
 | Review detail back link | "Back to Review Queue" |
-| Edit content toggle | "Edit content" |
-| Edit content helper | "This content will replace the library prompt on approval." |
+| Changes tab label | "Changes" |
+| Edit tab label | "Edit before approving" |
+| Edit helper text | "Edit the content below. This version will replace the library prompt when you approve." |
+| Reset edits link | "Reset to original adaptation" |
+| Diff toggle (collapse) | "Show changes only" |
+| Diff toggle (expand) | "Show all lines" |
+| More context toggle (expand) | "More context" |
+| More context toggle (collapse) | "Less context" |
 | Decline textarea placeholder | "Why are you declining this? The consultant will see your reason." |
-| Approve success toast | "Prompt updated — version bumped" |
+| Decline reason panel label | "Decline reason" |
 | Decline success toast | "Merge suggestion declined" |
 | Merge submit success toast | "Merge suggestion submitted" |
-| Error toast (generic) | "Couldn't save changes. Try again." |
-| No changes diff state | "No changes yet. Edit in Write mode to see a diff." (inherited from DiffViewer) |
+| Error toast (generic) | "Something went wrong. Try again." |
+| No changes diff state | "No differences found." |
+| Declined state merged-on label | "Merged on {date}" |
+| Version hint in approve button | "v{N} -> v{N+1}" |
 
-Destructive confirmation pattern:
-- Decline flow: inline expansion (no modal) — "Confirm Decline" button only enabled when textarea non-empty. No separate confirmation dialog needed — the required text input is the confirmation.
+Destructive confirmation patterns:
+- **Approve flow:** AlertDialog with explicit confirmation — "Approve & Merge" button in dialog footer. The dialog body states consequences (version bump, content replacement, irreversibility). The cancel label "Keep Reviewing" encourages the admin to double-check rather than abandon.
+- **Decline flow:** Inline expansion (no modal) — "Confirm Decline" button only enabled when textarea non-empty. No separate confirmation dialog needed — the required text input is the confirmation.
 
-Source: CONTEXT.md D-02, D-04, D-07, D-10, D-11; `.impeccable.md` § Design Principles (voice: direct, concise); revised 2026-03-25 (replaced generic "Cancel" labels with "Discard suggestion" and "Discard reason")
+Source: CONTEXT.md D-02, D-04, D-07, D-10, D-11; `.impeccable.md` SS Design Principles (voice: direct, concise); revised 2026-03-26 (added approve confirmation copy, version-aware toast, specific error messages, tab labels, diff toggle labels)
 
 ---
 
 ## Status Badge Visual Contract
 
-Status badges appear in two locations: fork sidebar (Section 8) and review queue cards (right-aligned).
+Status badges appear in three locations: fork sidebar (Section 8), review queue cards (right-aligned), and review detail page header (right-aligned).
 
 | Status | Background | Text Color | Icon | Icon size |
 |--------|-----------|------------|------|-----------|
