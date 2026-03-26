@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase complete — ready for verification
-stopped_at: Completed 05-06-PLAN.md
-last_updated: "2026-03-26T22:25:09.021Z"
+stopped_at: Completed 05-07-PLAN.md
+last_updated: "2026-03-26T22:25:26.676Z"
 progress:
   total_phases: 5
   completed_phases: 4
@@ -72,6 +72,7 @@ Plan: 2 of 2
 | Phase 05-demand-board-and-dashboard P03 | 5 | 2 tasks | 7 files |
 | Phase 05-demand-board-and-dashboard P05 | 260 | 2 tasks | 3 files |
 | Phase 05 P06 | 8 | 2 tasks | 5 files |
+| Phase 05-demand-board-and-dashboard P07 | 15 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -161,6 +162,8 @@ Recent decisions affecting current work:
 - [Phase 05]: Urgency sort uses JS-side URGENCY_PRIORITY map (urgent:0, medium:1, nice_to_have:2) with upvote tiebreak — alphabetical ORDER BY produced wrong sort
 - [Phase 05]: Seed claim loops over both DEMO_CONSULTANT_ID and DEMO_ADMIN_ID — both demo roles see identical demand board seed data
 - [Phase 05]: Consultant /library redirect removed entirely from middleware — library page handles read-only rendering for non-admins at render time
+- [Phase 05-demand-board-and-dashboard]: Client-side filtering via useMemo removes all server round-trips for demand board tab/sort changes — mirrors library-grid.tsx pattern from Phase 02
+- [Phase 05-demand-board-and-dashboard]: Optimistic upvote uses local useState with revert-on-failure; useEffect syncs from props after server revalidation
 
 ### Pending Todos
 
@@ -180,6 +183,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T22:24:55.380Z
-Stopped at: Completed 05-06-PLAN.md
+Last session: 2026-03-26T22:25:26.674Z
+Stopped at: Completed 05-07-PLAN.md
 Resume file: None
