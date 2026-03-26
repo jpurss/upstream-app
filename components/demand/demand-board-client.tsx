@@ -65,8 +65,8 @@ export function DemandBoardClient({
     setCurrentStatus(val)
   }
 
-  function handleSortChange(val: string) {
-    setCurrentSort(val)
+  function handleSortChange(val: string | null) {
+    if (val) setCurrentSort(val)
   }
 
   const { filteredRequests, statusCounts } = useMemo(() => {

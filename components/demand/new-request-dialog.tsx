@@ -108,7 +108,7 @@ export function NewRequestDialog({ open, onOpenChange }: NewRequestDialogProps) 
             <Label htmlFor="request-category" className="text-[13px]">
               Category
             </Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={category} onValueChange={(val) => { if (val) setCategory(val) }}>
               <SelectTrigger id="request-category" className="text-[15px]">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
@@ -127,7 +127,7 @@ export function NewRequestDialog({ open, onOpenChange }: NewRequestDialogProps) 
             <Label htmlFor="request-urgency" className="text-[13px]">
               Urgency
             </Label>
-            <Select value={urgency} onValueChange={setUrgency}>
+            <Select value={urgency} onValueChange={(val) => { if (val) setUrgency(val) }}>
               <SelectTrigger id="request-urgency" className="text-[15px]">
                 <SelectValue placeholder="Select urgency" />
               </SelectTrigger>
