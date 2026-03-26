@@ -36,7 +36,7 @@ export async function signIn(_prevState: unknown, formData: FormData) {
     }
   }
 
-  redirect(effectiveRole === 'admin' ? '/library' : '/engagements')
+  redirect(effectiveRole === 'admin' ? '/dashboard' : '/engagements')
 }
 
 export async function signInAsDemo(role: 'consultant' | 'admin') {
@@ -70,7 +70,40 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
     if (profileError) {
       console.error('[signInAsDemo] profile upsert failed:', profileError.message)
     }
+
+    // Claim seed data — transfer ownership from placeholder demo profiles to the new anonymous user.
+    // This ensures RLS policies (engagements_own, forked_prompts_own) show seed data as "yours".
+    const DEMO_CONSULTANT_ID = '00000000-0000-0000-0000-000000000001'
+    const DEMO_ADMIN_ID = '00000000-0000-0000-0000-000000000002'
+    const placeholderId = role === 'admin' ? DEMO_ADMIN_ID : DEMO_CONSULTANT_ID
+
+    // Only claim if the new anonymous user is not already the placeholder (shouldn't happen, but guard)
+    if (user.id !== placeholderId) {
+      // Transfer engagements
+      await adminClient
+        .from('engagements')
+        .update({ created_by: user.id })
+        .eq('created_by', placeholderId)
+
+      // Transfer forks
+      await adminClient
+        .from('forked_prompts')
+        .update({ forked_by: user.id })
+        .eq('forked_by', placeholderId)
+
+      // Transfer prompt requests
+      await adminClient
+        .from('prompt_requests')
+        .update({ requested_by: user.id })
+        .eq('requested_by', placeholderId)
+
+      // Transfer upvotes
+      await adminClient
+        .from('request_upvotes')
+        .update({ user_id: user.id })
+        .eq('user_id', placeholderId)
+    }
   }
 
-  redirect(role === 'admin' ? '/library' : '/engagements')
+  redirect(role === 'admin' ? '/dashboard' : '/engagements')
 }
