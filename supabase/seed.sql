@@ -422,6 +422,18 @@ UPDATE prompts SET total_checkouts =
 -- Two demo profiles (placeholder — claimed by signInAsDemo on login),
 -- 5 community profiles for upvote simulation,
 -- 2 engagements, 5 forks (varied ratings + merge statuses),
+
+-- Stub auth.users entries for placeholder profiles (profiles.id FK → auth.users)
+INSERT INTO auth.users (id, instance_id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at, confirmation_token, recovery_token, email_change_token_new, email_change)
+VALUES
+  ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'demo-consultant@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'demo-admin@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'community-01@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'community-02@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000012', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'community-03@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000013', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'community-04@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', ''),
+  ('00000000-0000-0000-0000-000000000014', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'community-05@placeholder.local', '', NOW(), NOW(), NOW(), '', '', '', '')
+ON CONFLICT (id) DO NOTHING;
 -- 7 prompt requests (all statuses represented), upvote rows.
 -- =============================================================================
 
