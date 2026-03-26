@@ -22,13 +22,15 @@ const darkStyles = {
 interface DiffViewerProps {
   original: string
   adapted: string
+  leftTitle?: string
+  rightTitle?: string
 }
 
-export function DiffViewer({ original, adapted }: DiffViewerProps) {
+export function DiffViewer({ original, adapted, leftTitle = 'Original', rightTitle = 'Adapted' }: DiffViewerProps) {
   if (original === adapted) {
     return (
       <div className="flex items-center justify-center py-12 text-[13px] text-muted-foreground">
-        No changes yet. Edit in Write mode to see a diff.
+        No differences found.
       </div>
     )
   }
@@ -39,8 +41,8 @@ export function DiffViewer({ original, adapted }: DiffViewerProps) {
       splitView={true}
       useDarkTheme={true}
       styles={darkStyles}
-      leftTitle="Original"
-      rightTitle="Adapted"
+      leftTitle={leftTitle}
+      rightTitle={rightTitle}
       hideLineNumbers={false}
       showDiffOnly={false}
     />
