@@ -26,10 +26,9 @@ export async function fetchPromptRequests(
     query = query.eq('status', status)
   }
 
-  // Sort: newest and urgent can be done in Supabase; upvotes sort is JS-side
+  // Sort: newest can be done in Supabase; upvotes and urgent sorts are JS-side
   if (sort === 'newest') query = query.order('created_at', { ascending: false })
-  else if (sort === 'urgent') query = query.order('urgency', { ascending: false })
-  else query = query.order('created_at', { ascending: false }) // fallback order before JS sort
+  else query = query.order('created_at', { ascending: false }) // stable base order before JS sort
 
   const { data, error } = await query
 
@@ -62,6 +61,24 @@ export async function fetchPromptRequests(
   // JS-side sort for upvotes (Supabase can't ORDER BY aggregate join)
   if (sort === 'upvotes') {
     mapped.sort((a, b) => b.upvote_count - a.upvote_count)
+  }
+
+  // JS-side sort for urgency: priority map ensures urgent > medium > nice_to_have.
+  // Alphabetical ORDER BY would produce wrong order (urgent > nice_to_have > medium).
+  const URGENCY_PRIORITY: Record<string, number> = {
+    urgent: 0,
+    medium: 1,
+    nice_to_have: 2,
+  }
+
+  if (sort === 'urgent') {
+    mapped.sort((a, b) => {
+      const aPri = URGENCY_PRIORITY[a.urgency] ?? 2
+      const bPri = URGENCY_PRIORITY[b.urgency] ?? 2
+      if (aPri !== bPri) return aPri - bPri
+      // Secondary sort: most upvoted within same urgency tier
+      return b.upvote_count - a.upvote_count
+    })
   }
 
   return mapped
