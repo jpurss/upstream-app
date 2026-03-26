@@ -34,12 +34,17 @@ vi.mock('@supabase/ssr', () => ({
   })),
 }))
 
-// Mock the admin client used for profile upserts and seed data claim
+// Mock the admin client used for profile upserts and seed data cloning
 const mockEq = vi.fn().mockResolvedValue({ error: null })
 const mockUpdate = vi.fn(() => ({ eq: mockEq }))
+const mockSelectEq = vi.fn().mockResolvedValue({ data: [] })
+const mockSelect = vi.fn(() => ({ eq: mockSelectEq }))
+const mockInsert = vi.fn().mockResolvedValue({ error: null })
 const mockAdminFrom = vi.fn(() => ({
   upsert: vi.fn().mockResolvedValue({ error: null }),
   update: mockUpdate,
+  select: mockSelect,
+  insert: mockInsert,
 }))
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: vi.fn(() => ({

@@ -57,19 +57,14 @@ export function ReviewActionBar({ suggestion, editedContent, hasEdited }: Review
           currentVersion={suggestion.source_prompt_version}
           mergeNote={suggestion.merge_suggestion || ''}
           onSuccess={handleApproveSuccess}
-          trigger={
-            <Button
-              className="gap-2 rounded-full"
-              disabled={isDeclineOpen}
-            >
-              <Check className="size-4" />
-              Approve & Merge
-              <span className="text-[13px] opacity-60 ml-1">
-                v{suggestion.source_prompt_version} → v{suggestion.source_prompt_version + 1}
-              </span>
-            </Button>
-          }
-        />
+          disabled={isDeclineOpen}
+        >
+          <Check className="size-4" />
+          Approve & Merge
+          <span className="text-[13px] opacity-60 ml-1">
+            v{suggestion.source_prompt_version} → v{suggestion.source_prompt_version + 1}
+          </span>
+        </ApproveConfirmDialog>
       </div>
     </div>
   )

@@ -13,6 +13,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { approveMerge } from '@/app/(app)/review/actions'
 
@@ -24,7 +25,8 @@ interface ApproveConfirmDialogProps {
   currentVersion: number
   mergeNote: string
   onSuccess: () => void
-  trigger: React.ReactNode
+  disabled?: boolean
+  children: React.ReactNode
 }
 
 export function ApproveConfirmDialog({
@@ -35,7 +37,8 @@ export function ApproveConfirmDialog({
   currentVersion,
   mergeNote,
   onSuccess,
-  trigger,
+  disabled,
+  children,
 }: ApproveConfirmDialogProps) {
   const [isPending, startTransition] = useTransition()
   const nextVersion = currentVersion + 1
@@ -61,7 +64,8 @@ export function ApproveConfirmDialog({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={trigger as React.ReactElement}>
+      <AlertDialogTrigger render={<Button className="gap-2 rounded-full" disabled={disabled} />}>
+        {children}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

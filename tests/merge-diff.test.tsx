@@ -312,11 +312,11 @@ describe('ApproveConfirmDialog', () => {
         currentVersion={2}
         mergeNote=""
         onSuccess={vi.fn()}
-        trigger={<span data-testid="approve-trigger">Open Dialog</span>}
-      />
+      >
+        Open Dialog
+      </ApproveConfirmDialog>
     )
-    expect(screen.getByTestId('approve-trigger')).toBeInTheDocument()
-    expect(screen.getByTestId('approve-trigger')).toHaveTextContent('Open Dialog')
+    expect(screen.getByText('Open Dialog')).toBeInTheDocument()
   })
 
   it('shows dialog title "Approve and merge this change?"', () => {
@@ -329,8 +329,9 @@ describe('ApproveConfirmDialog', () => {
         currentVersion={2}
         mergeNote=""
         onSuccess={vi.fn()}
-        trigger={<button>Open</button>}
-      />
+      >
+        Open
+      </ApproveConfirmDialog>
     )
     expect(screen.getByText('Approve and merge this change?')).toBeInTheDocument()
   })
@@ -345,8 +346,9 @@ describe('ApproveConfirmDialog', () => {
         currentVersion={2}
         mergeNote=""
         onSuccess={vi.fn()}
-        trigger={<button>Open</button>}
-      />
+      >
+        Open
+      </ApproveConfirmDialog>
     )
     expect(screen.getByText(/fork's adapted content/)).toBeInTheDocument()
   })
@@ -361,8 +363,9 @@ describe('ApproveConfirmDialog', () => {
         currentVersion={2}
         mergeNote=""
         onSuccess={vi.fn()}
-        trigger={<button>Open</button>}
-      />
+      >
+        Open
+      </ApproveConfirmDialog>
     )
     expect(screen.getByText(/Your edited content/)).toBeInTheDocument()
   })
@@ -377,8 +380,9 @@ describe('ApproveConfirmDialog', () => {
         currentVersion={2}
         mergeNote=""
         onSuccess={vi.fn()}
-        trigger={<button>Open</button>}
-      />
+      >
+        Open
+      </ApproveConfirmDialog>
     )
     expect(screen.getByText(/Version will be bumped from 2 to 3/)).toBeInTheDocument()
   })
