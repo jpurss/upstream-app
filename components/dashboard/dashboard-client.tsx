@@ -31,7 +31,7 @@ export function DashboardClient({
 }: DashboardClientProps) {
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-[20px] font-semibold text-foreground">"Dashboard"</h1>
+      <h1 className="text-[20px] font-semibold text-foreground">Dashboard</h1>
 
       {/* Zone 1: Metric Cards */}
       <div className="grid grid-cols-3 gap-6">
