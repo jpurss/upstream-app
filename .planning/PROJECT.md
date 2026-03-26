@@ -26,8 +26,8 @@ Every engagement makes the firm smarter — field-tested prompt improvements flo
 - [ ] Rate and provide feedback on forked prompts (1-2 clicks)
 - [x] Suggest merge back to central library with diff view
 - [x] Review queue with side-by-side diff for merge approval (lead/admin)
-- [ ] Demand board — submit requests, upvote, resolve
-- [ ] Admin dashboard with key metrics and analytics charts
+- [x] Demand board — submit requests, upvote, resolve — Validated in Phase 5: demand-board-and-dashboard
+- [x] Admin dashboard with key metrics and analytics charts — Validated in Phase 5: demand-board-and-dashboard
 - [ ] Auth with role-based access (consultant / admin) — email/password + demo bypass
 - [ ] Demo bypass button — skip signup with anonymous session + seed data
 - [ ] 18 realistic seed prompts across 6 categories for demo
