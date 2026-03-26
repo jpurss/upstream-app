@@ -1,6 +1,6 @@
 ---
 description: Phase roadmap for Upstream — a prompt management system for AI consultancies. Five phases from foundation and auth through library, engagement workspace, merge workflow, and demand board/dashboard.
-date_last_edited: 2026-03-25
+date_last_edited: 2026-03-26
 ---
 
 # Roadmap: Upstream
@@ -70,7 +70,7 @@ Plans:
   3. User can open a forked prompt and edit its content in a markdown editor, add adaptation notes, flag client-specific context, and save changes
   4. User can rate a forked prompt's effectiveness with 1-2 clicks from the engagement workspace — no modal, no form submission required
   5. User can view the diff between the original (at fork time) and their adapted version within the forked prompt view
-**Plans:** 7 plans (5 executed + 2 gap closure)
+**Plans:** 6/7 plans executed
 
 Plans:
 - [x] 03-01-PLAN.md — Install deps, Engagement/Fork types, data access layer, server actions, sidebar nav, role-based redirect
@@ -78,8 +78,8 @@ Plans:
 - [x] 03-03-PLAN.md — Engagement workspace: header with status dropdown, fork card grid, fork empty state
 - [x] 03-04-PLAN.md — Fork creation: 3 entry points, server actions, prompt picker modal, duplicate prevention
 - [x] 03-05-PLAN.md — Fork detail: Write/Preview/Diff editor, autosave, star rating, issue tags, feedback sidebar
-- [ ] 03-06-PLAN.md — Gap closure: profile creation on auth + engagement dialog simplification
-- [ ] 03-07-PLAN.md — Gap closure: proxy role redirect + ForkGrid CTA wiring + inline star rating
+- [x] 03-06-PLAN.md — Gap closure: profile creation on auth + engagement dialog simplification
+- [x] 03-07-PLAN.md — Gap closure: proxy role redirect + ForkGrid CTA wiring + inline star rating
 
 ### Phase 4: Merge Workflow
 **Goal**: The knowledge loop closes — consultants can suggest pushing field-tested improvements back to the central library, and admins can review, diff, approve, or reject them.
@@ -91,7 +91,13 @@ Plans:
   3. Admin can view all pending merge suggestions with context (who suggested, which engagement, effectiveness rating) and filter by status
   4. Admin can approve a merge — the central library prompt content updates, version increments, and a changelog entry is created
   5. Admin can decline a merge with a reason — the fork is notified of the rejection reason
-**Plans**: TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Schema migration, merge types, data access layer, server actions (suggestMerge, approveMerge, declineMerge)
+- [ ] 04-02-PLAN.md — Fork sidebar merge section (suggest/status badges), app sidebar pending count badge
+- [ ] 04-03-PLAN.md — Review queue page: filter tabs, rich context cards, empty state, loading skeleton
+- [ ] 04-04-PLAN.md — Review detail page: side-by-side diff, edit-before-approve, approve/decline flows
 
 ### Phase 5: Demand Board and Dashboard
 **Goal**: The demo is complete — consultants can surface prompt gaps through the demand board, admins have visibility into usage and quality metrics, and realistic seed engagement data makes every chart and metric meaningful.
@@ -114,6 +120,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 3/3 | Complete | 2026-03-25 |
 | 2. Prompt Library | 4/4 | Complete   | 2026-03-25 |
-| 3. Engagement Workspace | 5/7 | In Progress (gap closure) |  |
-| 4. Merge Workflow | 0/TBD | Not started | - |
+| 3. Engagement Workspace | 6/7 | In Progress|  |
+| 4. Merge Workflow | 0/4 | Not started | - |
 | 5. Demand Board and Dashboard | 0/TBD | Not started | - |
