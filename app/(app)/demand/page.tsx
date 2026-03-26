@@ -21,7 +21,12 @@ export default async function DemandBoardPage({
   const demoRole = isAnonymous ? (user.user_metadata?.demo_role as string ?? 'consultant') : null
   const effectiveRole = role ?? (isAnonymous ? demoRole : null)
 
-  const allRequests = await fetchPromptRequests('all', 'upvotes', user.id)
+  let allRequests: Awaited<ReturnType<typeof fetchPromptRequests>> = []
+  try {
+    allRequests = await fetchPromptRequests('all', 'upvotes', user.id)
+  } catch (err) {
+    console.error('[DemandBoardPage] Failed to fetch requests:', err)
+  }
 
   // Only fetch active prompts for admins — needed for the resolve dialog autocomplete
   let activePrompts: { id: string; title: string; category: string }[] = []

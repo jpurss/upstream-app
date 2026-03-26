@@ -61,8 +61,7 @@ export function ApproveConfirmDialog({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        {trigger}
+      <AlertDialogTrigger render={trigger as React.ReactElement}>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

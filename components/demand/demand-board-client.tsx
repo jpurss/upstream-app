@@ -51,7 +51,7 @@ interface DemandBoardClientProps {
 }
 
 export function DemandBoardClient({
-  allRequests,
+  allRequests = [],
   isAdmin,
   userId: _userId,
   activePrompts = [],

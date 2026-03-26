@@ -71,40 +71,45 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
       console.error('[signInAsDemo] profile upsert failed:', profileError.message)
     }
 
-    // Claim seed data — transfer ownership from BOTH placeholder demo profiles to the new anonymous user.
-    // Both demo roles (admin and consultant) should see the same seed data (demand board, engagements, etc.).
-    // Admin demo was previously claiming from DEMO_ADMIN_ID which owns nothing meaningful; this fixes that.
+    // Clone seed data — copy from placeholders so originals stay permanently for future sessions.
+    // Engagements and forks are RLS-gated (_own policies) so demo users need their own copies.
+    // Prompt requests and upvotes are read via admin client (bypass RLS) — originals are already visible.
     const DEMO_CONSULTANT_ID = '00000000-0000-0000-0000-000000000001'
-    const DEMO_ADMIN_ID = '00000000-0000-0000-0000-000000000002'
-    const placeholderIds = [DEMO_CONSULTANT_ID, DEMO_ADMIN_ID]
 
-    for (const placeholderId of placeholderIds) {
-      // Guard: skip if the new user happens to be the placeholder (shouldn't happen, but be safe)
-      if (user.id === placeholderId) continue
+    // Clone engagements
+    const { data: seedEngagements } = await adminClient
+      .from('engagements')
+      .select('*')
+      .eq('created_by', DEMO_CONSULTANT_ID)
 
-      // Transfer engagements
-      await adminClient
-        .from('engagements')
-        .update({ created_by: user.id })
-        .eq('created_by', placeholderId)
+    const engagementIdMap = new Map<string, string>()
+    if (seedEngagements?.length) {
+      for (const eng of seedEngagements) {
+        const newId = crypto.randomUUID()
+        engagementIdMap.set(eng.id, newId)
+        await adminClient.from('engagements').insert({
+          ...eng,
+          id: newId,
+          created_by: user.id,
+        })
+      }
+    }
 
-      // Transfer forks
-      await adminClient
-        .from('forked_prompts')
-        .update({ forked_by: user.id })
-        .eq('forked_by', placeholderId)
+    // Clone forks (remap engagement_id to cloned engagements)
+    const { data: seedForks } = await adminClient
+      .from('forked_prompts')
+      .select('*')
+      .eq('forked_by', DEMO_CONSULTANT_ID)
 
-      // Transfer prompt requests
-      await adminClient
-        .from('prompt_requests')
-        .update({ requested_by: user.id })
-        .eq('requested_by', placeholderId)
-
-      // Transfer upvotes
-      await adminClient
-        .from('request_upvotes')
-        .update({ user_id: user.id })
-        .eq('user_id', placeholderId)
+    if (seedForks?.length) {
+      for (const fork of seedForks) {
+        await adminClient.from('forked_prompts').insert({
+          ...fork,
+          id: crypto.randomUUID(),
+          forked_by: user.id,
+          engagement_id: engagementIdMap.get(fork.engagement_id) ?? fork.engagement_id,
+        })
+      }
     }
   }
 
