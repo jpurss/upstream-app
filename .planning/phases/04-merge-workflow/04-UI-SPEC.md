@@ -58,13 +58,15 @@ Source: `.impeccable.md` § Spacing
 |------|------|--------|------|-------------|-------|
 | Display | 20px | 600 | Geist Sans | 1.2 | Page titles (review queue heading, review detail prompt title) |
 | Heading | 16px | 600 | Geist Sans | 1.2 | Section headers, card titles, dialog titles |
-| Body | 14px | 400 | Geist Sans | 1.5 | Default UI text, form inputs, merge notes, decline reasons |
+| Body | 15px | 400 | Geist Sans | 1.5 | Default UI text, form inputs, merge notes, decline reasons |
 | Label | 13px | 400 | Geist Sans | 1.4 | Badges, metadata (who suggested, engagement name, timestamp), sidebar section labels, truncated card previews |
 | Prompt content | 13px | 400 | Geist Mono | 1.6 | Diff viewer content only — never UI chrome |
 
 Weights used: 400 (regular) and 600 (semibold) only. No other weights.
 
-Source: `.impeccable.md` § Typography
+Body/Label distinction: Body (15px) vs Label (13px) = 2px gap. Distinguished additionally by context — Body for interactive input and primary content; Label for metadata, badges, and muted annotations. Body renders at `--foreground`; Label typically renders at `--muted-foreground`.
+
+Source: `.impeccable.md` § Typography; revised 2026-03-25 (bumped Body from 14px to 15px to establish 2px hierarchy gap over Label)
 
 ---
 
@@ -139,7 +141,7 @@ New components to create:
 
 **Trigger state (no suggestion yet):**
 - Label: "Merge suggestion" (13px, muted, sidebar section heading pattern)
-- Button: "Suggest Merge" — `variant="outline"` full width, 14px, icon: `GitMerge` from lucide
+- Button: "Suggest Merge" — `variant="outline"` full width, 15px, icon: `GitMerge` from lucide
 - Positioned after Section 7 (Forked date), preceded by `border-t border-border`
 
 **Dialog (on button click):**
@@ -147,7 +149,7 @@ New components to create:
 - Title: "Suggest a merge" (16px, semibold)
 - Body: "Your adaptation notes, rating, and feedback will be shared with the reviewer automatically." (13px, muted)
 - Single `Textarea`: label "Why should this be merged back?" — required, min-height 80px
-- Footer: "Cancel" (ghost) + "Submit suggestion" (primary `#4287FF`)
+- Footer: "Discard suggestion" (ghost) + "Submit suggestion" (primary `#4287FF`)
 - On submit: optimistic UI — button shows spinner via `useTransition`, dialog closes on success, toast: "Merge suggestion submitted"
 
 **Pending state (suggestion submitted, awaiting review):**
@@ -201,7 +203,7 @@ New components to create:
 - Section heading: "Changes" (16px, semibold, border-b border-border pb-2 mb-4)
 - `DiffViewer` component rendered directly — `leftTitle="Library (current)"`, `rightTitle="Fork (adapted)"`
 - Below diff: collapsible section "Edit before approving" (collapsed by default)
-  - Trigger: "Edit content" button — `variant="ghost"`, `ChevronDown` icon, 14px
+  - Trigger: "Edit content" button — `variant="ghost"`, `ChevronDown` icon, 15px
   - Expanded: `Textarea` pre-filled with adapted content (monospace 13px), full height auto-resize
   - Label: "This content will replace the library prompt on approval." (13px, muted)
 
@@ -210,7 +212,7 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 
 - Section 1 — Who / Where (no border-t, first section)
   - Label: "Suggested by" (13px, muted)
-  - Value: consultant name (14px)
+  - Value: consultant name (15px)
   - Label: "Engagement" (13px, muted)
   - Value: engagement name with external link icon → `/engagements/[id]`
 
@@ -240,7 +242,7 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 - Initially: "Decline" button, `variant="outline"` full width, icon `X`
 - On click: button replaced by inline form — no modal
   - `Textarea`: placeholder "Why are you declining this? The consultant will see your reason." min-height 64px
-  - Two buttons below: "Cancel" (ghost, collapses form) + "Confirm Decline" (destructive `#E3392A`, requires non-empty textarea)
+  - Two buttons below: "Discard reason" (ghost, collapses form) + "Confirm Decline" (destructive `#E3392A`, requires non-empty textarea)
 - On confirm: server action, toast "Merge suggestion declined", redirect to `/review`
 
 **Approve flow:**
@@ -261,6 +263,8 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 | Merge dialog body | "Your adaptation notes, rating, and feedback will be shared with the reviewer automatically." |
 | Merge note label | "Why should this be merged back?" |
 | Merge submit button | "Submit suggestion" |
+| Merge dialog dismiss (ghost) | "Discard suggestion" |
+| DeclineReasonForm dismiss (ghost) | "Discard reason" |
 | Status badge — pending | "Pending Review" |
 | Status badge — merged | "Merged" |
 | Status badge — declined | "Declined" |
@@ -281,7 +285,7 @@ Section structure mirrors ForkSidebar (py-4 + border-t pattern):
 Destructive confirmation pattern:
 - Decline flow: inline expansion (no modal) — "Confirm Decline" button only enabled when textarea non-empty. No separate confirmation dialog needed — the required text input is the confirmation.
 
-Source: CONTEXT.md D-02, D-04, D-07, D-10, D-11; `.impeccable.md` § Design Principles (voice: direct, concise)
+Source: CONTEXT.md D-02, D-04, D-07, D-10, D-11; `.impeccable.md` § Design Principles (voice: direct, concise); revised 2026-03-25 (replaced generic "Cancel" labels with "Discard suggestion" and "Discard reason")
 
 ---
 
