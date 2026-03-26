@@ -1,9 +1,9 @@
 ---
-status: complete
+status: resolved
 phase: 05-demand-board-and-dashboard
-source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md, 05-05-SUMMARY.md]
+source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md, 05-05-SUMMARY.md, 05-06-SUMMARY.md, 05-07-SUMMARY.md]
 started: 2026-03-26T19:30:00Z
-updated: 2026-03-26T19:45:00Z
+updated: 2026-03-26T21:00:00Z
 ---
 
 ## Current Test
@@ -89,7 +89,7 @@ skipped: 0
 ## Gaps
 
 - truth: "Demand board filter/sort and upvote toggle should feel responsive without full page reload delay"
-  status: failed
+  status: resolved
   reason: "User reported: They all work but it feels super sluggish when I click a filter or sort. Also when I click upvote, there's quite a long delay before it changes number and color."
   severity: minor
   test: 3
@@ -102,7 +102,7 @@ skipped: 0
     - "True optimistic upvote update before server action completes"
 
 - truth: "Urgent sort should order: urgent → medium → nice_to_have (not alphabetical)"
-  status: failed
+  status: resolved
   reason: "User reported: urgent -> nice to have -> medium. That's the wrong order but urgent did get moved to the top"
   severity: major
   test: 4
@@ -112,7 +112,7 @@ skipped: 0
     - "JS-side urgency sort using priority map instead of Supabase alphabetical ORDER BY"
 
 - truth: "Dashboard metric cards should be compact — proportional to the data they display"
-  status: failed
+  status: resolved
   reason: "User reported: the cards for those data points are massive. Taking up way too much real estate for 3 pieces of data"
   severity: cosmetic
   test: 10
@@ -122,7 +122,7 @@ skipped: 0
     - "Reduce MetricCard padding and font sizes for more compact layout"
 
 - truth: "Consultant demo should see the same demand board seed data as admin demo"
-  status: failed
+  status: resolved
   reason: "User reported: Consultant seed data should match admin seed data"
   severity: major
   test: 13
@@ -133,7 +133,7 @@ skipped: 0
     - "Seed data claim should transfer ALL demo data to both roles, not just role-specific placeholder data"
 
 - truth: "Consultant can browse the prompt library (read-only)"
-  status: failed
+  status: resolved
   reason: "User reported: the consultant library button doesn't load anymore and I can't access the library in the consultant view now"
   severity: blocker
   test: 14
@@ -143,7 +143,7 @@ skipped: 0
     - "Middleware redirects non-admin from /library to /engagements — consultants cannot browse prompts"
 
 - truth: "Demand board cards should fill available width, not be capped at max-w-4xl"
-  status: failed
+  status: resolved
   reason: "Design critique: max-w-4xl caps content at 896px, wasting 35% of screen. Violates density-over-whitespace principle."
   severity: major
   test: critique
@@ -153,7 +153,7 @@ skipped: 0
     - "Remove max-w-4xl constraint so cards fill available width"
 
 - truth: "Admin controls should not crowd the card title row"
-  status: failed
+  status: resolved
   reason: "Design critique: 4 admin buttons + status badge in title row causes title truncation and visual clutter"
   severity: major
   test: critique
