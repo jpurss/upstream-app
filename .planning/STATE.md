@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 03-engagement-workspace 03-03-PLAN.md
-last_updated: "2026-03-25T18:25:44.090Z"
+stopped_at: Phase 4 context gathered
+last_updated: "2026-03-26T03:35:43.903Z"
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 10
+  completed_phases: 3
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 03 (engagement-workspace) — EXECUTING
-Plan: 4 of 5
+Plan: 3 of 7
 
 ## Performance Metrics
 
@@ -56,6 +56,10 @@ Plan: 4 of 5
 | Phase 03-engagement-workspace P01 | 203 | 2 tasks | 10 files |
 | Phase 03-engagement-workspace P02 | 3 | 2 tasks | 5 files |
 | Phase 03-engagement-workspace P03 | 4 | 2 tasks | 5 files |
+| Phase 03-engagement-workspace P04 | 4 | 2 tasks | 8 files |
+| Phase 03-engagement-workspace P05 | 4 | 2 tasks | 10 files |
+| Phase 03-engagement-workspace P06 | 3 | 2 tasks | 6 files |
+| Phase 03-engagement-workspace P07 | 8 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -100,6 +104,17 @@ Recent decisions affecting current work:
 - [Phase 03-engagement-workspace]: base-ui Select onValueChange receives (value | null) — null guard required before casting to EngagementStatus
 - [Phase 03-engagement-workspace]: ForkCard inline getRelativeTime helper — extract to lib/utils/date.ts when Plan 04-05 adds second consumer
 - [Phase 03-engagement-workspace]: onForkClick not wired in workspace page — prompt picker modal (Plan 04) will add client wrapper
+- [Phase 03-engagement-workspace]: [Phase 03-fork-workflow]: total_checkouts increment uses read-then-write — no RPC function in schema; acceptable for v1 low concurrency
+- [Phase 03-engagement-workspace]: [Phase 03-fork-workflow]: WorkspaceClient thin wrapper isolates modal open state from server component — avoids prop drilling onForkClick through server tree
+- [Phase 03-engagement-workspace]: [Phase 03-fork-workflow]: ForkToEngagementDialog filters to active engagements only — forking into paused/completed engagements is low-value UX
+- [Phase 03-engagement-workspace]: ForkDetailClient as client orchestrator wrapper — page.tsx stays a pure server component; ForkEditor and ForkSidebar manage their own state independently
+- [Phase 03-engagement-workspace]: Preview tab uses inline ReactMarkdown (not MarkdownPreview) — MarkdownPreview has its own Write/Preview tabs that would conflict with ForkEditor Tabs
+- [Phase 03-engagement-workspace]: Per-field autosave: useRef+setTimeout debounce (NOT useEffect) with separate useTransition per field group to prevent cross-field blocking
+- [Phase 03-engagement-workspace]: Admin client (service role) used for profile provisioning — regular client cannot INSERT to profiles due to RLS + auth hook REVOKE
+- [Phase 03-engagement-workspace]: Engagement name auto-generated as ClientName — Mon YYYY, removing superfluous manual naming field; ignoreDuplicates:true on signIn upsert preserves admin-assigned roles
+- [Phase 03-engagement-workspace]: Only redirect exact /library path — not /library/* — so consultants retain access to individual prompt detail pages
+- [Phase 03-engagement-workspace]: ForkGrid moved inside WorkspaceClient to share pickerOpen state — both WorkspaceHeader and empty-state CTA now call setPickerOpen(true)
+- [Phase 03-engagement-workspace]: showLabel prop on StarRating (default true) — renders label on fork detail sidebar, hidden on compact fork cards via showLabel={false}
 
 ### Pending Todos
 
@@ -113,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T18:25:44.088Z
-Stopped at: Completed 03-engagement-workspace 03-03-PLAN.md
-Resume file: None
+Last session: 2026-03-26T03:35:43.898Z
+Stopped at: Phase 4 context gathered
+Resume file: .planning/phases/04-merge-workflow/04-CONTEXT.md
