@@ -63,9 +63,9 @@ export function ReviewActionBar({ suggestion, editedContent, hasEdited }: Review
               disabled={isDeclineOpen}
             >
               <Check className="size-4" />
-              Approve &amp; Merge
+              Approve & Merge
               <span className="text-[13px] opacity-60 ml-1">
-                v{suggestion.source_prompt_version} &rarr; v{suggestion.source_prompt_version + 1}
+                v{suggestion.source_prompt_version} → v{suggestion.source_prompt_version + 1}
               </span>
             </Button>
           }

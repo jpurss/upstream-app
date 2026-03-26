@@ -79,7 +79,7 @@ export function MergeSuggestionSection({ fork, engagementId: _engagementId }: Me
                 setDialogOpen(true)
               }}
             >
-              Revise &amp; resubmit
+              Revise & resubmit
             </button>
           </>
         )}
