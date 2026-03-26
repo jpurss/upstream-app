@@ -1,40 +1,43 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
 interface ReviewContentEditorProps {
   content: string
+  originalContent: string
   onChange: (content: string) => void
+  onReset: () => void
 }
 
-export function ReviewContentEditor({ content, onChange }: ReviewContentEditorProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+export function ReviewContentEditor({ content, originalContent, onChange, onReset }: ReviewContentEditorProps) {
+  const hasEdited = content !== originalContent
 
   return (
-    <div>
-      <Button
-        variant="ghost"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="gap-2 text-[15px]"
-      >
-        <ChevronDown className={`size-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-        Edit content
-      </Button>
-      {isExpanded && (
-        <div className="mt-3">
-          <p className="text-[13px] text-muted-foreground mb-2">
-            This content will replace the library prompt on approval.
-          </p>
-          <Textarea
-            value={content}
-            onChange={(e) => onChange(e.target.value)}
-            className="min-h-[200px] font-mono text-[13px] leading-[1.6]"
-          />
-        </div>
-      )}
+    <div className="flex flex-col gap-3">
+      <p className="text-[13px] text-muted-foreground">
+        Edit the content below. This version will replace the library prompt when you approve.
+      </p>
+      <Textarea
+        value={content}
+        onChange={(e) => onChange(e.target.value)}
+        className="min-h-[400px] font-mono text-[13px] leading-[1.6] bg-card border-border resize-y"
+      />
+      <div className="flex items-center justify-between">
+        {hasEdited ? (
+          <button
+            type="button"
+            onClick={onReset}
+            className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Reset to original adaptation
+          </button>
+        ) : (
+          <div />
+        )}
+        <span className="text-[13px] text-muted-foreground">
+          {content.length} characters
+        </span>
+      </div>
     </div>
   )
 }

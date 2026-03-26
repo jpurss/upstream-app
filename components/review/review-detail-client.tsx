@@ -42,7 +42,12 @@ export function ReviewDetailClient({ suggestion }: ReviewDetailClientProps) {
             rightTitle="Fork (adapted)"
           />
           <div className="mt-6">
-            <ReviewContentEditor content={editedContent} onChange={setEditedContent} />
+            <ReviewContentEditor
+              content={editedContent}
+              originalContent={suggestion.adapted_content}
+              onChange={setEditedContent}
+              onReset={() => setEditedContent(suggestion.adapted_content)}
+            />
           </div>
         </div>
 

@@ -24,9 +24,18 @@ interface DiffViewerProps {
   adapted: string
   leftTitle?: string
   rightTitle?: string
+  showDiffOnly?: boolean
+  extraLinesSurroundingDiff?: number
 }
 
-export function DiffViewer({ original, adapted, leftTitle = 'Original', rightTitle = 'Adapted' }: DiffViewerProps) {
+export function DiffViewer({
+  original,
+  adapted,
+  leftTitle = 'Original',
+  rightTitle = 'Adapted',
+  showDiffOnly = true,
+  extraLinesSurroundingDiff = 3,
+}: DiffViewerProps) {
   if (original === adapted) {
     return (
       <div className="flex items-center justify-center py-12 text-[13px] text-muted-foreground">
@@ -44,7 +53,8 @@ export function DiffViewer({ original, adapted, leftTitle = 'Original', rightTit
       leftTitle={leftTitle}
       rightTitle={rightTitle}
       hideLineNumbers={false}
-      showDiffOnly={false}
+      showDiffOnly={showDiffOnly}
+      extraLinesSurroundingDiff={extraLinesSurroundingDiff}
     />
   )
 }
