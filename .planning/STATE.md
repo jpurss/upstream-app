@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 04-00-PLAN.md — Wave 0 test stubs
-last_updated: "2026-03-26T11:43:30.801Z"
+status: Ready to plan
+stopped_at: Completed 04-04-PLAN.md — review detail page
+last_updated: "2026-03-26T12:05:49.782Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 19
-  completed_plans: 15
+  completed_plans: 19
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 
 ## Current Position
 
-Phase: 04 (merge-workflow) — EXECUTING
-Plan: 2 of 5
+Phase: 5
+Plan: Not started
 
 ## Performance Metrics
 
@@ -61,6 +61,10 @@ Plan: 2 of 5
 | Phase 03-engagement-workspace P06 | 3 | 2 tasks | 6 files |
 | Phase 03-engagement-workspace P07 | 8 | 2 tasks | 5 files |
 | Phase 04-merge-workflow P00 | 2 | 2 tasks | 6 files |
+| Phase 04-merge-workflow P01 | 3 | 2 tasks | 10 files |
+| Phase 04-merge-workflow P02 | 3 | 2 tasks | 4 files |
+| Phase 04-merge-workflow P03 | 4 | 2 tasks | 6 files |
+| Phase 04-merge-workflow P04 | 6 | 2 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -117,6 +121,17 @@ Recent decisions affecting current work:
 - [Phase 03-engagement-workspace]: ForkGrid moved inside WorkspaceClient to share pickerOpen state — both WorkspaceHeader and empty-state CTA now call setPickerOpen(true)
 - [Phase 03-engagement-workspace]: showLabel prop on StarRating (default true) — renders label on fork detail sidebar, hidden on compact fork cards via showLabel={false}
 - [Phase 04-merge-workflow]: it.todo() used for Wave 0 stubs — todos appear in vitest output without failing, admin client mock separated from server client mock in approve/decline files
+- [Phase 04-merge-workflow]: Admin client (createAdminClient) used for all merge data queries — RLS forked_prompts_own only grants access to fork owner, service role required for admin review
+- [Phase 04-merge-workflow]: getAdminUser() in review/actions.ts is self-contained copy — server actions cannot import helpers across 'use server' file boundaries
+- [Phase 04-merge-workflow]: suggestMerge clears merge_decline_reason on resubmission — allows declined consultant to revise and resubmit cleanly without stale prior reason
+- [Phase 04-merge-workflow]: MergeSuggestionSection uses statusConfig object keyed by merge_status — avoids switch chains for 4-state rendering
+- [Phase 04-merge-workflow]: pendingMergeCount defaults to 0 in AppSidebar — layout only passes real count when effectiveRole === admin, consultants unaffected
+- [Phase 04-merge-workflow]: StarRating.onRate made optional to support read-only display in review queue and review detail sidebar
+- [Phase 04-merge-workflow]: Review queue filter tabs use router.push for URL state — triggers server re-fetch on tab change, simpler than nuqs for this use case
+- [Phase 04-merge-workflow]: redirect() mock in server component tests must throw to correctly simulate Next.js halt-on-redirect behavior
+- [Phase 04-merge-workflow]: DiffViewer leftTitle/rightTitle props use defaults — existing fork-detail usage unchanged, review detail passes 'Library (current)'/'Fork (adapted)'
+- [Phase 04-merge-workflow]: IssueTagGroup.onToggle made optional for read-only contexts — mirrors StarRating.onRate pattern from Plan 03
+- [Phase 04-merge-workflow]: Inline decline form (no modal) — required non-empty textarea IS the confirmation gate per UI-SPEC
 
 ### Pending Todos
 
@@ -130,6 +145,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T11:43:30.799Z
-Stopped at: Completed 04-00-PLAN.md — Wave 0 test stubs
+Last session: 2026-03-26T12:00:08.280Z
+Stopped at: Completed 04-04-PLAN.md — review detail page
 Resume file: None
