@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { DemoBanner } from '@/components/demo-banner'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { countPendingMerges } from '@/lib/data/merge-suggestions'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,12 +45,17 @@ export default async function AppLayout({
   // Use demoRole as fallback for anonymous users (Auth Hook only writes from profiles table)
   const effectiveRole = role ?? (isAnonymous ? demoRole : null)
 
+  let pendingMergeCount = 0
+  if (effectiveRole === 'admin') {
+    pendingMergeCount = await countPendingMerges()
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <DemoBanner isAnonymous={isAnonymous} demoRole={demoRole} />
       <SidebarProvider>
         <div className="flex flex-1 overflow-hidden">
-          <AppSidebar userRole={effectiveRole} userName={displayName} isAnonymous={isAnonymous} />
+          <AppSidebar userRole={effectiveRole} userName={displayName} isAnonymous={isAnonymous} pendingMergeCount={pendingMergeCount} />
           <main className="flex-1 overflow-auto">
             <SidebarTrigger />
             <NuqsAdapter>{children}</NuqsAdapter>

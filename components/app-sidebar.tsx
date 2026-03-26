@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
   { title: 'Library', icon: Library, href: '/library', enabled: true, adminOnly: false, phase: 2 },
   { title: 'Engagements', icon: Briefcase, href: '/engagements', enabled: true, adminOnly: false, phase: 3 },
   { title: 'Demand Board', icon: MessageSquarePlus, href: '/demand', enabled: false, adminOnly: false, phase: 5 },
-  { title: 'Review Queue', icon: GitPullRequestArrow, href: '/review', enabled: false, adminOnly: true, phase: 4 },
+  { title: 'Review Queue', icon: GitPullRequestArrow, href: '/review', enabled: true, adminOnly: true, phase: 4 },
   { title: 'Dashboard', icon: BarChart3, href: '/dashboard', enabled: false, adminOnly: true, phase: 5 },
 ]
 
@@ -46,9 +46,10 @@ interface AppSidebarProps {
   userRole: 'consultant' | 'admin' | 'anon' | null
   userName: string | null
   isAnonymous: boolean
+  pendingMergeCount?: number
 }
 
-export function AppSidebar({ userRole, userName, isAnonymous }: AppSidebarProps) {
+export function AppSidebar({ userRole, userName, isAnonymous, pendingMergeCount = 0 }: AppSidebarProps) {
   const pathname = usePathname()
 
   // Filter admin-only items for non-admins
@@ -100,6 +101,14 @@ export function AppSidebar({ userRole, userName, isAnonymous }: AppSidebarProps)
                   >
                     <Icon className="size-4" />
                     <span>{item.title}</span>
+                    {item.title === 'Review Queue' && pendingMergeCount > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="ml-auto text-[11px] bg-[#FFB852]/15 text-[#FFB852] border-0"
+                      >
+                        {pendingMergeCount}
+                      </Badge>
+                    )}
                   </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
