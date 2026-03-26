@@ -71,14 +71,17 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
       console.error('[signInAsDemo] profile upsert failed:', profileError.message)
     }
 
-    // Claim seed data — transfer ownership from placeholder demo profiles to the new anonymous user.
-    // This ensures RLS policies (engagements_own, forked_prompts_own) show seed data as "yours".
+    // Claim seed data — transfer ownership from BOTH placeholder demo profiles to the new anonymous user.
+    // Both demo roles (admin and consultant) should see the same seed data (demand board, engagements, etc.).
+    // Admin demo was previously claiming from DEMO_ADMIN_ID which owns nothing meaningful; this fixes that.
     const DEMO_CONSULTANT_ID = '00000000-0000-0000-0000-000000000001'
     const DEMO_ADMIN_ID = '00000000-0000-0000-0000-000000000002'
-    const placeholderId = role === 'admin' ? DEMO_ADMIN_ID : DEMO_CONSULTANT_ID
+    const placeholderIds = [DEMO_CONSULTANT_ID, DEMO_ADMIN_ID]
 
-    // Only claim if the new anonymous user is not already the placeholder (shouldn't happen, but guard)
-    if (user.id !== placeholderId) {
+    for (const placeholderId of placeholderIds) {
+      // Guard: skip if the new user happens to be the placeholder (shouldn't happen, but be safe)
+      if (user.id === placeholderId) continue
+
       // Transfer engagements
       await adminClient
         .from('engagements')
