@@ -68,7 +68,6 @@ export async function fetchDashboardMetrics(): Promise<DashboardMetrics> {
 
 export async function fetchUsageOverTime(): Promise<UsageDataPoint[]> {
   const supabase = createAdminClient()
-  // Fetch all forks from last 12 weeks, group in JS (Supabase JS client lacks date_trunc — Research option 1)
   const twelveWeeksAgo = new Date()
   twelveWeeksAgo.setDate(twelveWeeksAgo.getDate() - 84) // 12 * 7
 
@@ -78,26 +77,37 @@ export async function fetchUsageOverTime(): Promise<UsageDataPoint[]> {
     .gte('forked_at', twelveWeeksAgo.toISOString())
     .order('forked_at')
 
-  // Group by week in JS
+  // Use UTC throughout to avoid local-timezone key mismatches
+  function sundayKeyUTC(date: Date): string {
+    const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    d.setUTCDate(d.getUTCDate() - d.getUTCDay())
+    return d.toISOString().split('T')[0]
+  }
+
+  function labelFromKey(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number)
+    return new Date(Date.UTC(y, m - 1, d))
+      .toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
+  }
+
+  // Group by week
   const weekMap = new Map<string, number>()
   for (const row of data ?? []) {
-    const date = new Date(row.forked_at)
-    const weekStart = new Date(date)
-    weekStart.setDate(date.getDate() - date.getDay()) // Sunday start
-    const key = weekStart.toISOString().split('T')[0]
+    const key = sundayKeyUTC(new Date(row.forked_at))
     weekMap.set(key, (weekMap.get(key) ?? 0) + 1)
   }
 
   // Fill in missing weeks with 0
   const result: UsageDataPoint[] = []
-  const current = new Date(twelveWeeksAgo)
-  current.setDate(current.getDate() - current.getDay())
+  const current = new Date(Date.UTC(
+    twelveWeeksAgo.getUTCFullYear(), twelveWeeksAgo.getUTCMonth(), twelveWeeksAgo.getUTCDate()
+  ))
+  current.setUTCDate(current.getUTCDate() - current.getUTCDay())
   const now = new Date()
   while (current <= now) {
     const key = current.toISOString().split('T')[0]
-    const label = current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    result.push({ week: label, count: weekMap.get(key) ?? 0 })
-    current.setDate(current.getDate() + 7)
+    result.push({ week: labelFromKey(key), count: weekMap.get(key) ?? 0 })
+    current.setUTCDate(current.getUTCDate() + 7)
   }
 
   return result
