@@ -62,19 +62,6 @@ export default function LoginPage() {
             <Button
               type="button"
               className="w-full h-11 text-base font-semibold bg-[#4287FF] hover:bg-[#4287FF]/90 text-white border-0"
-              onClick={handleDemoConsultant}
-              disabled={isDemoConsultantPending || isDemoAdminPending || isPending}
-            >
-              {isDemoConsultantPending ? (
-                <Loader2 className="size-4 animate-spin mr-2" />
-              ) : null}
-              Explore as Consultant
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-11 text-base font-semibold border-[#4287FF] text-[#4287FF] hover:bg-[#4287FF]/10 hover:text-[#4287FF] bg-transparent"
               onClick={handleDemoAdmin}
               disabled={isDemoConsultantPending || isDemoAdminPending || isPending}
             >
@@ -82,6 +69,19 @@ export default function LoginPage() {
                 <Loader2 className="size-4 animate-spin mr-2" />
               ) : null}
               Explore as Admin
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-11 text-base font-semibold border-[#4287FF] text-[#4287FF] hover:bg-[#4287FF]/10 hover:text-[#4287FF] bg-transparent"
+              onClick={handleDemoConsultant}
+              disabled={isDemoConsultantPending || isDemoAdminPending || isPending}
+            >
+              {isDemoConsultantPending ? (
+                <Loader2 className="size-4 animate-spin mr-2" />
+              ) : null}
+              Explore as Consultant
             </Button>
 
             <p className="text-[13px] text-zinc-500 text-center">No signup required</p>
