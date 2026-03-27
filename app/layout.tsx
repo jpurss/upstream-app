@@ -17,7 +17,7 @@ const satoshi = localFont({
   display: "swap",
 });
 import "./globals.css";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 
