@@ -40,7 +40,7 @@ export function ReviewQueueClient({ suggestions, currentStatus }: ReviewQueueCli
   const emptyDescription = emptyDescriptions[currentStatus] ?? emptyDescriptions.pending
 
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="p-6">
       <h1 className="text-[20px] font-semibold">Review Queue</h1>
 
       <div className="mt-4">
