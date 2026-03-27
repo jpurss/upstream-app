@@ -34,17 +34,30 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left column — product context (60% on desktop) */}
-      <div className="hidden xl:flex xl:w-3/5 flex-col justify-center px-16 py-16 bg-zinc-950">
-        {/* Wordmark */}
-        <div className="mb-16">
-          <h1 className="text-xl font-semibold text-white">Upstream</h1>
-        </div>
+      <div className="hidden xl:flex xl:w-3/5 relative overflow-hidden bg-zinc-950">
+        {/* Background illustration */}
+        <img
+          src="/login-bg.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Dark overlay — keeps text readable over the illustration */}
+        <div className="absolute inset-0 bg-zinc-950/85" />
 
-        {/* Brand motto */}
-        <p className="font-display text-5xl font-black leading-[1.1] tracking-tight text-white">
-          Every engagement makes your firm{' '}
-          <span className="text-[#4287FF]">smarter</span>.
-        </p>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col justify-center px-16 py-16">
+          {/* Wordmark */}
+          <div className="mb-16">
+            <h1 className="text-xl font-semibold text-white">Upstream</h1>
+          </div>
+
+          {/* Brand motto */}
+          <p className="font-display text-5xl font-black leading-[1.1] tracking-tight text-white">
+            Every engagement makes your firm{' '}
+            <span className="text-[#4287FF]">smarter</span>.
+          </p>
+        </div>
       </div>
 
       {/* Right column — auth panel (40% on desktop, full width on mobile) */}
