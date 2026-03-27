@@ -76,42 +76,34 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
     // Prompt requests and upvotes are read via admin client (bypass RLS) — originals are already visible.
     const DEMO_CONSULTANT_ID = '00000000-0000-0000-0000-000000000001'
 
-    // Clone engagements
-    const { data: seedEngagements } = await adminClient
-      .from('engagements')
-      .select('*')
-      .eq('created_by', DEMO_CONSULTANT_ID)
+    // Fetch seed engagements and forks in parallel
+    const [{ data: seedEngagements }, { data: seedForks }] = await Promise.all([
+      adminClient.from('engagements').select('*').eq('created_by', DEMO_CONSULTANT_ID),
+      adminClient.from('forked_prompts').select('*').eq('forked_by', DEMO_CONSULTANT_ID),
+    ])
 
+    // Clone engagements in a single batch insert
     const engagementIdMap = new Map<string, string>()
     if (seedEngagements?.length) {
-      for (const eng of seedEngagements) {
+      const clonedEngagements = seedEngagements.map(eng => {
         const newId = crypto.randomUUID()
         engagementIdMap.set(eng.id, newId)
-        await adminClient.from('engagements').insert({
-          ...eng,
-          id: newId,
-          created_by: user.id,
-        })
-      }
+        return { ...eng, id: newId, created_by: user.id }
+      })
+      await adminClient.from('engagements').insert(clonedEngagements)
     }
 
-    // Clone forks (remap engagement_id to cloned engagements)
-    const { data: seedForks } = await adminClient
-      .from('forked_prompts')
-      .select('*')
-      .eq('forked_by', DEMO_CONSULTANT_ID)
-
+    // Clone forks in a single batch insert (remap engagement_id to cloned engagements)
     if (seedForks?.length) {
-      for (const fork of seedForks) {
-        await adminClient.from('forked_prompts').insert({
-          ...fork,
-          id: crypto.randomUUID(),
-          forked_by: user.id,
-          engagement_id: engagementIdMap.get(fork.engagement_id) ?? fork.engagement_id,
-          merge_status: 'none',
-          merge_suggestion: null,
-        })
-      }
+      const clonedForks = seedForks.map(fork => ({
+        ...fork,
+        id: crypto.randomUUID(),
+        forked_by: user.id,
+        engagement_id: engagementIdMap.get(fork.engagement_id) ?? fork.engagement_id,
+        merge_status: 'none',
+        merge_suggestion: null,
+      }))
+      await adminClient.from('forked_prompts').insert(clonedForks)
     }
   }
 
