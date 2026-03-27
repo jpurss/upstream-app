@@ -76,10 +76,10 @@ export function AppSidebar({ userRole, userName, isAnonymous, pendingMergeCount 
       {/* Header */}
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1">
-          <span className="text-[16px] font-semibold text-white group-data-[collapsible=icon]:hidden">
+          <span className="text-[16px] font-brand font-black tracking-tight text-white group-data-[collapsible=icon]:hidden">
             Upstream
           </span>
-          <span className="text-[16px] font-semibold text-white hidden group-data-[collapsible=icon]:block">
+          <span className="text-[16px] font-brand font-black tracking-tight text-white hidden group-data-[collapsible=icon]:block">
             U
           </span>
         </div>

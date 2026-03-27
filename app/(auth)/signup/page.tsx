@@ -19,7 +19,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 px-8">
       <div className="w-full max-w-sm">
         {/* Wordmark */}
-        <h1 className="text-xl font-semibold text-white mb-8">Upstream</h1>
+        <h1 className="text-xl font-brand font-black tracking-tight text-white mb-8">Upstream</h1>
 
         <h2 className="text-base font-semibold text-white mb-6">Create your account</h2>
 

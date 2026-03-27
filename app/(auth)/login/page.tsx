@@ -49,7 +49,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col justify-center px-16 py-16">
           {/* Wordmark */}
           <div className="mb-16">
-            <h1 className="text-xl font-semibold text-white">Upstream</h1>
+            <h1 className="text-xl font-brand font-black tracking-tight text-white">Upstream</h1>
           </div>
 
           {/* Brand motto */}
@@ -64,7 +64,7 @@ export default function LoginPage() {
       <div className="flex-1 xl:w-2/5 flex flex-col justify-center px-8 py-16 bg-zinc-950 xl:bg-zinc-900 xl:border-l xl:border-zinc-800">
         <div className="w-full max-w-sm mx-auto">
           {/* Wordmark (visible on mobile and in auth panel) */}
-          <h2 className="text-xl font-semibold text-white mb-8">Upstream</h2>
+          <h2 className="text-xl font-brand font-black tracking-tight text-white mb-8">Upstream</h2>
 
           {/* Demo section */}
           <div className="space-y-3">
