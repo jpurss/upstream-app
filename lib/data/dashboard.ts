@@ -156,27 +156,31 @@ export async function fetchDemandVsSupply(): Promise<DemandDataPoint[]> {
     .from('prompt_requests')
     .select('status, created_at, resolved_at')
 
+  // Key by YYYY-MM to ensure chronological sorting
   const monthMap = new Map<string, { opened: number; resolved: number }>()
 
   for (const r of allRequests ?? []) {
-    // Opened month
-    const createdMonth = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short' })
-    const entry = monthMap.get(createdMonth) ?? { opened: 0, resolved: 0 }
+    const created = new Date(r.created_at)
+    const createdKey = `${created.getUTCFullYear()}-${String(created.getUTCMonth() + 1).padStart(2, '0')}`
+    const entry = monthMap.get(createdKey) ?? { opened: 0, resolved: 0 }
     entry.opened++
-    monthMap.set(createdMonth, entry)
+    monthMap.set(createdKey, entry)
 
-    // Resolved month (if applicable)
     if (r.resolved_at) {
-      const resolvedMonth = new Date(r.resolved_at).toLocaleDateString('en-US', { month: 'short' })
-      const rEntry = monthMap.get(resolvedMonth) ?? { opened: 0, resolved: 0 }
+      const resolved = new Date(r.resolved_at)
+      const resolvedKey = `${resolved.getUTCFullYear()}-${String(resolved.getUTCMonth() + 1).padStart(2, '0')}`
+      const rEntry = monthMap.get(resolvedKey) ?? { opened: 0, resolved: 0 }
       rEntry.resolved++
-      monthMap.set(resolvedMonth, rEntry)
+      monthMap.set(resolvedKey, rEntry)
     }
   }
 
-  return Array.from(monthMap.entries()).map(([month, data]) => ({
-    month,
-    opened: data.opened,
-    resolved: data.resolved,
-  }))
+  return Array.from(monthMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, data]) => {
+      const [y, m] = key.split('-').map(Number)
+      const label = new Date(Date.UTC(y, m - 1, 1))
+        .toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })
+      return { month: label, opened: data.opened, resolved: data.resolved }
+    })
 }
