@@ -7,41 +7,13 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+  CartesianGrid,
 } from 'recharts'
 import type { DemandDataPoint } from '@/lib/data/dashboard'
+import { ChartTooltip } from '@/components/dashboard/chart-tooltip'
 
 interface DemandBarChartProps {
   data: DemandDataPoint[]
-}
-
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: Array<{ name: string; value: number; color: string }>
-  label?: string
-}
-
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null
-  return (
-    <div
-      style={{
-        backgroundColor: '#18181b',
-        border: '1px solid #27272a',
-        borderRadius: '6px',
-        padding: '8px 12px',
-      }}
-    >
-      <p style={{ color: 'oklch(0.985 0 0)', fontSize: '13px', margin: '0 0 4px 0', fontWeight: 600 }}>
-        {label}
-      </p>
-      {payload.map((entry, i) => (
-        <p key={i} style={{ color: entry.color, fontSize: '13px', margin: '2px 0' }}>
-          {entry.name}: {entry.value}
-        </p>
-      ))}
-    </div>
-  )
 }
 
 function CustomLegend() {
@@ -68,9 +40,10 @@ function CustomLegend() {
 export function DemandBarChart({ data }: DemandBarChartProps) {
   return (
     <div className="bg-card border border-border rounded-md p-6">
-      <h2 className="text-[20px] font-semibold text-foreground mb-4">Demand vs Supply</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
+      <h2 className="text-[16px] font-semibold text-foreground mb-4">Demand vs Supply</h2>
+      <ResponsiveContainer width="100%" height={240}>
+        <BarChart data={data} barSize={24} margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
           <XAxis
             dataKey="month"
             stroke="#27272a"
@@ -84,19 +57,24 @@ export function DemandBarChart({ data }: DemandBarChartProps) {
             axisLine={{ stroke: '#27272a' }}
             tickLine={false}
             width={32}
+            allowDecimals={false}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<ChartTooltip />} cursor={false} />
           <Bar
             dataKey="opened"
             name="Requests opened"
             fill="#FFB852"
-            radius={[2, 2, 0, 0]}
+            radius={[3, 3, 0, 0]}
+            animationDuration={600}
+            animationEasing="ease-out"
           />
           <Bar
             dataKey="resolved"
             name="Resolved"
             fill="#65CFB2"
-            radius={[2, 2, 0, 0]}
+            radius={[3, 3, 0, 0]}
+            animationDuration={600}
+            animationEasing="ease-out"
           />
         </BarChart>
       </ResponsiveContainer>

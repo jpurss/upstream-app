@@ -7,45 +7,24 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
 } from 'recharts'
 import type { UsageDataPoint } from '@/lib/data/dashboard'
+import { ChartTooltip } from '@/components/dashboard/chart-tooltip'
 
 interface UsageLineChartProps {
   data: UsageDataPoint[]
 }
 
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: Array<{ value: number }>
-  label?: string
-}
-
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null
-  return (
-    <div
-      style={{
-        backgroundColor: '#18181b',
-        border: '1px solid #27272a',
-        borderRadius: '6px',
-        padding: '8px 12px',
-      }}
-    >
-      <p style={{ color: 'oklch(0.985 0 0)', fontSize: '13px', margin: 0 }}>
-        {label}: {payload[0].value} checkouts
-      </p>
-    </div>
-  )
-}
-
 export function UsageLineChart({ data }: UsageLineChartProps) {
   return (
     <div className="bg-card border border-border rounded-md p-6">
-      <h2 className="text-[20px] font-semibold text-foreground mb-4">
+      <h2 className="text-[16px] font-semibold text-foreground mb-4">
         Prompt Usage Over Time
       </h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
           <XAxis
             dataKey="week"
             stroke="#27272a"
@@ -59,15 +38,17 @@ export function UsageLineChart({ data }: UsageLineChartProps) {
             axisLine={{ stroke: '#27272a' }}
             tickLine={false}
             width={32}
+            allowDecimals={false}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<ChartTooltip valueSuffix=" checkouts" />} cursor={false} />
           <Line
             type="monotone"
             dataKey="count"
             stroke="#4287FF"
-            strokeWidth={2}
+            strokeWidth={2.5}
             dot={false}
-            activeDot={{ r: 4, fill: '#4287FF', stroke: '#4287FF' }}
+            activeDot={{ r: 5, fill: '#4287FF', stroke: '#4287FF' }}
+            animationDuration={800}
           />
         </LineChart>
       </ResponsiveContainer>

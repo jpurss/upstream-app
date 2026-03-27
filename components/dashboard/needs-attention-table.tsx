@@ -13,7 +13,7 @@ export function NeedsAttentionTable({ prompts }: NeedsAttentionTableProps) {
   return (
     <div className="bg-card border border-border rounded-md">
       <div className="p-4 border-b border-border">
-        <h2 className="text-[20px] font-semibold text-foreground">Needs Attention</h2>
+        <h2 className="text-[16px] font-semibold text-foreground">Needs Attention</h2>
       </div>
 
       {/* Sub-section A: Lowest Rated */}
@@ -21,8 +21,8 @@ export function NeedsAttentionTable({ prompts }: NeedsAttentionTableProps) {
         <span className="text-[13px] text-muted-foreground">Lowest Rated</span>
       </div>
       {lowestRated.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground italic py-3 px-4 border-b border-border">
-          No ratings data yet.
+        <p className="text-[13px] text-muted-foreground py-3 px-4 border-b border-border">
+          Rating data will appear here as consultants rate prompts after use.
         </p>
       ) : (
         <div>
@@ -32,7 +32,7 @@ export function NeedsAttentionTable({ prompts }: NeedsAttentionTableProps) {
               href={`/library/${prompt.id}`}
               className="flex items-center justify-between py-3 px-4 border-b border-border hover:bg-accent/40 transition-colors"
             >
-              <span className="text-[15px] text-foreground flex-1 min-w-0 mr-4 truncate">
+              <span className="text-sm text-foreground flex-1 min-w-0 mr-4 truncate">
                 {prompt.title}
               </span>
               <div className="flex items-center gap-2 shrink-0">
@@ -51,7 +51,7 @@ export function NeedsAttentionTable({ prompts }: NeedsAttentionTableProps) {
         <span className="text-[13px] text-muted-foreground">Underutilized</span>
       </div>
       {underutilized.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground italic py-3 px-4">
+        <p className="text-[13px] text-muted-foreground py-3 px-4">
           All prompts have been checked out at least once.
         </p>
       ) : (
@@ -62,7 +62,7 @@ export function NeedsAttentionTable({ prompts }: NeedsAttentionTableProps) {
               href={`/library/${prompt.id}`}
               className="flex items-center justify-between py-3 px-4 border-b border-border hover:bg-accent/40 transition-colors last:border-b-0"
             >
-              <span className="text-[15px] text-foreground flex-1 min-w-0 mr-4 truncate">
+              <span className="text-sm text-foreground flex-1 min-w-0 mr-4 truncate">
                 {prompt.title}
               </span>
               <span className="text-[13px] text-muted-foreground shrink-0">0 checkouts</span>

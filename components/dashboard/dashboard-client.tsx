@@ -30,8 +30,8 @@ export function DashboardClient({
   demandVsSupply,
 }: DashboardClientProps) {
   return (
-    <div className="p-8 space-y-8">
-      <h1 className="text-[20px] font-semibold text-foreground">Dashboard</h1>
+    <div className="p-8">
+      <h1 className="text-sm text-muted-foreground uppercase tracking-wider mb-8">Dashboard</h1>
 
       {/* Zone 1: Metric Cards */}
       <div className="grid grid-cols-3 gap-6">
@@ -49,6 +49,7 @@ export function DashboardClient({
           icon={Inbox}
           value={metrics.openMergeRequests + metrics.openPromptRequests}
           label="Open Items"
+          accentColor="#FFB852"
           subLines={[
             `${metrics.openMergeRequests} merge suggestions`,
             `${metrics.openPromptRequests} prompt requests`,
@@ -57,13 +58,13 @@ export function DashboardClient({
       </div>
 
       {/* Zone 2: Charts */}
-      <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-6 mt-6">
         <UsageLineChart data={usageData} />
         <DemandBarChart data={demandVsSupply} />
       </div>
 
       {/* Zone 3: Tables */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6 mt-10">
         <TopPromptsTable prompts={topPrompts} />
         <NeedsAttentionTable prompts={needsAttention} />
       </div>
