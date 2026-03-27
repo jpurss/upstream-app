@@ -16,10 +16,17 @@ interface ReviewQueueClientProps {
 }
 
 const emptyHeadings: Record<string, string> = {
-  pending: 'No pending merge suggestions',
-  approved: 'No approved merge suggestions',
-  declined: 'No declined merge suggestions',
+  pending: 'No pending suggestions',
+  approved: 'No approved merges yet',
+  declined: 'No declined suggestions',
   all: 'No merge suggestions yet',
+}
+
+const emptyDescriptions: Record<string, string> = {
+  pending: "When consultants suggest merging their improvements, they'll appear here for review.",
+  approved: 'Suggestions you approve will be recorded here.',
+  declined: 'Suggestions you decline will be recorded here.',
+  all: "When consultants suggest merging their improvements, they'll appear here for review.",
 }
 
 export function ReviewQueueClient({ suggestions, currentStatus }: ReviewQueueClientProps) {
@@ -30,9 +37,10 @@ export function ReviewQueueClient({ suggestions, currentStatus }: ReviewQueueCli
   }
 
   const emptyHeading = emptyHeadings[currentStatus] ?? emptyHeadings.pending
+  const emptyDescription = emptyDescriptions[currentStatus] ?? emptyDescriptions.pending
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6 max-w-5xl">
       <h1 className="text-[20px] font-semibold">Review Queue</h1>
 
       <div className="mt-4">
@@ -51,7 +59,7 @@ export function ReviewQueueClient({ suggestions, currentStatus }: ReviewQueueCli
           <GitMerge className="size-8 text-muted-foreground mb-4" />
           <h2 className="text-[16px] font-semibold">{emptyHeading}</h2>
           <p className="text-[13px] text-muted-foreground mt-1 max-w-[400px]">
-            When consultants suggest merging their improvements, they&apos;ll appear here for review.
+            {emptyDescription}
           </p>
         </div>
       ) : (

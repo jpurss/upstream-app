@@ -61,7 +61,7 @@ export function ReviewActionBar({ suggestion, editedContent, hasEdited }: Review
         >
           <Check className="size-4" />
           Approve & Merge
-          <span className="text-[13px] opacity-60 ml-1">
+          <span className="text-[13px] opacity-75 ml-1">
             v{suggestion.source_prompt_version} → v{suggestion.source_prompt_version + 1}
           </span>
         </ApproveConfirmDialog>

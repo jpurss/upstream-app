@@ -52,7 +52,9 @@ export function ApproveConfirmDialog({
         mergeNote
       )
       if (result.success) {
-        toast.success(`Prompt merged — now at version ${nextVersion}`)
+        toast.success(`Merged to v${nextVersion}`, {
+          description: 'The library prompt has been updated.',
+        })
         onSuccess()
       } else {
         toast.error(

@@ -28,7 +28,7 @@ export default async function ReviewDetailPage({
   if (!suggestion) notFound()
 
   return (
-    <div className="p-6 max-w-6xl">
+    <div className="p-6 max-w-5xl">
       <ReviewDetailClient suggestion={suggestion} />
     </div>
   )

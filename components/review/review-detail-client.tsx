@@ -1,48 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Pencil, Expand, Minimize2, Clock, Check, X as XIcon } from 'lucide-react'
+import { ArrowLeft, Pencil, Expand, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { DiffViewer } from '@/components/engagements/diff-viewer'
 import { ReviewContextBar } from '@/components/review/review-context-bar'
 import { ReviewActionBar } from '@/components/review/review-action-bar'
 import { ReviewContentEditor } from '@/components/review/review-content-editor'
+import { StatusBadge } from '@/components/review/status-badge'
 import type { MergeSuggestion } from '@/lib/types/merge'
 
 interface ReviewDetailClientProps {
   suggestion: MergeSuggestion
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const config: Record<string, { bg: string; text: string; icon: React.ReactNode; label: string }> = {
-    pending: {
-      bg: 'bg-[#FFB852]/15',
-      text: 'text-[#FFB852]',
-      icon: <Clock className="size-3" />,
-      label: 'Pending Review',
-    },
-    approved: {
-      bg: 'bg-[#65CFB2]/15',
-      text: 'text-[#65CFB2]',
-      icon: <Check className="size-3" />,
-      label: 'Merged',
-    },
-    declined: {
-      bg: 'bg-[#E3392A]/15',
-      text: 'text-[#E3392A]',
-      icon: <XIcon className="size-3" />,
-      label: 'Declined',
-    },
-  }
-  const c = config[status] ?? config.pending
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[13px] font-medium ${c.bg} ${c.text}`}>
-      {c.icon}
-      {c.label}
-    </span>
-  )
 }
 
 export function ReviewDetailClient({ suggestion }: ReviewDetailClientProps) {
@@ -53,6 +24,17 @@ export function ReviewDetailClient({ suggestion }: ReviewDetailClientProps) {
   const hasEdited = editedContent !== suggestion.adapted_content
   const isPending = suggestion.merge_status === 'pending'
   const isApproved = suggestion.merge_status === 'approved'
+
+  useEffect(() => {
+    if (!hasEdited) return
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [hasEdited])
 
   function handleReset() {
     setEditedContent(suggestion.adapted_content)
@@ -85,7 +67,7 @@ export function ReviewDetailClient({ suggestion }: ReviewDetailClientProps) {
       {suggestion.merge_status === 'declined' && suggestion.merge_decline_reason && (
         <div className="bg-[#E3392A]/5 border border-[#E3392A]/20 rounded-md px-4 py-3">
           <span className="text-[13px] text-muted-foreground">Decline reason</span>
-          <p className="text-[15px] text-foreground mt-1">{suggestion.merge_decline_reason}</p>
+          <p className="text-[14px] text-foreground mt-1">{suggestion.merge_decline_reason}</p>
         </div>
       )}
 

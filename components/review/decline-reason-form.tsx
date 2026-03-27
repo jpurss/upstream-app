@@ -64,7 +64,7 @@ export function DeclineReasonForm({ forkId, onDeclined, onDiscard, initialExpand
             onDiscard?.()
           }}
         >
-          Discard reason
+          Cancel
         </Button>
         <Button
           variant="destructive"
