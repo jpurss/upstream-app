@@ -108,6 +108,8 @@ export async function signInAsDemo(role: 'consultant' | 'admin') {
           id: crypto.randomUUID(),
           forked_by: user.id,
           engagement_id: engagementIdMap.get(fork.engagement_id) ?? fork.engagement_id,
+          merge_status: 'none',
+          merge_suggestion: null,
         })
       }
     }

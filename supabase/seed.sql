@@ -597,6 +597,46 @@ INSERT INTO forked_prompts (
     '00000000-0000-0000-0000-000000000001',
     NOW() - INTERVAL '3 weeks',
     NOW() - INTERVAL '2 weeks'
+  ),
+  -- Fork 6: Acme Corp, Process Mining from Documentation, pending merge
+  (
+    'bbbbbbbb-0000-0000-0000-000000000006',
+    (SELECT id FROM prompts WHERE title = 'Process Mining from Documentation' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000001',
+    (SELECT content FROM prompts WHERE title = 'Process Mining from Documentation' LIMIT 1),
+    E'You are an AI process analyst working with Acme Corp to extract structured workflow intelligence from their compliance reporting documentation.\n\n## Objective\nAnalyze Acme''s compliance reporting SOPs and produce a structured process map focused on regulatory submission workflows — identify where manual handoffs between Risk, Legal, and Finance create bottlenecks and compliance exposure.\n\n## Context\n- Client: Acme Corp\n- Process domain: Quarterly regulatory compliance reporting (SEC, OCC)\n- Documentation type: SOPs + internal wiki\n- Current team size: 8 analysts + 2 compliance officers\n- Cycle time: 15 business days per quarterly submission\n\n## FSI-Specific Instructions\n1. Flag any step where regulated data changes hands without an audit trail\n2. Distinguish between regulatory-mandated steps (cannot automate) and internal process steps (automation candidates)\n3. Map approval chains — FSI clients typically have 3-4x more approval layers than other industries\n4. Note any steps dependent on external regulatory calendars or filing deadlines',
+    'Specialized for FSI compliance reporting workflows. Added regulatory submission context, SEC/OCC filing requirements, and audit trail tracking. Distinguished mandatory regulatory steps from automatable internal steps.',
+    4,
+    5,
+    'The compliance-specific framing caught two manual handoffs that had no audit trail — Risk was emailing spreadsheets to Finance. The regulatory vs. internal step distinction saved the team from trying to automate mandated review steps.',
+    '{}',
+    'pending',
+    'The compliance reporting specialization surfaced a pattern we see across FSI clients: distinguishing regulatory-mandated steps from internal process steps before recommending automation. This prevents the common mistake of flagging mandated reviews as automation candidates. Recommend adding a {{process_regulatory_context}} variable and a regulatory step classification tier to the standard prompt.',
+    false,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '6 weeks',
+    NOW() - INTERVAL '1 week'
+  ),
+  -- Fork 7: TechStart, Change Impact Assessment, pending merge
+  (
+    'bbbbbbbb-0000-0000-0000-000000000007',
+    (SELECT id FROM prompts WHERE title = 'Change Impact Assessment' LIMIT 1),
+    1,
+    'aaaaaaaa-0000-0000-0000-000000000002',
+    (SELECT content FROM prompts WHERE title = 'Change Impact Assessment' LIMIT 1),
+    E'You are a change management specialist assessing the organizational impact of deploying AI coding assistants across TechStart''s 120-person engineering org.\n\n## Objective\nEvaluate the ripple effects of rolling out GitHub Copilot Enterprise and Claude Code across all engineering teams, with specific focus on the startup context: speed of adoption, impact on shipping velocity, and developer sentiment.\n\n## Context\n- Client: TechStart\n- Change: Org-wide AI coding assistant deployment\n- Affected teams: 14 squads, 120 engineers\n- Timeline: 4-week phased rollout\n- Culture: High autonomy, low process, move-fast ethos\n\n## Startup-Specific Adaptations\n1. Skip the formal change readiness survey — instead, use async Slack polls and observe actual usage metrics from the first cohort\n2. Measure impact on PR cycle time and deploy frequency, not satisfaction surveys\n3. Identify the 3-5 internal champions who are already power users — leverage them as peer coaches rather than formal training\n4. Flag any security/IP concerns specific to startup codebases (proprietary algorithms, pre-patent code)',
+    'Stripped enterprise change management formality for startup context. Replaced surveys with usage metrics and Slack signals. Added startup-specific IP concerns. Focused on shipping velocity as the primary success metric rather than adoption percentage.',
+    5,
+    4,
+    'CTO loved that we measured PR cycle time instead of running surveys. The internal champion approach got 80% adoption in week 1 without any formal training sessions. This should be the default for any sub-500 person tech company.',
+    '{}',
+    'pending',
+    'The startup adaptation revealed that the standard Change Impact Assessment is too enterprise-heavy for tech companies under 500 people. Key improvements: (1) replace formal readiness surveys with usage metrics and async signals, (2) measure developer velocity (PR cycle time, deploy frequency) instead of satisfaction scores, (3) use internal champions instead of formal training programs. Recommend adding a {{company_stage}} variable that switches between enterprise and startup change frameworks.',
+    false,
+    '00000000-0000-0000-0000-000000000001',
+    NOW() - INTERVAL '5 weeks',
+    NOW() - INTERVAL '1 week'
   );
 
 -- =============================================================================
