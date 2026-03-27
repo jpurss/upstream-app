@@ -22,6 +22,19 @@ export default async function DashboardPage() {
 
   if (effectiveRole !== 'admin') redirect('/library')
 
+  // Derive display name (same pattern as layout)
+  let displayName: string | null = null
+  if (user.user_metadata?.display_name) {
+    displayName = user.user_metadata.display_name as string
+  } else if (!isAnonymous) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', user.id)
+      .single()
+    displayName = profile?.name ?? null
+  }
+
   const [metrics, usage, topPrompts, needsAttention, demandVsSupply] = await Promise.all([
     fetchDashboardMetrics(),
     fetchUsageOverTime(),
@@ -32,6 +45,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
+      displayName={displayName}
       metrics={metrics}
       usageData={usage}
       topPrompts={topPrompts}
