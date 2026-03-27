@@ -17,6 +17,7 @@ const satoshi = localFont({
   display: "swap",
 });
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" forcedTheme="dark" disableTransitionOnChange>
           {children}
+          <Analytics />
           <Toaster />
         </ThemeProvider>
       </body>
